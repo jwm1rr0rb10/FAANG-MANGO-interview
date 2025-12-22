@@ -1018,3 +1018,6 @@ In the context of Go programming language and concurrent computing, synchronizat
 
 In summary, while synchronization is about ensuring goroutines can work together safely and predictably, orchestration is about managing how these goroutines work together to achieve the overall task.
 */
+
+
+func liveCodingTask() 
