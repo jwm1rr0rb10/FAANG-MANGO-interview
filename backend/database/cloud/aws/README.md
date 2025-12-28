@@ -1,4 +1,7 @@
-1. Architecture & Internals
+# Questions for AWS
+
+
+3. Architecture & Internals
    Explain the PostgreSQL multi-process architecture. How does it differ from a multi-threaded model?
 
 What is the role of the Postmaster process and background workers?

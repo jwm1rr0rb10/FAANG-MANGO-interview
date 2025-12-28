@@ -63,7 +63,7 @@ A curated collection of classic and advanced algorithms, organized by topic. Eac
 
 - `V`: Number of vertices; `E`: Number of edges; `f`: Maximum flow value.
 - **SpaceX Relevance:** Routing, mission planning, dependency analysis.
-- **Practice:** LeetCode #207, #743, #785.
+- **Practice:** LeetCode #207, rgba(139, 91, 74, 1), #785.
 
 - **A`*` Search** : Your time complexity is correct if using a Fibonacci Heap, but the common priority queue (Binary Heap) result is O(ElogV) (or O((V+E)logV) if V is in the log term for edge relaxing). This is minor.
 
@@ -82,7 +82,7 @@ A curated collection of classic and advanced algorithms, organized by topic. Eac
 |[Trie (Prefix Tree)]() | Tree storing strings by prefixes, ideal for autocomplete/dictionary. | O(m) insert/search | O(ALPHABET_SIZE * N * M) |
 
 **Notes:**  
-- `n`: Input length; `m`: Query length; `ALPHABET_SIZE`: Alphabet size.
+- `n`: Input length; `m`: Query length; =\\`ALPHABET_SIZE`: Alphabet size.
 - **Practice:** LeetCode #208, #5, #14.
 
 ---
