@@ -109,4 +109,3 @@ Real-time collaborative systems enable multiple users to edit shared content sim
 | Presence	 | Eventual	Medium	     | Last-write-wins	  | Status indicators   |   
 
 These algorithms represent different points in the design space of distributed consistency, each optimized for specific collaboration scenarios from document editing to real-time gaming.
-
