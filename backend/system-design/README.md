@@ -93,7 +93,4 @@
 - 4. [**Design Satellite Constellation Management (inter-satellite links, routing)**]()
 - 5. [**Design Edge AI Inference on Vehicles/Satellites (quantized models, fallback)**]()
 
----
-
-
 

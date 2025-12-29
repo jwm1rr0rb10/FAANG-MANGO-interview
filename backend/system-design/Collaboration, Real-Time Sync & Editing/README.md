@@ -1,165 +1,112 @@
-# ChatGPT-like LLM Serving Architecture
-*Design Overview Including Autoscaling, Quantization, and Fallback Mechanisms*
+# System Design: Collaboration, Real-Time Sync & Editing
 
-This README provides a complete, production-grade system design for serving a large language model (LLM) similar to ChatGPT. Perfect for system design interviews or reference architecture.
+## Topic Overview
 
-## 1. Requirements and Assumptions
+Real-time collaborative systems enable multiple users to edit shared content simultaneously with immediate visibility of changes. This domain requires solving fundamental challenges of consistency, latency, conflict resolution, and state synchronization across distributed clients. The core tension is between providing instant feedback (optimistic local updates) and maintaining eventual consistency across all participants. These systems power modern collaborative tools, multiplayer experiences, and live status services.
 
-### Functional Requirements
-- Conversational text generation with multi-turn context
-- Streaming responses
-- Optional Retrieval-Augmented Generation (RAG) for factual grounding
-- Safety filtering and moderation
+## Algorithm Descriptions
 
-### Non-Functional Requirements
-- Support millions of concurrent users
-- Average latency < 2 seconds (p95 < 5 seconds)
-- 99.99% uptime
-- Cost-efficient (< $0.01 per 1K tokens)
-- Global low-latency access
-- Handle bursty traffic
+### 1. CRDT (Conflict-Free Replicated Data Type)
 
-### Constraints
-- GPU-intensive inference
-- Variable context lengths (up to 128K tokens)
-- Model sizes: 7B to 70B+ parameters
+- **Purpose:** Achieve eventual consistency without coordination
 
-### Assumed Stack
-- Cloud provider (AWS / GCP / Azure)
-- Kubernetes for orchestration
-- GPU instances (A100 / H100)
+- **Core Principle:** Mathematical structures where operations commute (order doesn't matter)
 
-## 2. High-Level Architecture
+- **Types:** State-based (send full state), operation-based (send operations)
 
-```ascii
-Client (Web/Mobile App)
-       ↓ (HTTPS / WebSocket)
-API Gateway / Load Balancer (NGINX, AWS ALB)
-       ↓
-Backend Service (FastAPI / Node.js)
-   ↙   ↘   ↘
-Cache   Queue   Retrieval Service
-(Redis) (Kafka) (Vector DB: Pinecone/Weaviate/FAISS)
-       ↓
-Inference Engine (vLLM / TensorRT-LLM / TGI / Triton)
-       ↓ (GPU Cluster)
-Model Replicas (Quantized models, continuous batching)
-       ↓
-Backend → Post-processing → Stream response to Client
-```
+- **Use Case:** Collaborative text editing, counters, sets in distributed systems
 
-### Key Components
+- **Key Feature:** Automatic conflict resolution through idempotent operations
 
-- `API Gateway:` Rate limiting, authentication, request validation
-- `Backend Service:` Session management, prompt engineering, context handling, RAG orchestration
-- `Retrieval Layer:` Embedding model + vector database
-- `Inference Layer:` Optimized engine with dynamic batching, paged attention, KV caching
-- `Storage:` Redis (sessions), PostgreSQL/MongoDB (history), S3 (logs)
-- `Observability:` Prometheus + Grafana (metrics), Loki/ELK (logs)
+---
 
-## 3. Autoscaling
+### 2. OT (Operational Transformation)
+   
+- **Purpose:** Transform operations to maintain consistency
 
-### Goal
-Dynamically adjust resources based on load while minimizing cost.
+- **Core Principle:** Apply transformations to operations so they can be applied in different orders
 
-### Mechanisms
+- **Workflow:** Client operations transformed against server history before application
 
-- **Kubernetes HPA / KEDA:** Scale inference pods on custom metrics
-- **Cluster Autoscaler:** Add/remove GPU nodes
+- **Use Case:** Google Docs, Etherpad (historical approach)
 
-### Key Scaling Metrics
-// Here make a table.
+- **Complexity:** Requires central coordination or sophisticated transformation logic
 
+---
 
-Metric,Target,Scaling Action
-GPU Utilization,60–80%,Scale up/down pods
-Requests Per Second,-,Horizontal pod scaling
-Inference Queue Length,< 50–100,Add replicas
-p95 Latency,< 5s,Add nodes / vertical scaling
-Tokens Per Second,-,Monitor throughput
+### 3. State Synchronization (for Gaming)
 
-### Advanced Techniques
+- **Purpose:** Keep game clients in consistent state
 
-- Pre-warming pods to avoid cold starts
-- Multi-region deployment with geo-routing
-- Continuous batching (vLLM) for maximum GPU utilization
+- **Models:**
 
-### Challenges
+    - **Lockstep:** Deterministic simulation with synchronized inputs
 
-- Scaling lag (2–5 minutes)
-- Model loading time on new pods (mitigate with quantized models)
+    - **Client-Server:** Single source of truth with state snapshots
 
-## 4. Quantization
+    - **Peer-to-Peer:** Distributed authority with consensus
 
-### Purpose
-Reduce memory footprint and increase inference speed with minimal accuracy loss.
+- **Techniques:** Entity interpolation, prediction, reconciliation
 
-### Common Techniques
+---
 
-Method,Precision,Memory Reduction,Speedup,Accuracy Impact
-FP16 / BF16,Half precision,~50%,1.5–2x,Negligible
-INT8 (PTQ),8-bit,~75%,2–3x,Small
-GPTQ / AWQ,4-bit / 3-bit,~80–85%,3–4x,Moderate (tunable)
-GGUF (llama.cpp),2–8 bit,Up to 90%,High,Varies
+### 4. Lag Compensation
 
-### Integration
+- **Purpose:** Mitigate network latency in real-time interactions
 
-- Apply during model export (AutoGPTQ, bitsandbytes, TensorRT-LLM)
-- Combine with FlashAttention-2 and paged attention
+- **Methods:**
 
-### Benefits
+    - **Client-side Prediction:** Act immediately, reconcile with server
 
-- Run larger models on fewer GPUs
-- Lower inference cost
-- Higher throughput
+    - **Server Rewind:** Process actions based on past game state
 
-### Trade-offs
+    - **Interpolation:** Smooth display of other entities' movements
 
-- Slight perplexity increase
-- Model-dependent quality; always benchmark
+- **Use Case:** First-person shooters, fast-paced multiplayer games
 
-### 5. Fallback Mechanisms
+---
+ 
 
-### Goal
-Ensure high availability and graceful degradation.
+### 5. Presence & Status Algorithms
 
-### Strategies
+- **Purpose:** Track user availability and activity in real-time
 
-#### 1. Model Cascade / Tiered Routing
-- Primary: High-quality model (e.g., 70B fine-tuned)
-- Fallback 1: Smaller quantized model (e.g., 13B)
-- Fallback 2: Even smaller or cached response
-- Fallback 3: Rule-based message (“I’m experiencing issues, try again”)
+- **Techniques:**
 
-#### 2. Multi-Provider Routing
-- Use AI gateway (Portkey, LiteLLM, OpenRouter)
-- Route across OpenAI → Anthropic → Grok → self-hosted on failure
+- **Heartbeat:** Regular pings to indicate liveliness
 
-#### 3. Retry Policies
-- Exponential backoff (3–5 retries)
-- Circuit breaker for failing endpoints
+- **Last-Seen Timestamps:** Efficient but less immediate
 
+- **WebSocket Pub/Sub:** Real-time status propagation
 
-### Triggers for Fallback
+- **Grace Periods:** Prevent flickering between states
 
-- Timeout (>5–10s)
-- HTTP errors (5xx, 429)
-- Empty/malformed response
-- Policy violation detected
+---
 
-### Benefits
+### 6. Versioning with Merge Semantics
 
-- Near-100% uptime
-- Cost optimization
-- Reduced vendor lock-in
+- **Purpose:** Maintain document history with branching/merging
 
-## 6. Additional Production Considerations
+- **Approaches:**
 
-- **Cost Optimization:** Spot instances, reserved GPUs, dynamic batching
-- **Safety:** Input/output moderation, PII redaction
-- **Security:** Prompt injection defense, per-user rate limiting
-- **Monitoring:** Token usage, latency breakdown, error rates, user feedback
-- **Deployment:** Canary rollouts, blue-green updates
-- **Edge Cases:** Long contexts (compression/summarization), multi-modal support
+    - **DAG-based:** Graph structure for non-linear history
 
-This architecture reflects best practices used by leading LLM providers (OpenAI, Anthropic, etc.) and is optimized for scale, reliability, and efficiency.
+    - **Patch-based:** Store differences between versions
+
+    - **Three-way Merge:** Use common ancestor to resolve conflicts
+
+    - **Operational Merging:** Apply OT/CRDT principles to version trees
+
+---
+
+### System Tradeoffs
+
+|Algorithm   | Consistency Model    | Latency Tolerance | 	Conflict Resolution   | Best For |
+|:-----------|:---------------------|:------------------|:-----------------------|:---------|
+| CRDT	     | Eventual	       	    | Hight             | Automatic	 |    Text, simple structures|
+| OT	     | Strong (eventual)    | Medium	           | Transformation rules	|Complex documents| 
+| State Sync | Eventual/Strong	     |  Very Low         |   Games, simulations|
+| Presence	 | Eventual	Medium	     | Last-write-wins	  | Status indicators   |   
+
+These algorithms represent different points in the design space of distributed consistency, each optimized for specific collaboration scenarios from document editing to real-time gaming.
+
