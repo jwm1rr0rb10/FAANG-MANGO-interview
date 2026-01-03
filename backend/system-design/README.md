@@ -94,3 +94,34 @@
 - 5. [**Design Edge AI Inference on Vehicles/Satellites (quantized models, fallback)**]()
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
