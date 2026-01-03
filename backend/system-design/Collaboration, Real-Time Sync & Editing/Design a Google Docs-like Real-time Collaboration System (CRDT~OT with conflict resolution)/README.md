@@ -162,7 +162,7 @@ This diagram shows client connections funneling through the gateway, with the se
 
 ### Diagram: Editing Flow in Dynamic Modes (Mermaid Flowchart)
 
-![Mermaid Flowchart](https://github.com/ogamor69wm1rr0rb/senior_question_interview/blob/main/images/backend/system-design/google-doc-1.svg)
+![Mermaid Flowchart](https://github.com/ogamor69wm1rr0rb/senior_question_interview/blob/main/images/backend/system-design/google-doc2.svg)
 
 This flowchart illustrates how modes alter the flow, adding checks for larger groups.
 
