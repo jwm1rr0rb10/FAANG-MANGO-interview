@@ -53,3 +53,5 @@ The system follows a client-server architecture with distributed elements for sc
 
 ## Diagram: High-Level Architecture (Mermaid UML) 
 
+- [Mermaid UML](https://github.com/ogamor69wm1rr0rb/senior_question_interview/blob/main/images/backend/system-design/google-doc-1.svg)
+
