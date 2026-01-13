@@ -2,8 +2,8 @@
 
 # [A Collaboration, Real-Time Sync & Editing]()
 
-- 1. [**Design a Google Docs-like Real-time Collaboration System (CRDT/OT with conflict resolution)**]() 
-- 2. [**Design a Multiplayer Game Backend (state sync, tick model, lag compensation)**]()
+- 1. [**Design a Google Docs-like Real-time Collaboration System (CRDT/OT with conflict resolution)**](https://codefarm0.medium.com/building-a-collaborative-document-editor-real-time-synchronization-crdts-and-conflict-resolution-4743436639f5) 
+- 2. [**Design a Multiplayer Game Backend (state sync, tick model, lag compensation)**](https://medium.com/@qingweilim/how-do-multiplayer-games-sync-their-state-part-1-ab72d6a54043)
 - 3. [**Design a Real-time Presence and Status Service**]() 
 - 4. [**Design a Realtime Document Versioning System with merge semantics**]() 
 
@@ -91,37 +91,6 @@
 - 2. [**Design a Low-Latency Over-the-Air (OTA) Update System for Fleet**]()
 - 3. [**Design a Safety-Critical Real-Time Control System (redundancy, voting)**]()
 - 4. [**Design Satellite Constellation Management (inter-satellite links, routing)**]()
-- 5. [**Design Edge AI Inference on Vehicles/Satellites (quantized models, fallback)**]()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+ - 5. [**Design Edge AI Inference on Vehicles/Satellites (quantized models, fallback)**]()
 
 
