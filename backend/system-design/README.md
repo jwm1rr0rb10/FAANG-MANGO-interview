@@ -91,6 +91,6 @@
 - 2. [**Design a Low-Latency Over-the-Air (OTA) Update System for Fleet**]()
 - 3. [**Design a Safety-Critical Real-Time Control System (redundancy, voting)**]()
 - 4. [**Design Satellite Constellation Management (inter-satellite links, routing)**]()
- - 5. [**Design Edge AI Inference on Vehicles/Satellites (quantized models, fallback)**]()
+- 5. [**Design Edge AI Inference on Vehicles/Satellites (quantized models, fallback)**]()
 
 
