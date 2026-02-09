@@ -1,4 +1,6 @@
-# System Design: Real-Time Collaboration System like Google Docs (Using OT and CRDT with Conflict Resolution)As a senior-level system design example, I'll outline a scalable, fault-tolerant real-time collaboration system similar to Google Docs. This supports multiple users editing a document simultaneously, with low-latency updates and conflict resolution. We'll focus on two primary approaches for conflict-free editing: Operational Transformation (OT) (used by Google Docs) and Conflict-Free Replicated Data Types (CRDT) (used in systems like Teletype or Automerge). I'll discuss trade-offs, architecture, components, scalability, and implementation considerations.The system handles text documents but can extend to spreadsheets or drawings. Assumptions:Up to 100 concurrent users per document.
+# System Design: Real-Time Collaboration System like Google Docs (Using OT and CRDT with Conflict Resolution)
+
+As a senior-level system design example, I'll outline a scalable, fault-tolerant real-time collaboration system similar to Google Docs. This supports multiple users editing a document simultaneously, with low-latency updates and conflict resolution. We'll focus on two primary approaches for conflict-free editing: Operational Transformation (OT) (used by Google Docs) and Conflict-Free Replicated Data Types (CRDT) (used in systems like Teletype or Automerge). I'll discuss trade-offs, architecture, components, scalability, and implementation considerations.The system handles text documents but can extend to spreadsheets or drawings. Assumptions:Up to 100 concurrent users per document.
 
 
 As a senior-level system design example, I'll outline a scalable, fault-tolerant real-time collaboration system similar to Google Docs.
@@ -110,26 +112,26 @@ Alerts: >5% conflicts trigger review.
 package main
 
 import (
-"encoding/json"
-"log"
-"net/http"
-"sync"
+    "encoding/json"
+    "log"
+    "net/http"
+    "sync"
 
     "github.com/gorilla/websocket"
 )
 
 // Simplified OT Operation
 type Operation struct {
-Type string `json:"type"` // insert/delete/retain
-Pos  int    `json:"pos"`
-Data string `json:"data,omitempty"`
+    Type string `json:"type"` // insert/delete/retain
+    Pos  int    `json:"pos"`
+    Data string `json:"data,omitempty"`
 }
 
 // Document State (in-memory for demo; use DB in prod)
 type Document struct {
-Content string
-Version int
-mu      sync.Mutex
+    Content string
+    Version int
+    mu      sync.Mutex
 }
 
 var docs = make(map[string]*Document) // docID -> Document
@@ -137,13 +139,15 @@ var conns = make(map[string][]*websocket.Conn) // docID -> connections
 
 // WebSocket Handler
 func handleWS(w http.ResponseWriter, r *http.Request) {
-docID := r.URL.Query().Get("docID")
-conn, err := websocket.Upgrade(w, r, w.Header(), 1024, 1024)
-if err != nil {
-log.Println(err)
-return
+    docID := r.URL.Query().Get("docID")
+    conn, err := websocket.Upgrade(w, r, w.Header(), 1024, 1024)
+    if err != nil {
+        log.Println(err)
+    return
 }
+
 conns[docID] = append(conns[docID], conn)
+
 defer func() {
 // Remove conn
 }()
@@ -171,10 +175,10 @@ defer func() {
 }
 
 func broadcast(docID string, op Operation) {
-data, _ := json.Marshal(op)
-for _, c := range conns[docID] {
-c.WriteMessage(websocket.TextMessage, data)
-}
+    data, _ := json.Marshal(op)
+    for _, c := range conns[docID] {
+        c.WriteMessage(websocket.TextMessage, data)
+    }
 }
 
 func getDoc(docID string) *Document {
