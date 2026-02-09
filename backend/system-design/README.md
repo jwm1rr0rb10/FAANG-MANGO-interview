@@ -7,6 +7,19 @@
 - 3. [**Design a Real-time Presence and Status Service**]() 
 - 4. [**Design a Realtime Document Versioning System with merge semantics**]() 
 
+| Name | Level | Description | Resource |
+|:-----|:------|:------------|:---------|
+| 1. [**Design a Google Docs-like Real-time Collaboration System (CRDT/OT with conflict resolution)**](link) | Hard/Advanced | Real-time sync, multi-user editing, offline support, merge semantics. | Medium article в твоём списке; добавь AI для auto-complete. |
+| 2. [**Design a Multiplayer Game Backend (state sync, tick model, lag compensation)**](link) | Medium | Low-latency state, anti-cheat, matchmaking. | Из Medium; для Tesla — аналогично vehicle sync. |
+| 3. [**Design a Real-time Presence and Status Service**](link) | Easy | User online/offline, typing indicators. | Базовая для chat apps; интегрируй с WebSockets. |
+| 4. [**Design a Realtime Document Versioning System with merge semantics**](link) | Advanced | Git-like merges, history rollback. | Дополни CRDT для conflict-free. |
+| 5. [**Design a Collaborative Online Spreadsheet System**](link) | Medium | Cell locking, formula sync. | Из твоего 1-го; FAANG-like (Google Sheets). |
+| 6. [**Design a Live Comment System**](link) | Medium | Threaded replies, notifications. | Meta-style (Facebook comments). |
+
+
+
+
+
 ---
 
 ## [B Consumer-Scale Systems & Real-Time Features]()
@@ -22,6 +35,22 @@
 - 9.  [**Design Privacy-Aware User Data Storage (GDPR, erasure, auditing, differential privacy)**]() 
 - 10. [**Design TikTok-Style Video Feed (ranking, embedding stores, A/B pipelines)**]() 
 - 11. [**Design Time-series Storage for Billions of Events/sec**]() 
+
+| Name | Level | Description | Resource |
+|:---|:---|:---|:---|
+| 7. [**Design a ChatGPT-like LLM Serving Architecture (autoscaling, quantization, fallback)**](link) | Hard | Model inference, token limits, cost optimization. | 2026 тренд: AI-heavy; добавь agentic tools. |
+| 8. [**Design a Global Social Graph Storage (Facebook-scale)**](link) | Hard | Graph DBs, sharding, privacy. | Meta-specific. |
+| 9. [**Design a Global User Profile Service with caching & write coalescing**](link) | Medium | Multi-region sync, GDPR compliance. | Из твоего. |
+| 10. [**Design a Large-scale Feature Store (for ML training/serving)**](link) | Advanced | Offline/online features, vector embeddings. | ML infra. |
+| 11. [**Design a Low-Latency Multi-region Notification System**](link) | Medium | Push, fan-out, reliability. | Apple/Google push. |
+| 12. [**Design a Multi-region Active-Active Newsfeed System**](link) | Hard | Ranking, A/B tests. | Facebook Newsfeed. |
+| 13. [**Design a Real-time Inference Service (10M RPS, <10 ms latency)**](link) | Advanced | GPU scaling, quantization. | Tesla AI (autopilot inference). |
+| 14. [**Design a Real-time Personalized Recommendation Engine with Online Learning**](link) | Hard | Two-tower models, feedback loops. | Netflix/Amazon. |
+| 15. [**Design Privacy-Aware User Data Storage (GDPR, erasure, auditing, differential privacy)**](link) | Advanced | Encryption, access logs. | 2026 фокус: privacy. |
+| 16. [**Design TikTok-Style Video Feed (ranking, embedding stores, A/B pipelines)**](link) | Hard | Short-form content, ML ranking. | ByteDance-style. |
+| 17. [**Design Time-series Storage for Billions of Events/sec**](link) | Advanced | InfluxDB-like, compression. | Monitoring tools. |
+| 18. [**Design Instagram**](link) | Medium | Feeds, stories, media upload. | FAANG staple<br>igotanoffer.com |
+| 19. [**Design YouTube or Netflix**](link) | Medium | Streaming, recommendations. | Content delivery<br>tryexponent.com |
 
 --- 
 
