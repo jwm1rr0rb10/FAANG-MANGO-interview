@@ -2,23 +2,14 @@
 
 # [A Collaboration, Real-Time Sync & Editing]()
 
-- 1. [**Design a Google Docs-like Real-time Collaboration System (CRDT/OT with conflict resolution)**](https://codefarm0.medium.com/building-a-collaborative-document-editor-real-time-synchronization-crdts-and-conflict-resolution-4743436639f5) 
-- 2. [**Design a Multiplayer Game Backend (state sync, tick model, lag compensation)**](https://medium.com/@qingweilim/how-do-multiplayer-games-sync-their-state-part-1-ab72d6a54043)
-- 3. [**Design a Real-time Presence and Status Service**]() 
-- 4. [**Design a Realtime Document Versioning System with merge semantics**]() 
-
 | Name | Level | Description | Resource |
 |:-----|:------|:------------|:---------|
-| 1. [**Design a Google Docs-like Real-time Collaboration System (CRDT/OT with conflict resolution)**](link) | Hard/Advanced | Real-time sync, multi-user editing, offline support, merge semantics. | Medium article в твоём списке; добавь AI для auto-complete. |
-| 2. [**Design a Multiplayer Game Backend (state sync, tick model, lag compensation)**](link) | Medium | Low-latency state, anti-cheat, matchmaking. | Из Medium; для Tesla — аналогично vehicle sync. |
-| 3. [**Design a Real-time Presence and Status Service**](link) | Easy | User online/offline, typing indicators. | Базовая для chat apps; интегрируй с WebSockets. |
-| 4. [**Design a Realtime Document Versioning System with merge semantics**](link) | Advanced | Git-like merges, history rollback. | Дополни CRDT для conflict-free. |
-| 5. [**Design a Collaborative Online Spreadsheet System**](link) | Medium | Cell locking, formula sync. | Из твоего 1-го; FAANG-like (Google Sheets). |
-| 6. [**Design a Live Comment System**](link) | Medium | Threaded replies, notifications. | Meta-style (Facebook comments). |
-
-
-
-
+| 1. [**Design a Collaborative Online Spreadsheet System**](link) | Medium | Cell locking, formula sync. | FAANG-like (Google Sheets). |
+| 2. [**Design a Google Docs-like Real-time Collaboration System (CRDT/OT with conflict resolution)**](link) | Hard/Advanced | Real-time sync, multi-user editing, offline support, merge semantics. | Medium article in list; add AI for auto-complete. |
+| 3. [**Design a Live Comment System**](link) | Medium | Threaded replies, notifications. | Meta-style (Facebook comments). |
+| 4. [**Design a Multiplayer Game Backend (state sync, tick model, lag compensation)**](link) | Medium | Low-latency state, anti-cheat, matchmaking. | From Medium; For Tesla — the same vehicle sync. |
+| 5. [**Design a Real-time Presence and Status Service**](link) | Easy | User online/offline, typing indicators. | Common for chat apps; integrate with WebSockets. |
+| 6. [**Design a Realtime Document Versioning System with merge semantics**](link) | Advanced | Git-like merges, history rollback. | Add CRDT for conflict-free. |
 
 ---
 
@@ -66,6 +57,20 @@
 - 8. [**Design a Vector Database for Semantic Search/ANN (Pinecone/Weaviate-scale)**]() 
 - 9. [**Design Log-as-Database Architecture (Kafka/Pravega/Lakehouse)**]() 
 
+| Topic | Сложность | Ключевые аспекты | Ресурсы/Примечания |
+|:---|:---|:---|---|
+| 1. [**Design a Columnar Storage System for Analytics (Parquet/BigQuery-like)**](link) | Advanced | Query optimization, partitioning. | Big Data. |
+| 2. [**Design a Distributed Key-Value Store (Dynamo/Bigtable-style)**](link) | Hard | CAP trade-offs, replication. | Amazon Dynamo. |
+| 3. [**Design a Distributed Metadata Service (e.g., HDFS NameNode or etcd)**](link) | Advanced | High availability, consensus. | Из твоего. |
+| 4. [**Design a Global Locking/Coordination Service (Zookeeper/Chubby-like)**](link) | Hard | Leader election, watches. | Google Chubby. |
+| 5. [**Design a Large-scale Blob Storage (S3-like with multi-region replication)**](link) | Hard | Durability, geo-replication. | AWS S3. |
+| 6. [**Design a Multi-zone Conflict-free Replication System (CRDT-based)**](link) | Advanced | Eventual consistency. | Из твоего. |
+| 7. [**Design a Sharded SQL Database with Online Resharding**](link) | Hard | Zero-downtime migrations. | Vitess-style. |
+| 8. [**Design a Vector Database for Semantic Search/ANN (Pinecone/Weaviate-scale)**](link) | Advanced | HNSW indexes, hybrid search. | AI search 2026. |
+| 9. [**Design Log-as-Database Architecture (Kafka/Pravega/Lakehouse)**](link) | Hard | Stream processing, immutability. | Delta Lake. |
+| 10. [**Design a Wide Column Database**](link) | Hard | Cassandra-like, sparse data. | Из твоего 1-го. |
+| 11. [**Design a Distributed File System**](link) | Hard | Fault tolerance, replication. | HDFS. |
+
 ---
 
 ## [D E-commerce, Fintech & Mission-Critical Systems]() 
@@ -77,6 +82,16 @@
 - 5. [**Design an Inventory Consistency System with distributed locking/sagas**]() 
 - 6. [**Design a High-throughput Search Auction System (AdWords/Meta Ads)**]() 
 
+| Тема | Сложность | Ключевые аспекты | Ресурсы/Примечания |
+|:---|:---|:---|---|
+| 1. [**Design a Fraud Detection System (event ingestion + real-time ML scoring)**](link) | Hard | Anomaly detection, rules+ML. | Stripe/ML. |
+| 2. [**Design a Global Shopping Cart Service (session replication, conflict resolution)**](link) | Medium | Distributed sessions, sagas. | Amazon Cart. |
+| 3. [**Design a High-throughput Search Auction System (AdWords/Meta Ads)**](link) | Hard | Real-time bidding, latency <50ms. | Google Ads. |
+| 4. [**Design an Idempotent Payment Processing Pipeline (Stripe-like)**](link) | Hard | Transactions, retries. | Fintech. |
+| 5. [**Design an Inventory Consistency System with distributed locking/sagas**](link) | Hard | 2PC or sagas for consistency. | E-commerce. |
+| 6. [**Design an E-commerce Service**](link) | Medium | Orders, inventory, recommendations. | Shopify. |
+| 7. [**Design an Online Payment Service**](link) | Medium | PCI compliance, gateways. | PayPal. |
+| 8. [**Design an Auction System**](link) | Hard | Bidding, winner determination. | eBay. |
 ---
 
 ## [E High-Performance Distributed Compute & ML Infra]()
@@ -88,6 +103,18 @@
 - 5. [**Design a Workflow Orchestration System (Airflow/Dagster-like)**]()
 - 6. [**Design an Autoscaling System for Real-time Compute**]()
 - 7. [**Design an LLM Fine-Tuning & Serving Platform (LoRA, quantization-aware training)**]()
+
+| Тема | Сложность | Ключевые аспекты | Ресурсы/Примечания |
+|:---|:---|:---|---|
+| 1. [**Design a Batch Compute Engine (MapReduce/Spark-like)**](link) | Advanced | Job DAGs, fault recovery. | Hadoop. |
+| 2. [**Design a GPU/TPU Orchestration Cluster (for ML training/inference)**](link) | Advanced | Scheduling, multi-tenancy. | Kubernetes+GPUs. |
+| 3. [**Design a Priority-based Job Scheduler with backfilling & preemption**](link) | Advanced | Fairness, SLAs. | Borg/K8s. |
+| 4. [**Design a Stream Processing Pipeline (Flink/Spark Streaming)**](link) | Advanced | Windowing, state management. | Kafka integration. |
+| 5. [**Design a Workflow Orchestration System (Airflow/Dagster-like)**](link) | Medium | DAGs, retries. | ETL/ML pipelines. |
+| 6. [**Design an Autoscaling System for Real-time Compute**](link) | Advanced | Metrics-based, predictive. | AWS ASG. |
+| 7. [**Design an LLM Fine-Tuning & Serving Platform (LoRA, quantization-aware training)**](link) | Hard | Distributed training, serving. | 2026 AI. |
+| 8. [**Design a Big Data Processing Pipeline**](link) | Advanced | ETL at scale. | Из твоего 1-го. |
+| 9. [**Design a High-Performance Computing Cluster**](link) | Advanced | MPI, low-latency networks. | SpaceX simulations. |
 
 ---
 
@@ -101,6 +128,17 @@
 - 6. [**Design a Zero-downtime Deployment Framework (canary, blue/green, feature flags)**]()
 - 7. [**Design an API Gateway with authN/authZ, rate-limits, quotas & observability**]()
 
+| Тема | Сложность | Ключевые аспекты | Ресурсы/Примечания |
+|:---|:---|:---|---|
+| 1. [**Design a Disaster Recovery System with RPO/RTO guarantees**](link) | Advanced | Backups, failover. | AWS DR. |
+| 2. [**Design a Global Edge Compute Platform (Cloudflare Workers/AWS Lambda@Edge)**](link) | Advanced | Serverless, anycast. | 2026 edge. |
+| 3. [**Design a Multi-region Load Balancing System (GSLB with anycast)**](link) | Hard | Geo-routing, health checks. | Akamai. |
+| 4. [**Design a Multi-tenant SaaS System with noisy-neighbor isolation**](link) | Advanced | Namespaces, quotas. | Salesforce. |
+| 5. [**Design a Real-time CDN with edge compute and cache invalidation**](link) | Hard | Purging, prefetching. | Fastly. |
+| 6. [**Design a Zero-downtime Deployment Framework (canary, blue/green, feature flags)**](link) | Medium | Rollouts, monitoring. | CI/CD. |
+| 7. [**Design an API Gateway with authN/authZ, rate-limits, quotas & observability**](link) | Medium | Envoy/Istio. | Microservices. |
+| 8. [**Design a Hybrid Cloud Infrastructure**](link) | Advanced | On-prem + cloud sync. | Из твоего 1-го. |
+| 9. [**Design a Virtualization System**](link) | Advanced | Hypervisors, VMs. | VMware. |
 ---
 
 ## [G Search, Recommendations & Personalization (AI-Heavy in 2025)]()
@@ -112,14 +150,29 @@
 - 5. [**Design an Agentic AI System (tool calling, multi-agent orchestration, memory)**]()
 - 6. [**Design Google Search Autocomplete (prefix index + ranking + personalization)**]()
 
+| Тема | Сложность | Ключевые аспекты | Ресурсы/Примечания |
+|:---|:---|:---|---|
+| 1. [**Design a Large-scale Embedding Store (for ranking/retrieval models)**](link) | Advanced | FAISS, vector indexes. | ML serving. |
+| 2. [**Design a Real-time Clickstream Analytics System**](link) | Medium | Event processing, dashboards. | Kafka+ELK. |
+| 3. [**Design a Recommendation Ranking Pipeline (retrieval + scoring + rerank + two-tower)**](link) | Hard | Online/offline. | Amazon Recs. |
+| 4. [**Design a Vector Search Engine (semantic search / ANN with hybrid retrieval)**](link) | Advanced | Pinecone-like. | RAG for AI. |
+| 5. [**Design an Agentic AI System (tool calling, multi-agent orchestration, memory)**](link) | Hard | LangChain-style. | 2026 тренд. |
+| 6. [**Design Google Search Autocomplete (prefix index + ranking + personalization)**](link) | Medium | Trie + ML. | Google. |
+| 7. [**Design Typeahead Suggestion**](link) | Medium | Predictive search. | Из твоего 1-го. |
+| 8. [**Design Google Search**](link) | Hard | Crawling, indexing, ranking. | Full search engine. |
+
 ---
 
 ## [H. SpaceX/Tesla-Specific Flavor (High-Reliability & Real-Time)]()
 
-- 1. [**Design a Telemetry Pipeline for Millions of Sensors (rocket/vehicle → ground/cloud)**]()
-- 2. [**Design a Low-Latency Over-the-Air (OTA) Update System for Fleet**]()
-- 3. [**Design a Safety-Critical Real-Time Control System (redundancy, voting)**]()
-- 4. [**Design Satellite Constellation Management (inter-satellite links, routing)**]()
-- 5. [**Design Edge AI Inference on Vehicles/Satellites (quantized models, fallback)**]()
+| Тема | Сложность | Ключевые аспекты | Ресурсы/Примечания |
+|:---|:---|:---|---|
+| 1. [**Design a Charging Station Network**](link) | Medium | Load balancing, availability. | Tesla Superchargers |
+| 2. [**Design a Fleet Management System for Autonomous Vehicles**](link) | Hard | Tracking, routing, charging. | Tesla-specific |
+| 3. [**Design a Telemetry Pipeline for Millions of Sensors (rocket/vehicle → ground/cloud)**](link) | Advanced | Low-latency ingest, anomaly detection. | SpaceX: Stream processing |
+| 4. [**Design a Low-Latency Over-the-Air (OTA) Update System for Fleet**](link) | Advanced | Delta updates, rollback safety. | Tesla vehicles |
+| 5. [**Design a Safety-Critical Real-Time Control System (redundancy, voting)**](link) | Hard | Fault tolerance, real-time OS. | SpaceX engines |
+| 6. [**Design Satellite Constellation Management (inter-satellite links, routing)**](link) | Advanced | Starlink-like, dynamic routing. | SpaceX |
+| 7. [**Design Edge AI Inference on Vehicles/Satellites (quantized models, fallback)**](link) | Advanced | On-device ML, cloud fallback. | Tesla Autopilot |
 
 
