@@ -1,6 +1,6 @@
 # Updated Advanced System Design Topics for FAANG/MANGA, SpaceX & Tesla Interviews (2025 Edition)
 
-# [A Collaboration, Real-Time Sync & Editing]()
+# [A Collaboration, Real-Time Sync & Editing]() - 6
 
 | Name | Level | Description | Resource |
 |:-----|:------|:------------|:---------|
@@ -13,39 +13,27 @@
 
 ---
 
-## [B Consumer-Scale Systems & Real-Time Features]()
-
-- 1.  [**Design a ChatGPT-like LLM Serving Architecture (incl. autoscaling, quantization, fallback)**]() 
-- 2.  [**Design a Global Social Graph Storage (Facebook-scale)**]() 
-- 3.  [**Design a Global User Profile Service with caching & write coalescing**]() 
-- 4.  [**Design a Large-scale Feature Store (for ML training/serving)**]() 
-- 5.  [**Design a Low-Latency Multi-region Notification System**]() 
-- 6.  [**Design a Multi-region Active-Active Newsfeed System**]() 
-- 7.  [**Design a Real-time Inference Service (10M RPS, <10 ms latency)**]() 
-- 8.  [**Design a Real-time Personalized Recommendation Engine with Online Learning**]() 
-- 9.  [**Design Privacy-Aware User Data Storage (GDPR, erasure, auditing, differential privacy)**]() 
-- 10. [**Design TikTok-Style Video Feed (ranking, embedding stores, A/B pipelines)**]() 
-- 11. [**Design Time-series Storage for Billions of Events/sec**]() 
+## [B Consumer-Scale Systems & Real-Time Features]() -13
 
 | Name | Level | Description | Resource |
 |:---|:---|:---|:---|
-| 7. [**Design a ChatGPT-like LLM Serving Architecture (autoscaling, quantization, fallback)**](link) | Hard | Model inference, token limits, cost optimization. | 2026 тренд: AI-heavy; добавь agentic tools. |
-| 8. [**Design a Global Social Graph Storage (Facebook-scale)**](link) | Hard | Graph DBs, sharding, privacy. | Meta-specific. |
-| 9. [**Design a Global User Profile Service with caching & write coalescing**](link) | Medium | Multi-region sync, GDPR compliance. | Из твоего. |
-| 10. [**Design a Large-scale Feature Store (for ML training/serving)**](link) | Advanced | Offline/online features, vector embeddings. | ML infra. |
-| 11. [**Design a Low-Latency Multi-region Notification System**](link) | Medium | Push, fan-out, reliability. | Apple/Google push. |
-| 12. [**Design a Multi-region Active-Active Newsfeed System**](link) | Hard | Ranking, A/B tests. | Facebook Newsfeed. |
-| 13. [**Design a Real-time Inference Service (10M RPS, <10 ms latency)**](link) | Advanced | GPU scaling, quantization. | Tesla AI (autopilot inference). |
-| 14. [**Design a Real-time Personalized Recommendation Engine with Online Learning**](link) | Hard | Two-tower models, feedback loops. | Netflix/Amazon. |
-| 15. [**Design Privacy-Aware User Data Storage (GDPR, erasure, auditing, differential privacy)**](link) | Advanced | Encryption, access logs. | 2026 фокус: privacy. |
-| 16. [**Design TikTok-Style Video Feed (ranking, embedding stores, A/B pipelines)**](link) | Hard | Short-form content, ML ranking. | ByteDance-style. |
-| 17. [**Design Time-series Storage for Billions of Events/sec**](link) | Advanced | InfluxDB-like, compression. | Monitoring tools. |
-| 18. [**Design Instagram**](link) | Medium | Feeds, stories, media upload. | FAANG staple<br>igotanoffer.com |
-| 19. [**Design YouTube or Netflix**](link) | Medium | Streaming, recommendations. | Content delivery<br>tryexponent.com |
+| 1. [**Design a ChatGPT-like LLM Serving Architecture (autoscaling, quantization, fallback)**](link) | Hard | Model inference, token limits, cost optimization. | 2026 тренд: AI-heavy; добавь agentic tools. |
+| 2. [**Design a Global Social Graph Storage (Facebook-scale)**](link) | Hard | Graph DBs, sharding, privacy. | Meta-specific. |
+| 3. [**Design a Global User Profile Service with caching & write coalescing**](link) | Medium | Multi-region sync, GDPR compliance. | Из твоего. |
+| 4. [**Design a Large-scale Feature Store (for ML training/serving)**](link) | Advanced | Offline/online features, vector embeddings. | ML infra. |
+| 5. [**Design a Low-Latency Multi-region Notification System**](link) | Medium | Push, fan-out, reliability. | Apple/Google push. |
+| 6. [**Design a Multi-region Active-Active Newsfeed System**](link) | Hard | Ranking, A/B tests. | Facebook Newsfeed. |
+| 7. [**Design a Real-time Inference Service (10M RPS, <10 ms latency)**](link) | Advanced | GPU scaling, quantization. | Tesla AI (autopilot inference). |
+| 8. [**Design a Real-time Personalized Recommendation Engine with Online Learning**](link) | Hard | Two-tower models, feedback loops. | Netflix/Amazon. |
+| 9. [**Design Instagram**](link) | Medium | Feeds, stories, media upload. | FAANG staple<br>igotanoffer.com |
+| 10. [**Design Privacy-Aware User Data Storage (GDPR, erasure, auditing, differential privacy)**](link) | Advanced | Encryption, access logs. | 2026 фокус: privacy. |
+| 11. [**Design TikTok-Style Video Feed (ranking, embedding stores, A/B pipelines)**](link) | Hard | Short-form content, ML ranking. | ByteDance-style. |
+| 12. [**Design Time-series Storage for Billions of Events/sec**](link) | Advanced | InfluxDB-like, compression. | Monitoring tools. |
+| 13. [**Design YouTube and Netflix**](link) | Medium | Streaming, recommendations. | Content delivery<br>tryexponent.com |
 
 --- 
 
-## [C Distributed Storage, Consistency & Databases]()
+## [C Distributed Storage, Consistency & Databases]() - 11
 
 - 1. [**Design a Columnar Storage System for Analytics (Parquet/BigQuery-like)**]() 
 - 2. [**Design a Distributed Key-Value Store (Dynamo/Bigtable-style)**]() 
@@ -73,7 +61,7 @@
 
 ---
 
-## [D E-commerce, Fintech & Mission-Critical Systems]() 
+## [D E-commerce, Fintech & Mission-Critical Systems]() - 8
 
 - 1. [**Design a Fraud Detection System (event ingestion + real-time ML scoring)**]() 
 - 2. [**Design a Global Shopping Cart Service (session replication, conflict resolution)**]() 
@@ -94,7 +82,7 @@
 | 8. [**Design an Auction System**](link) | Hard | Bidding, winner determination. | eBay. |
 ---
 
-## [E High-Performance Distributed Compute & ML Infra]()
+## [E High-Performance Distributed Compute & ML Infra]() - 9
 
 - 1. [**Design a Batch Compute Engine (MapReduce/Spark-like)**]() 
 - 2. [**Design a GPU/TPU Orchestration Cluster (for ML training/inference)**]() 
@@ -118,7 +106,7 @@
 
 ---
 
-## [F Networking, Reliability & Multi-Region Ops]()
+## [F Networking, Reliability & Multi-Region Ops]() - 9
 
 - 1. [**Design a Disaster Recovery System with RPO/RTO guarantees**]()
 - 2. [**Design a Global Edge Compute Platform (Cloudflare Workers/AWS Lambda@Edge)**]()
@@ -141,7 +129,7 @@
 | 9. [**Design a Virtualization System**](link) | Advanced | Hypervisors, VMs. | VMware. |
 ---
 
-## [G Search, Recommendations & Personalization (AI-Heavy in 2025)]()
+## [G Search, Recommendations & Personalization (AI-Heavy in 2025)]() - 8
 
 - 1. [**Design a Large-scale Embedding Store (for ranking/retrieval models)**]()
 - 2. [**Design a Real-time Clickstream Analytics System**]()
@@ -163,9 +151,9 @@
 
 ---
 
-## [H. SpaceX/Tesla-Specific Flavor (High-Reliability & Real-Time)]()
+## [H. SpaceX/Tesla-Specific Flavor (High-Reliability & Real-Time)]() 
 
-| Тема | Сложность | Ключевые аспекты | Ресурсы/Примечания |
+| Topic | Complexity | key aspect | Resource  |
 |:---|:---|:---|---|
 | 1. [**Design a Charging Station Network**](link) | Medium | Load balancing, availability. | Tesla Superchargers |
 | 2. [**Design a Fleet Management System for Autonomous Vehicles**](link) | Hard | Tracking, routing, charging. | Tesla-specific |
