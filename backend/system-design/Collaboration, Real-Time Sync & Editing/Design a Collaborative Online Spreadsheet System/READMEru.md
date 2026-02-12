@@ -1,39 +1,61 @@
 # Дизайн Коллаборативной Онлайн-Таблицы
  
-Представь, что мы на собеседовании в FAANG-компании, например, в Google или Meta. Я — кандидат, а ты — интервьюер. Тема: "Design a Collaborative Online Spreadsheet System" — это классическая задача на system design. Я буду объяснять всё шаг за шагом, максимально подробно, чтобы показать, как я думаю: начиная с уточнения требований, переходя к high-level дизайну, deep dive в компоненты, обсуждению [**масштабируемости**](https://github.com/ogamor69wm1rr0rb/senior_question_interview/blob/main/backend/system-design/READMEHelperRu.md#масштабируемость), [**надежности**](https://github.com/ogamor69wm1rr0rb/senior_question_interview/blob/main/backend/system-design/READMEHelperRu.md#надежность), [**компромисса**](https://github.com/ogamor69wm1rr0rb/senior_question_interview/blob/main/backend/system-design/READMEHelperRu.md#компромисс) и потенциальных [**узских мест**](https://github.com/ogamor69wm1rr0rb/senior_question_interview/blob/main/backend/system-design/READMEHelperRu.md#узское_место). Я постараюсь быть структурированным, логичным и правдоподобным — как на реальном интервью, где я рисую на доске (или в Google Docs), объясняю trade-offs и отвечаю на возможные вопросы.Поскольку ты попросил сначала на русском с подробным объяснением, я дам полный разбор здесь. В следующих сообщениях мы можем перевести на английский и углубить, если нужно. Давай начнём!
+Представь, что мы на собеседовании в FAANG-компании, например, в Google или Meta. Я — кандидат, а ты — интервьюер. Тема: "Design a Collaborative Online Spreadsheet System" — это классическая задача на system design. Я буду объяснять всё шаг за шагом, максимально подробно, чтобы показать, как я думаю: начиная с уточнения требований, переходя к high-level дизайну, deep dive в компоненты, обсуждению [**масштабируемости**](https://github.com/ogamor69wm1rr0rb/senior_question_interview/blob/main/backend/system-design/READMEHelperRu.md#масштабируемость), [**надежности**](https://github.com/ogamor69wm1rr0rb/senior_question_interview/blob/main/backend/system-design/READMEHelperRu.md#надежность), [**компромисса**](https://github.com/ogamor69wm1rr0rb/senior_question_interview/blob/main/backend/system-design/READMEHelperRu.md#компромисс) и потенциальных [**узских мест**](https://github.com/ogamor69wm1rr0rb/senior_question_interview/blob/main/backend/system-design/READMEHelperRu.md#узское_место). Я постараюсь быть структурированным, логичным и правдоподобным — как на реальном интервью, где я рисую на доске (или в Google Docs), объясняю компромиссы и отвечаю на возможные вопросы.
 
 ---
 
 ## Шаг 1: Уточнение Требований (Requirements Clarification)
 
-На собеседовании всегда начинаю с вопросов, чтобы понять scope. Не предполагаю ничего заранее — это показывает, что я думаю о продукте.
+- На собеседовании всегда начинаю с вопросов, чтобы понять объем. Не предполагаю ничего заранее — это показывает, что я думаю о продукте.
 
-### Функциональные требования (Functional Requirements):Пользователи могут создавать, редактировать и делиться электронными таблицами (spreadsheets), подобно Google Sheets.
-Коллаборативное редактирование: Несколько пользователей (скажем, до 100 одновременно) могут редактировать одну таблицу в реальном времени. Изменения должны отображаться у всех мгновенно (low latency, <1 секунда).
-Основные операции: Вставка/удаление строк/столбцов, ввод формул (с расчётами, как SUM, AVERAGE), форматирование (цвета, шрифты), импорт/экспорт (CSV, Excel).
-Авторизация: Пользователи логинятся (OAuth, email/password), контроль доступа (view-only, edit, owner).
-История изменений: Version history с возможностью rollback.
-Оффлайн-поддержка: Опционально, но для базового дизайна — онлайн-only, чтобы не усложнять.
-Интеграции: Не обязательно, но упомянем уведомления (email/slack) при изменениях.
+### Функциональные требования (Functional Requirements):
 
-Нефункциональные требования (Non-Functional Requirements):Масштабируемость (Scalability): Поддержка миллионов пользователей, тысяч одновременных сессий на таблицу. Глобальный доступ (multi-region).
-Производительность (Performance): Latency <200ms для обновлений, throughput — тысячи операций в секунду.
-Надёжность (Reliability): 99.99% uptime, no data loss. Fault tolerance (если сервер упадёт, сессия продолжается).
-Безопасность (Security): Защита от XSS, SQL injection, data encryption at rest/transit. Granular permissions.
-Стоимость (Cost): Эффективное использование ресурсов, auto-scaling.
+1. Пользователи могут создавать, редактировать и делиться электронными таблицами (spreadsheets), подобно Google Sheets.
 
-Вопросы, которые я бы задал: "Сколько пользователей ожидается? Есть ли лимит на размер таблицы (e.g., 1M cells)? Поддержка мобильных устройств? Интеграция с другими сервисами?"Предположим, мы согласились на базовый scope: онлайн-коллаборативный spreadsheet без оффлайн, с фокусом на реал-тайм.
+    - **Коллаборативное редактирование:** Несколько пользователей (скажем, до 100 одновременно) могут редактировать одну таблицу в реальном времени. Изменения должны отображаться у всех мгновенно (low latency, <1 секунда).
+    - **Основные операции:** Вставка/удаление строк/столбцов, ввод формул (с расчётами, как SUM, AVERAGE), форматирование (цвета, шрифты), импорт/экспорт (CSV, Excel).
+    - **Авторизация:** Пользователи логинятся (OAuth, email/password), контроль доступа (view-only, edit, owner).
+    - **История изменений:** Version history с возможностью rollback.
+    - **Оффлайн-поддержка:** Опционально, но для базового дизайна — онлайн-only, чтобы не усложнять.
+    - **Интеграции:** Не обязательно, но упомянем уведомления (email/slack) при изменениях.
 
 
-Шаг 2: High-Level Design (Общий Дизайн)На доске я бы нарисовал архитектуру: клиенты <-> API Gateway <-> Backend Services <-> Database <-> Real-Time Layer.Компоненты:Frontend (Client-Side): Web app на React/Vue с WebSocket для реал-тайм. Локальный state для таблицы (grid library как Handsontable или custom). Обрабатывает UI, локальные расчёты формул (используя JS engine как Formula.js).
-Backend Services: Microservices на Node.js/Go/Java. Разделим на:Auth Service: JWT tokens, RBAC (Role-Based Access Control).
+### Нефункциональные требования (Non-Functional Requirements):
+
+1. Масштабируемость (Scalability): Поддержка миллионов пользователей, тысяч одновременных сессий на таблицу. Глобальный доступ (multi-region).
+
+    - **Производительность (Performance):** Latency <200ms для обновлений, throughput — тысячи операций в секунду.
+    - **Надёжность (Reliability):** 99.99% uptime, no data loss. Fault tolerance (если сервер упадёт, сессия продолжается).
+    - **Безопасность (Security):** Защита от XSS, SQL injection, data encryption at rest/transit. Granular permissions.
+    - **Стоимость (Cost):** Эффективное использование ресурсов, auto-scaling.
+
+Вопросы, которые я бы задал:
+ - "Сколько пользователей ожидается? 
+ - Есть ли лимит на размер таблицы (e.g., 1M cells)? 
+ - Поддержка мобильных устройств? 
+ - Интеграция с другими сервисами?
+ - "Предположим, мы согласились на базовый scope: онлайн-коллаборативный spreadsheet без оффлайн, с фокусом на реал-тайм.
+
+--- 
+
+## Шаг 2: High-Level Design (Общий Дизайн)
+
+- **На доске я бы нарисовал архитектуру:** клиенты <-> API Gateway <-> Backend Services <-> Database <-> Real-Time Layer.Компоненты:Frontend (Client-Side): Web app на React/Vue с WebSocket для реал-тайм. Локальный state для таблицы (grid library как Handsontable или custom). Обрабатывает UI, локальные расчёты формул (используя JS engine как Formula.js).
+
+- **Backend Services:** Microservices на Node.js/Go/Java. Разделим на:Auth Service: JWT tokens, RBAC (Role-Based Access Control).
 Spreadsheet Service: CRUD для таблиц, обработка операций.
-Formula Engine: Server-side расчёты для сложных формул (чтобы избежать несогласованности).
 
-Real-Time Collaboration: Pub/Sub system (e.g., Kafka, Redis Pub/Sub) или WebSocket server (Socket.io). Используем Operational Transformation (OT) или Conflict-Free Replicated Data Types (CRDT) для разрешения конфликтов.
-Storage: NoSQL для данных таблицы (MongoDB/Cassandra для гибкости) + Relational DB (PostgreSQL) для metadata (users, permissions). Blob storage (S3) для attachments.
-Caching: Redis для часто доступных данных (active sheets).
-Load Balancer/API Gateway: Nginx/Envoy для routing, rate limiting.
+- **Formula Engine:** Server-side расчёты для сложных формул (чтобы избежать несогласованности).
+
+- **Real-Time Collaboration:** Pub/Sub system (e.g., Kafka, Redis Pub/Sub) или WebSocket server (Socket.io). Используем Operational Transformation (OT) или 
+
+- **Conflict-Free Replicated Data Types (CRDT)** для разрешения конфликтов.
+
+- **Storage:** NoSQL для данных таблицы (MongoDB/Cassandra для гибкости) + Relational DB (PostgreSQL) для metadata (users, permissions). Blob storage (S3) для attachments.
+
+- **Caching:** Redis для часто доступных данных (active sheets).
+
+- **Load Balancer/API Gateway:** Nginx/Envoy для routing, rate limiting.
 
 Поток: Пользователь открывает sheet → Auth → Load data from DB → Establish WebSocket → Send operations (e.g., "cell A1 changed to 5") → Broadcast to others → Apply locally.Шаг 3: Deep Dive в Ключевые КомпонентыДавай углубимся — на интервью это показывает экспертизу.Данные Модели (Data Model):Spreadsheet: JSON-like структура. Каждая таблица — документ с {id, name, owner_id, cells: {row:col: {value, formula, style}}}.
 Для scalability: Sharding по spreadsheet_id (horizontal partitioning). Лимит размера: Если >1M cells, paginate или warn user.
