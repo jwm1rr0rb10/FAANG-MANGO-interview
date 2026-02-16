@@ -115,25 +115,57 @@ A curated collection of classic and advanced algorithms, organized by topic. Eac
 
 ---
 
-# Bit Manipulation Algorithms
+## 🧮 Bit Manipulation Algorithms
 
-| Algorithm | Description | Time Complexity | Space Complexity |
-|:---|:---|:---|:---|
-| [Bitwise Subset Generation]() | Generate all subsets using bits. | O(2^n * n) | O(1) |
-| [Brian Kernighan's Bit Count]() | Counts set bits in integer. | O(k), k = # set bits | O(1) |
-| [Gray Code Generation]() | Generates sequence where only one bit changes. | O(2^n) | O(2^n) |
-| [Power of Two Check]() | Checks if number is power of two. | O(1) | O(1) |
-| [Single Number (XOR)]() | Finds unique element among duplicates. | O(n) | O(1) |
+| Algorithm | Description | Time Complexity | Space Complexity | Notes / Interview Power Move |
+|:-----------|:------------|:----------------|:-----------------|:-----------------------------|
+| [**Get, Set, Clear, Toggle Bit**]() | Retrieve, set, clear, or flip a specific bit in an integer. | O(1) | O(1) | Fundamental operations – know them by heart. |
+| [**Check if number is power of two**]() | `(n & (n-1)) == 0 && n > 0` | O(1) | O(1) | Classic one-liner. |
+| [**Count set bits (popcount)**]() | Count the number of 1-bits. Methods: built-in, lookup table, Kernighan’s. | O(1) with built-in, O(k) for Kernighan | O(1) | Modern CPUs have `popcnt` instruction. |
+| [**Brian Kernighan's Algorithm**]() | `n = n & (n-1)` until zero; counts set bits. | O(number of set bits) | O(1) | Clarification of popcount method. |
+| [**Find the only non-repeating element (others repeat twice)**]() | XOR all elements. | O(n) | O(1) | LeetCode #136 – Single Number. |
+| [**Find two non-repeating elements (others repeat twice)**]() | XOR all, then separate based on rightmost set bit. | O(n) | O(1) | LeetCode #260. |
+| [**Find the missing number in an array of size n (0..n)**]() | XOR all indices and values. | O(n) | O(1) | LeetCode #268. |
+| [**Reverse bits of an integer**]() | Reverse the bit order (e.g., 1101 → 1011). | O(1) for fixed-width (e.g., 32 bits) | O(1) | Can use lookup table for 4/8-bit chunks. |
+| [**Swap two numbers without a temporary variable**]() | `a ^= b; b ^= a; a ^= b;` | O(1) | O(1) | Classic XOR swap – rarely used in practice but good to know. |
+| [**Check if two numbers have opposite signs**]() | `(x ^ y) < 0` | O(1) | O(1) | Uses sign bit. |
+| [**Compute absolute value without branching**]() | `(x ^ (x >> 31)) - (x >> 31)` | O(1) | O(1) | For 32-bit two's complement integers. |
+| [**Round up to the next power of two**]() | `n--; n |= n>>1; n |= n>>2; n |= n>>4; n |= n>>8; n |= n>>16; n++;` | O(1) (32-bit) | O(1) | Useful for dynamic arrays, hash tables. |
+| [**Find the highest set bit (floor log2)**]() | Use built-ins (`__builtin_clz`) or loop. | O(1) with built-in, O(log n) loop | O(1) | Important for many algorithms. |
+| [**Lowest set bit (isolate rightmost 1)**]() | `n & -n` | O(1) | O(1) | Used in Fenwick trees (Binary Indexed Trees). |
+| [**Clear the lowest set bit**]() | `n & (n - 1)` | O(1) | O(1) | Already used for bit counting. |
+| [**Check if a number is divisible by 2^m**]() | `(n & ((1<<m)-1)) == 0` | O(1) | O(1) | Fast divisibility check for powers of two. |
+| [**Gray code (binary to Gray and back)**]() | Generate Gray code or convert between binary and Gray. | O(1) per conversion | O(1) | Useful for encoding to minimize errors. |
+| [**Bitmask DP (subset generation)**]() | Enumerate all subsets using bitmasks. | O(2ⁿ * n) | O(1) (excluding storage) | Foundation for DP over subsets. |
+| [**Enumerate all subsets of a given subset (submask enumeration)**]() | `submask = (submask - 1) & mask` | O(3ⁿ) total for all masks | O(1) | Efficient submask iteration. |
+| [**XOR swap**]() | Already listed. | O(1) | O(1) | — |
+| [**Calculate 2ⁿ**]() | `1 << n` | O(1) | O(1) | Only for small n (result must fit in type). |
+| [**Check parity (odd/even number of 1-bits)**]() | XOR all bits or use built-in. | O(1) with built-in, O(log n) otherwise | O(1) | Used in error detection. |
 
 ---
 
 
-# Cryptography
+## 🔐 Cryptography
 
-| Algorithm | Description | Time Complexity | Space Complexity |
-|:---|:---|:---|:---|
-| [RSA]() | Public-key encryption. | O(n^3) | O(n) |
-| [Diffie-Hellman Key Exchange]() | Key exchange protocol. | O(n^3) | O(n) |
+| Algorithm | Description | Time Complexity (typical) | Space Complexity | Notes / Interview Context |
+|:------------|:------------|:---------------------------|:------------------|:---------------------------|
+| [**RSA**]() | Public-key encryption based on the difficulty of factoring large integers. | O(n³) (modular exponentiation) | O(n) (key size) | Classic asymmetric cipher; know key generation, encryption/decryption. |
+| [**Diffie-Hellman Key Exchange**]() | Protocol to securely exchange cryptographic keys over a public channel. | O(log p) (modular exponentiation) | O(log p) | Based on discrete logarithm problem; used in TLS, SSH. |
+| [**AES (Advanced Encryption Standard)**]() | Symmetric block cipher (128/192/256 bits). Ubiquitous in TLS, disk encryption, Wi-Fi. | O(1) per block (typically 128 bits) | O(1) (small key schedule tables) | Understand modes (CBC, GCM, CTR) – often asked in security-related roles. |
+| [**DES / 3DES** ]()| Legacy block cipher; 3DES still appears in legacy systems. | O(1) per block | O(1) | Mention that DES is broken, 3DES is being phased out. |
+| [**ChaCha20**]() | Modern stream cipher (used in TLS, Google, mobile). Faster than AES on devices without hardware acceleration. | O(1) per 64-byte block | O(1) | Resistant to side-channel attacks; often paired with Poly1305. |
+| [**SHA-256 (Secure Hash Algorithm)**]() | Cryptographic hash function from the SHA-2 family. Basis of blockchain, TLS, Git. | O(n) (linear in message length) | O(1) (fixed internal state) | Important properties: preimage resistance, collision resistance. |
+| [**MD5**]() | Obsolete 128-bit hash function. Still found in legacy systems. | O(n) | O(1) | Know why it’s insecure (collisions found). |
+| [**Elliptic Curve Cryptography (ECC)**]() | Asymmetric cryptography based on elliptic curves (smaller keys, same security). Used in Bitcoin, TLS. | O(log n) (scalar multiplication) | O(1) | Main operation: point multiplication. Key size ~256 bits equivalent to RSA 3072. |
+| [**ElGamal**]() | Asymmetric algorithm (encryption and signatures) based on discrete logarithm. | O(log p) (exponentiation) | O(log p) | Interesting for understanding homomorphic properties. |
+| [**DSA (Digital Signature Algorithm)**]() | U.S. federal standard for digital signatures. | O(log p) (generation/verification) | O(1) | Largely replaced by ECDSA and EdDSA. |
+| [**ECDSA**]() | DSA variant on elliptic curves. Used in Bitcoin, Ethereum, TLS. | O(log n) | O(1) | Frequently asked in blockchain contexts. |
+| [**Ed25519**]() | Modern signature scheme using the Ed25519 curve. Very fast and secure. | O(1) (constant time) | O(1) | Used in SSH, OpenSSL, libsodium. |
+| [**HMAC**]() | Keyed-Hash Message Authentication Code (authentication using a hash and a key). | O(n) (same as underlying hash) | O(1) | Essential for message integrity and authentication. |
+| [**PBKDF2**]() | Key derivation function (password hashing) with many iterations. | O(iterations × n) | O(1) | Know about salt and iteration count. |
+| [**bcrypt / scrypt / Argon2**]() | Modern password hashing functions (resistant to GPU/ASIC brute force). | O(cost × n) / memory-hard | Depends on memory | Argon2 won the Password Hashing Competition. |
+| [**Shamir's Secret Sharing**]() | Splits a secret into multiple parts (threshold scheme). | O(n log p) for generation | O(n) | Used in key management and cryptocurrencies. |
+
 
 ---
 
