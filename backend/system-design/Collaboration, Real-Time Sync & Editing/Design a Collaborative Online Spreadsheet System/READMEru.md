@@ -57,49 +57,110 @@ Spreadsheet Service: CRUD для таблиц, обработка операци
 
 - **Load Balancer/API Gateway:** Nginx/Envoy для routing, rate limiting.
 
-Поток: Пользователь открывает sheet → Auth → Load data from DB → Establish WebSocket → Send operations (e.g., "cell A1 changed to 5") → Broadcast to others → Apply locally.Шаг 3: Deep Dive в Ключевые КомпонентыДавай углубимся — на интервью это показывает экспертизу.Данные Модели (Data Model):Spreadsheet: JSON-like структура. Каждая таблица — документ с {id, name, owner_id, cells: {row:col: {value, formula, style}}}.
-Для scalability: Sharding по spreadsheet_id (horizontal partitioning). Лимит размера: Если >1M cells, paginate или warn user.
-Формулы: Parse и evaluate на сервере (используя библиотеку как Apache POI или custom parser). Dependency graph для recalculations (topological sort для обновлений).
+Поток: Пользователь открывает sheet → Auth → Load data from DB → Establish WebSocket → Send operations (e.g., "cell A1 changed to 5") → Broadcast to others → Apply locally.
 
-Коллаборативное Редактирование (Real-Time Collaboration):Это сердце системы. Проблема: Конфликты при одновременных изменениях.
-Решение: Operational Transformation (OT) — как в Google Docs. Каждая операция (op) — delta (e.g., "insert char at pos 5"). Клиент отправляет op → Сервер трансформирует против других ops → Broadcast transformed op.Альтернатива: CRDT (e.g., Yjs library) — децентрализованно, но сложнее в реализации.
+---
 
-WebSocket: Каждый пользователь в "room" по sheet_id. Сервер — cluster of nodes (e.g., с Redis для cross-node pub/sub).
-Latency: Используем CDN (CloudFront) для static assets, edge locations для WebSockets.
-Конфликты: Для формул — lock cells temporarily (optimistic locking) или versioned updates.
+## Шаг 3: Deep Dive в Ключевые Компоненты
 
-Сохранение и Версионирование (Persistence and Versioning):Auto-save каждые 5 сек или на change. Используем Delta encoding: Храним только изменения, не весь sheet.
-Version History: Snapshot every N changes (e.g., using Git-like diff) в separate DB table. Rollback: Load previous snapshot + apply diffs.
+Давай углубимся — на интервью это показывает экспертизу.
 
-Масштабируемость (Scalability):Horizontal scaling: Stateless services, auto-scale pods in Kubernetes.
-Database: Read replicas для reads, sharding для writes.
-Bottlenecks: High traffic sheets (e.g., viral doc): Dedicate shards or rate-limit users.
-Formula recalc: Offload to worker queues (Celery/RabbitMQ) для async processing.
+### Данные Модели (Data Model):
 
-Metrics: Monitor with Prometheus/Grafana: CPU, latency, error rates.
+- **Spreadsheet:** JSON-like структура. Каждая таблица — документ с {id, name, owner_id, cells: {row:col: {value, formula, style}}}.
+- **Для scalability:** Sharding по spreadsheet_id (horizontal partitioning). Лимит размера: Если >1M cells, paginate или warn user.
 
-Надёжность и Fault Tolerance (Reliability):Replication: DB multi-AZ, backups hourly.
-Failover: Service discovery (Consul), circuit breakers (Hystrix).
-Data Loss: ACID transactions for critical ops, eventual consistency для non-critical (e.g., styles).
-Disaster Recovery: Multi-region replication, RTO <1h, RPO <5min.
+- **Формулы:** Parse и evaluate на сервере (используя библиотеку как Apache POI или custom parser). Dependency graph для recalculations (topological sort для обновлений).
 
-Безопасность (Security):Auth: OAuth2, JWT with short expiry.
-Data: Encrypt in transit (HTTPS), at rest (AES-256).
-Vulnerabilities: Sanitize inputs (no eval() для формул), rate-limit API.
-Permissions: Check on every op (e.g., can_edit?).
+---
 
-Производительность Оптимизации (Performance Optimizations):Lazy loading: Load only visible cells (virtual scrolling).
-Batching: Group ops before send/broadcast.
-Compression: Gzip for data transfer.
+### Коллаборативное Редактирование (Real-Time Collaboration):
 
-Шаг 4: Trade-Offs и АльтернативыOT vs CRDT: OT проще для централизованного сервера, но CRDT лучше для offline (если добавим).
-Monolith vs Microservices: Micro для scale, но overhead в latency.
-DB Choice: SQL для relations (permissions), NoSQL для flexible schema (cells).
-Cost: Serverless (Lambda) для rare ops, но WebSockets требуют always-on.
+- Это сердце системы. Проблема: Конфликты при одновременных изменениях.
 
-Шаг 5: Потенциальные Проблемы и Решения (Edge Cases)Network partition: Client reconnects, resyncs state.
-Large sheets: Compress data, warn users.
-Abuse: Rate-limit per user, CAPTCHA fo
+- **Решение:** Operational Transformation (OT) — как в Google Docs. Каждая операция (op) — delta (e.g., "insert char at pos 5"). Клиент отправляет op → Сервер трансформирует против других ops → Broadcast transformed op.
+    - **Альтернатива:** CRDT (e.g., Yjs library) — децентрализованно, но сложнее в реализации.
+
+- **WebSocket:** Каждый пользователь в "room" по sheet_id. Сервер — cluster of nodes (e.g., с Redis для cross-node pub/sub).
+
+- **Latency:** Используем CDN (CloudFront) для static assets, edge locations для WebSockets.
+
+- **Конфликты:** Для формул — lock cells temporarily (optimistic locking) или versioned updates.
+
+---
+
+### Сохранение и Версионирование (Persistence and Versioning):
+
+- Auto-save каждые 5 сек или на change. Используем Delta encoding: Храним только изменения, не весь sheet.
+
+- **Version History:** Snapshot every N changes (e.g., using Git-like diff) в separate DB table. Rollback: Load previous snapshot + apply diffs.
+
+---
+
+### Масштабируемость (Scalability):
+
+- **Horizontal scaling:** Stateless services, auto-scale pods in Kubernetes.
+
+- **Database:** Read replicas для reads, sharding для writes.
+
+- **Bottlenecks:** High traffic sheets (e.g., viral doc): Dedicate shards or rate-limit users.
+- **Formula recalc:** Offload to worker queues (Celery/RabbitMQ) для async processing.
+
+- **Metrics:** Monitor with Prometheus/Grafana: CPU, latency, error rates.
+
+---
+
+### Надёжность и Fault Tolerance (Reliability):
+
+- **Replication:** DB multi-AZ, backups hourly.
+
+- **Failover:** Service discovery (Consul), circuit breakers (Hystrix).
+
+- **Data Loss:** ACID transactions for critical ops, eventual consistency для non-critical (e.g., styles).
+
+- **Disaster Recovery:** Multi-region replication, RTO <1h, RPO <5min.
+
+---
+
+### Безопасность (Security):
+
+- **Auth:** OAuth2, JWT with short expiry.
+
+- **Data:** Encrypt in transit (HTTPS), at rest (AES-256).
+
+- **Vulnerabilities:** Sanitize inputs (no eval() для формул), rate-limit API.
+
+- **Permissions:** Check on every op (e.g., can_edit?).
+
+---
+
+### Производительность Оптимизации (Performance Optimizations):
+
+- **Lazy loading:** Load only visible cells (virtual scrolling).
+
+- **Batching:** Group ops before send/broadcast.
+
+- **Compression:** Gzip for data transfer.
+
+---
+
+## Шаг 4: Trade-Offs и АльтернативыOT vs CRDT:
+OT проще для централизованного сервера, но CRDT лучше для offline (если добавим).
+
+- **Monolith vs Microservices:** Micro для scale, но overhead в latency.
+
+- **DB Choice:** SQL для relations (permissions), NoSQL для flexible schema (cells).
+
+- **Cost:** Serverless (Lambda) для rare ops, но WebSockets требуют always-on.
+
+--- 
+
+## Шаг 5: Потенциальные Проблемы и Решения (Edge Cases)Network partition:
+ Client reconnects, resyncs state.
+
+- **Large sheets:** Compress data, warn users.
+
+- **Abuse:** Rate-limit per user, CAPTCHA fo
 
 Введение в System Design: Дизайн Коллаборативной Онлайн-Таблицы с ДиаграммамиПривет, Roman! Продолжаем наш "собеседовательный" разбор, как будто в FAANG. В прошлый раз я дал детальный текст на русском, теперь добавим визуализации — диаграммы, чтобы было как на реальном интервью, где я бы рисовал на whiteboard. Я нашёл релевантные примеры диаграмм (адаптированные под тему), которые иллюстрируют ключевые части: high-level архитектуру, data flow и т.д. Они не 100% точные для нашего дизайна, но близки и помогут визуализировать. Я вставлю их inline, где это логично, для наглядности.Шаг 1: Уточнение Требований (Requirements Clarification)Здесь всё то же: функциональные (коллаборативное редактирование, формулы, доступ) и нефункциональные (scale, perf, security). Нет нужды в диаграмме тут — это текстовый scope.Шаг 2: High-Level Design (Общий Дизайн)На доске я бы начал с общей архитектуры: клиенты → API Gateway → Backend → DB → Real-Time. Вот пример high-level диаграммы для похожей системы (онлайн-доставка, но структура аналогична: users, services, DB). Представь, что вместо "Order" — "Spreadsheet Ops".
 -----------------картинка
