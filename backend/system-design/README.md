@@ -1,164 +1,154 @@
-# Updated Advanced System Design Topics for FAANG/MANGA, SpaceX & Tesla Interviews (2025 Edition)
+# Advanced System Design Topics for FAANG/MANGA, SpaceX & Tesla Interviews (2025 Edition)
 
-# [A Collaboration, Real-Time Sync & Editing]() - 6
-
-| Topic                                                                                              | Complexity | Key Aspects                          | Resources/Notes           |
-|:---------------------------------------------------------------------------------------------------|:-----------|:-------------------------------------|:--------------------------|
-| 1. [**Design a Collaborative Online Spreadsheet System**](link)                                            | Medium | Cell locking, formula sync. | FAANG-like (Google Sheets). |
-| 2. [**Design a Google Docs-like Real-time Collaboration System (CRDT/OT with conflict resolution)**](link) | Hard/Advanced | Real-time sync, multi-user editing, offline support, merge semantics. | Medium article in list; add AI for auto-complete. |
-| 3. [**Design a Live Comment System**](link)                                                                | Medium | Threaded replies, notifications. | Meta-style (Facebook comments). |
-| 4. [**Design a Multiplayer Game Backend (state sync, tick model, lag compensation)**](link) | Medium | Low-latency state, anti-cheat, matchmaking. | From Medium; For Tesla — the same vehicle sync. |
-| 5. [**Design a Real-time Presence and Status Service**](link)                                              | Easy | User online/offline, typing indicators. | Common for chat apps; integrate with WebSockets. |
-| 6. [**Design a Realtime Document Versioning System with merge semantics**](link) | Advanced | Git-like merges, history rollback. | Add CRDT for conflict-free. |
+A comprehensive list for collaboration, real-time systems, consumer-scale, distributed storage, e-commerce, high-performance compute, networking, AI, and security.  
 
 ---
 
-## [B Consumer-Scale Systems & Real-Time Features]() -13
+## A. Collaboration, Real-Time Sync & Editing – 6
 
-| Topic                                                                                              | Complexity | Key Aspects                          | Resources/Notes           |
-|:---------------------------------------------------------------------------------------------------|:-----------|:-------------------------------------|:--------------------------|
-| 1. [**Design a ChatGPT-like LLM Serving Architecture (autoscaling, quantization, fallback)**](link) | Hard | Model inference, token limits, cost optimization. | 2026 тренд: AI-heavy; добавь agentic tools. |
-| 2. [**Design a Global Social Graph Storage (Facebook-scale)**](link) | Hard | Graph DBs, sharding, privacy. | Meta-specific. |
-| 3. [**Design a Global User Profile Service with caching & write coalescing**](link) | Medium | Multi-region sync, GDPR compliance. | Из твоего. |
-| 4. [**Design a Large-scale Feature Store (for ML training/serving)**](link) | Advanced | Offline/online features, vector embeddings. | ML infra. |
-| 5. [**Design a Low-Latency Multi-region Notification System**](link) | Medium | Push, fan-out, reliability. | Apple/Google push. |
-| 6. [**Design a Multi-region Active-Active Newsfeed System**](link) | Hard | Ranking, A/B tests. | Facebook Newsfeed. |
-| 7. [**Design a Real-time Inference Service (10M RPS, <10 ms latency)**](link) | Advanced | GPU scaling, quantization. | Tesla AI (autopilot inference). |
-| 8. [**Design a Real-time Personalized Recommendation Engine with Online Learning**](link) | Hard | Two-tower models, feedback loops. | Netflix/Amazon. |
-| 9. [**Design Instagram**](link) | Medium | Feeds, stories, media upload. | FAANG staple<br>igotanoffer.com |
-| 10. [**Design Privacy-Aware User Data Storage (GDPR, erasure, auditing, differential privacy)**](link) | Advanced | Encryption, access logs. | 2026 фокус: privacy. |
-| 11. [**Design TikTok-Style Video Feed (ranking, embedding stores, A/B pipelines)**](link) | Hard | Short-form content, ML ranking. | ByteDance-style. |
-| 12. [**Design Time-series Storage for Billions of Events/sec**](link) | Advanced | InfluxDB-like, compression. | Monitoring tools. |
-| 13. [**Design YouTube and Netflix**](link) | Medium | Streaming, recommendations. | Content delivery<br>tryexponent.com |
-
---- 
-
-## [C Distributed Storage, Consistency & Databases]() - 11
-
-- 1. [**Design a Columnar Storage System for Analytics (Parquet/BigQuery-like)**]() 
-- 2. [**Design a Distributed Key-Value Store (Dynamo/Bigtable-style)**]() 
-- 3. [**Design a Distributed Metadata Service (e.g., HDFS NameNode or etcd)**]() 
-- 4. [**Design a Global Locking/Coordination Service (Zookeeper/Chubby-like)**]() 
-- 5. [**Design a Large-scale Blob Storage (S3-like with multi-region replication)**]() 
-- 6. [**Design a Multi-zone Conflict-free Replication System (CRDT-based)**]() 
-- 7. [**Design a Sharded SQL Database with Online Resharding**]() 
-- 8. [**Design a Vector Database for Semantic Search/ANN (Pinecone/Weaviate-scale)**]() 
-- 9. [**Design Log-as-Database Architecture (Kafka/Pravega/Lakehouse)**]() 
-
-| Topic                                                                                              | Complexity | Key Aspects                          | Resources/Notes           |
-|:---------------------------------------------------------------------------------------------------|:-----------|:-------------------------------------|:--------------------------|
-| 1.  [**Design a Columnar Storage System for Analytics (Parquet/BigQuery-like)**](link) | Advanced | Query optimization, partitioning. | Big Data. |
-| 2.  [**Design a Distributed Key-Value Store (Dynamo/Bigtable-style)**](link) | Hard | CAP trade-offs, replication. | Amazon Dynamo. |
-| 3.  [**Design a Distributed Metadata Service (e.g., HDFS NameNode or etcd)**](link) | Advanced | High availability, consensus. | Из твоего. |
-| 4.  [**Design a Global Locking/Coordination Service (Zookeeper/Chubby-like)**](link) | Hard | Leader election, watches. | Google Chubby. |
-| 5.  [**Design a Large-scale Blob Storage (S3-like with multi-region replication)**](link) | Hard | Durability, geo-replication. | AWS S3. |
-| 6.  [**Design a Multi-zone Conflict-free Replication System (CRDT-based)**](link) | Advanced | Eventual consistency. | Из твоего. |
-| 7.  [**Design a Sharded SQL Database with Online Resharding**](link) | Hard | Zero-downtime migrations. | Vitess-style. |
-| 8.  [**Design a Vector Database for Semantic Search/ANN (Pinecone/Weaviate-scale)**](link) | Advanced | HNSW indexes, hybrid search. | AI search 2026. |
-| 9.  [**Design Log-as-Database Architecture (Kafka/Pravega/Lakehouse)**](link) | Hard | Stream processing, immutability. | Delta Lake. |
-| 10. [**Design a Wide Column Database**](link) | Hard | Cassandra-like, sparse data. | Из твоего 1-го. |
-| 11. [**Design a Distributed File System**](link) | Hard | Fault tolerance, replication. | HDFS. |
+| Topic | Complexity | Key Aspects | Resources/Notes |
+|-------|------------|------------|----------------|
+| []()Design a Collaborative Online Spreadsheet System | Medium | Cell locking, formula sync | FAANG-like (Google Sheets) |
+| Design a Google Docs-like Real-time Collaboration System (CRDT/OT) | Hard/Advanced | Real-time sync, multi-user editing, offline support, merge semantics | Medium article; add AI for auto-complete |
+| Design a Live Comment System | Medium | Threaded replies, notifications | Meta-style (Facebook comments) |
+| Design a Multiplayer Game Backend | Medium | State sync, tick model, lag compensation, low-latency, anti-cheat, matchmaking | From Medium; Tesla vehicle sync |
+| Design a Real-time Presence and Status Service | Easy | User online/offline, typing indicators | Common for chat apps; integrate with WebSockets |
+| Design a Realtime Document Versioning System with merge semantics | Advanced | Git-like merges, history rollback | Add CRDT for conflict-free merges |
 
 ---
 
-## [D E-commerce, Fintech & Mission-Critical Systems]() - 8
+## B. Consumer-Scale Systems & Real-Time Features – 13
 
-- 1. [**Design a Fraud Detection System (event ingestion + real-time ML scoring)**]() 
-- 2. [**Design a Global Shopping Cart Service (session replication, conflict resolution)**]() 
-- 3. [**Design a High-throughput Search Auction System (AdWords/Meta Ads)**]() 
-- 4. [**Design an Idempotent Payment Processing Pipeline (Stripe-like)**]() 
-- 5. [**Design an Inventory Consistency System with distributed locking/sagas**]() 
-- 6. [**Design a High-throughput Search Auction System (AdWords/Meta Ads)**]() 
-
-| Topic                                                                                              | Complexity | Key Aspects                          | Resources/Notes           |
-|:---------------------------------------------------------------------------------------------------|:-----------|:-------------------------------------|:--------------------------|
-| 1. [**Design a Fraud Detection System (event ingestion + real-time ML scoring)**](link) | Hard | Anomaly detection, rules+ML. | Stripe/ML. |
-| 2. [**Design a Global Shopping Cart Service (session replication, conflict resolution)**](link) | Medium | Distributed sessions, sagas. | Amazon Cart. |
-| 3. [**Design a High-throughput Search Auction System (AdWords/Meta Ads)**](link) | Hard | Real-time bidding, latency <50ms. | Google Ads. |
-| 4. [**Design an Idempotent Payment Processing Pipeline (Stripe-like)**](link) | Hard | Transactions, retries. | Fintech. |
-| 5. [**Design an Inventory Consistency System with distributed locking/sagas**](link) | Hard | 2PC or sagas for consistency. | E-commerce. |
-| 6. [**Design an E-commerce Service**](link) | Medium | Orders, inventory, recommendations. | Shopify. |
-| 7. [**Design an Online Payment Service**](link) | Medium | PCI compliance, gateways. | PayPal. |
-| 8. [**Design an Auction System**](link) | Hard | Bidding, winner determination. | eBay. |
----
-
-## [E High-Performance Distributed Compute & ML Infra]() - 9
-
-- 1. [**Design a Batch Compute Engine (MapReduce/Spark-like)**]() 
-- 2. [**Design a GPU/TPU Orchestration Cluster (for ML training/inference)**]() 
-- 3. [**Design a Priority-based Job Scheduler with backfilling & preemption**]() 
-- 4. [**Design a Stream Processing Pipeline (Flink/Spark Streaming)**]()
-- 5. [**Design a Workflow Orchestration System (Airflow/Dagster-like)**]()
-- 6. [**Design an Autoscaling System for Real-time Compute**]()
-- 7. [**Design an LLM Fine-Tuning & Serving Platform (LoRA, quantization-aware training)**]()
-
-| Topic                                                                                              | Complexity | Key Aspects                          | Resources/Notes           |
-|:---------------------------------------------------------------------------------------------------|:-----------|:-------------------------------------|:--------------------------|
-| 1. [**Design a Batch Compute Engine (MapReduce/Spark-like)**](link) | Advanced | Job DAGs, fault recovery. | Hadoop. |
-| 2. [**Design a GPU/TPU Orchestration Cluster (for ML training/inference)**](link) | Advanced | Scheduling, multi-tenancy. | Kubernetes+GPUs. |
-| 3. [**Design a Priority-based Job Scheduler with backfilling & preemption**](link) | Advanced | Fairness, SLAs. | Borg/K8s. |
-| 4. [**Design a Stream Processing Pipeline (Flink/Spark Streaming)**](link) | Advanced | Windowing, state management. | Kafka integration. |
-| 5. [**Design a Workflow Orchestration System (Airflow/Dagster-like)**](link) | Medium | DAGs, retries. | ETL/ML pipelines. |
-| 6. [**Design an Autoscaling System for Real-time Compute**](link) | Advanced | Metrics-based, predictive. | AWS ASG. |
-| 7. [**Design an LLM Fine-Tuning & Serving Platform (LoRA, quantization-aware training)**](link) | Hard | Distributed training, serving. | 2026 AI. |
-| 8. [**Design a Big Data Processing Pipeline**](link) | Advanced | ETL at scale. | Из твоего 1-го. |
-| 9. [**Design a High-Performance Computing Cluster**](link) | Advanced | MPI, low-latency networks. | SpaceX simulations. |
+| Topic | Complexity | Key Aspects | Resources/Notes |
+|-------|------------|------------|----------------|
+| Design a ChatGPT-like LLM Serving Architecture | Hard | Model inference, token limits, cost optimization | 2026 trend: AI-heavy; add agentic tools |
+| Design a Global Social Graph Storage | Hard | Graph DBs, sharding, privacy | Meta-specific |
+| Design a Global User Profile Service | Medium | Multi-region sync, GDPR compliance | — |
+| Design a Large-scale Feature Store | Advanced | Offline/online features, vector embeddings | ML infra |
+| Design a Low-Latency Multi-region Notification System | Medium | Push, fan-out, reliability | Apple/Google push |
+| Design a Multi-region Active-Active Newsfeed System | Hard | Ranking, A/B tests | Facebook Newsfeed |
+| Design a Real-time Inference Service (10M RPS, <10 ms latency) | Advanced | GPU scaling, quantization | Tesla AI (autopilot inference) |
+| Design a Real-time Personalized Recommendation Engine | Hard | Two-tower models, feedback loops | Netflix/Amazon |
+| Design Instagram | Medium | Feeds, stories, media upload | FAANG staple |
+| Design Privacy-Aware User Data Storage | Advanced | Encryption, access logs | 2026 focus: privacy |
+| Design TikTok-Style Video Feed | Hard | Short-form content, ML ranking | ByteDance-style |
+| Design Time-series Storage for Billions of Events/sec | Advanced | InfluxDB-like, compression | Monitoring tools |
+| Design YouTube and Netflix | Medium | Streaming, recommendations | Content delivery |
 
 ---
 
-## [F Networking, Reliability & Multi-Region Ops]() - 9
+## C. Distributed Storage, Consistency & Databases – 12
 
-- 1. [**Design a Disaster Recovery System with RPO/RTO guarantees**]()
-- 2. [**Design a Global Edge Compute Platform (Cloudflare Workers/AWS Lambda@Edge)**]()
-- 3. [**Design a Multi-region Load Balancing System (GSLB with anycast)**]()
-- 4. [**Design a Multi-tenant SaaS System with noisy-neighbor isolation**]()
-- 5. [**Design a Real-time CDN with edge compute and cache invalidation**]()
-- 6. [**Design a Zero-downtime Deployment Framework (canary, blue/green, feature flags)**]()
-- 7. [**Design an API Gateway with authN/authZ, rate-limits, quotas & observability**]()
-
-| Topic                                                                                              | Complexity | Key Aspects                          | Resources/Notes           |
-|:---------------------------------------------------------------------------------------------------|:-----------|:-------------------------------------|:--------------------------|
-| 1. [**Design a Disaster Recovery System with RPO/RTO guarantees**](link) | Advanced | Backups, failover. | AWS DR. |
-| 2. [**Design a Global Edge Compute Platform (Cloudflare Workers/AWS Lambda@Edge)**](link) | Advanced | Serverless, anycast. | 2026 edge. |
-| 3. [**Design a Multi-region Load Balancing System (GSLB with anycast)**](link) | Hard | Geo-routing, health checks. | Akamai. |
-| 4. [**Design a Multi-tenant SaaS System with noisy-neighbor isolation**](link) | Advanced | Namespaces, quotas. | Salesforce. |
-| 5. [**Design a Real-time CDN with edge compute and cache invalidation**](link) | Hard | Purging, prefetching. | Fastly. |
-| 6. [**Design a Zero-downtime Deployment Framework (canary, blue/green, feature flags)**](link) | Medium | Rollouts, monitoring. | CI/CD. |
-| 7. [**Design an API Gateway with authN/authZ, rate-limits, quotas & observability**](link) | Medium | Envoy/Istio. | Microservices. |
-| 8. [**Design a Hybrid Cloud Infrastructure**](link) | Advanced | On-prem + cloud sync. | Из твоего 1-го. |
-| 9. [**Design a Virtualization System**](link) | Advanced | Hypervisors, VMs. | VMware. |
----
-
-## [G Search, Recommendations & Personalization (AI-Heavy in 2025)]() - 8
-
-| Topic                                                                                              | Complexity | Key Aspects                          | Resources/Notes           |
-|:---------------------------------------------------------------------------------------------------|:-----------|:-------------------------------------|:--------------------------|
-| 1. [**Design a Large-scale Embedding Store (for ranking/retrieval models)**](link) | Advanced | FAISS, vector indexes. | ML serving. |
-| 2. [**Design a Real-time Clickstream Analytics System**](link) | Medium | Event processing, dashboards. | Kafka+ELK. |
-| 3. [**Design a Recommendation Ranking Pipeline (retrieval + scoring + rerank + two-tower)**](link) | Hard | Online/offline. | Amazon Recs. |
-| 4. [**Design a Vector Search Engine (semantic search / ANN with hybrid retrieval)**](link) | Advanced | Pinecone-like. | RAG for AI. |
-| 5. [**Design an Agentic AI System (tool calling, multi-agent orchestration, memory)**](link) | Hard | LangChain-style. | 2026 тренд. |
-| 6. [**Design Google Search**](link) | Hard | Crawling, indexing, ranking. | Full search engine. |
-| 7. [**Design Google Search Autocomplete (prefix index + ranking + personalization)**](link) | Medium | Trie + ML. | Google. |
-| 8. [**Design Typeahead Suggestion**](link) | Medium | Predictive search. | Из твоего 1-го. |
+| Topic | Complexity | Key Aspects | Resources/Notes |
+|-------|------------|------------|----------------|
+| Design a Columnar Storage System for Analytics | Advanced | Query optimization, partitioning | Parquet/BigQuery-like |
+| Design a Distributed Key-Value Store | Hard | CAP trade-offs, replication | Dynamo/Bigtable-style |
+| Design a Distributed Metadata Service | Advanced | High availability, consensus | — |
+| Design a Global Locking/Coordination Service | Hard | Leader election, watches | Zookeeper/Chubby-like |
+| Design a Large-scale Blob Storage | Hard | Durability, geo-replication | S3-like |
+| Design a Multi-zone Conflict-free Replication System | Advanced | Eventual consistency | CRDT-based |
+| Design a Sharded SQL Database with Online Resharding | Hard | Zero-downtime migrations | Vitess-style |
+| Design a Vector Database for Semantic Search/ANN | Advanced | HNSW indexes, hybrid search | Pinecone/Weaviate-scale |
+| Design Log-as-Database Architecture | Hard | Stream processing, immutability | Kafka/Pravega/Lakehouse |
+| Design a Wide Column Database | Hard | Sparse data | Cassandra-like |
+| Design a Distributed File System | Hard | Fault tolerance, replication | HDFS |
+| Design a Modern Data Lakehouse | Advanced | ACID transactions, time travel, schema evolution | Iceberg/Delta Lake |
 
 ---
 
-## [H. SpaceX/Tesla-Specific Flavor (High-Reliability & Real-Time)]() 
+## D. E-commerce, Fintech & Mission-Critical Systems – 8
 
-| Topic                                                                                              | Complexity | Key Aspects                          | Resources/Notes           |
-|:---------------------------------------------------------------------------------------------------|:-----------|:-------------------------------------|:--------------------------|
-| 1. [**Design a Charging Station Network**](link)                                                   | Medium   | Load balancing, availability.          | Tesla Superchargers       |
-| 2. [**Design a Fleet Management System for Autonomous Vehicles**](link)                            | Hard     | Tracking, routing, charging.           | Tesla-specific            |
-| 3. [**Design a Low-Latency Over-the-Air (OTA) Update System for Fleet**](link)                     | Advanced | Delta updates, rollback safety.        | Tesla vehicles            |
-| 4. [**Design a Safety-Critical Real-Time Control System (redundancy, voting)**](link)              | Hard     | Fault tolerance, real-time OS.         | SpaceX engines            |
-| 5. [**Design a Telemetry Pipeline for Millions of Sensors (rocket/vehicle → ground/cloud)**](link) | Advanced | Low-latency ingest, anomaly detection. | SpaceX: Stream processing |
-| 6. [**Design Edge AI Inference on Vehicles/Satellites (quantized models, fallback)**](link)        | Advanced | On-device ML, cloud fallback.          | Tesla Autopilot           |
-| 7. [**Design Satellite Constellation Management (inter-satellite links, routing)**](link)          | Advanced | Starlink-like, dynamic routing.        | SpaceX                    |
+| Topic | Complexity | Key Aspects | Resources/Notes |
+|-------|------------|------------|----------------|
+| Design a Fraud Detection System | Hard | Event ingestion + real-time ML scoring, anomaly detection | Stripe/ML |
+| Design a Global Shopping Cart Service | Medium | Session replication, conflict resolution | Amazon Cart |
+| Design a High-throughput Search Auction System | Hard | Real-time bidding, latency <50ms | Google Ads |
+| Design an Idempotent Payment Processing Pipeline | Hard | Transactions, retries | Stripe-like |
+| Design an Inventory Consistency System | Hard | Distributed locking/sagas | E-commerce |
+| Design an E-commerce Service | Medium | Orders, inventory, recommendations | Shopify |
+| Design an Online Payment Service | Medium | PCI compliance, gateways | PayPal |
+| Design an Auction System | Hard | Bidding, winner determination | eBay |
 
 ---
 
+## E. High-Performance Distributed Compute & ML Infra – 9
 
+| Topic | Complexity | Key Aspects | Resources/Notes |
+|-------|------------|------------|----------------|
+| Design a Batch Compute Engine | Advanced | Job DAGs, fault recovery | MapReduce/Spark-like |
+| Design a GPU/TPU Orchestration Cluster | Advanced | Scheduling, multi-tenancy | Kubernetes+GPUs |
+| Design a Priority-based Job Scheduler | Advanced | Fairness, SLAs, backfilling & preemption | Borg/K8s |
+| Design a Stream Processing Pipeline | Advanced | Windowing, state management | Flink/Spark Streaming |
+| Design a Workflow Orchestration System | Medium | DAGs, retries | Airflow/Dagster-like |
+| Design an Autoscaling System for Real-time Compute | Advanced | Metrics-based, predictive | AWS ASG |
+| Design an LLM Fine-Tuning & Serving Platform | Hard | Distributed training, quantization-aware training | 2026 AI |
+| Design a Big Data Processing Pipeline | Advanced | ETL at scale | — |
+| Design a High-Performance Computing Cluster | Advanced | MPI, low-latency networks | SpaceX simulations |
 
+---
 
+## F. Networking, Reliability & Multi-Region Ops – 10
 
+| Topic | Complexity | Key Aspects | Resources/Notes |
+|-------|------------|------------|----------------|
+| Design a Disaster Recovery System | Advanced | Backups, failover, RPO/RTO | AWS DR |
+| Design a Global Edge Compute Platform | Advanced | Serverless, anycast | Cloudflare Workers/AWS Lambda@Edge |
+| Design a Multi-region Load Balancing System | Hard | Geo-routing, health checks | Akamai |
+| Design a Multi-tenant SaaS System | Advanced | Namespaces, quotas | Salesforce |
+| Design a Real-time CDN with edge compute | Hard | Purging, prefetching | Fastly |
+| Design a Zero-downtime Deployment Framework | Medium | Canary, blue/green, feature flags | CI/CD |
+| Design an API Gateway | Medium | AuthN/authZ, rate-limits, quotas & observability | Envoy/Istio |
+| Design a Hybrid Cloud Infrastructure | Advanced | On-prem + cloud sync | — |
+| Design a Virtualization System | Advanced | Hypervisors, VMs | VMware |
+| Design a Feature Flag & A/B Testing Platform | Medium | User segmentation, statistical analysis | LaunchDarkly-like |
+
+---
+
+## G. Search, Recommendations & Personalization (AI-Heavy in 2025) – 9
+
+| Topic | Complexity | Key Aspects | Resources/Notes |
+|-------|------------|------------|----------------|
+| Design a Large-scale Embedding Store | Advanced | FAISS, vector indexes | ML serving |
+| Design a Real-time Clickstream Analytics System | Medium | Event processing, dashboards | Kafka+ELK |
+| Design a Recommendation Ranking Pipeline | Hard | Retrieval + scoring + rerank + two-tower | Amazon Recs |
+| Design a Vector Search Engine | Advanced | Semantic search, ANN hybrid retrieval | Pinecone-like, RAG |
+| Design an Agentic AI System | Hard | Tool calling, multi-agent orchestration, memory | LangChain-style |
+| Design Google Search | Hard | Crawling, indexing, ranking | Full search engine |
+| Design Google Search Autocomplete | Medium | Trie + ML | Google |
+| Design Typeahead Suggestion | Medium | Predictive search | — |
+| Design a RAG Pipeline for LLM Applications | Hard | Indexing, retrieval, reranking, context window management | Retrieval-Augmented Generation |
+
+---
+
+## H. SpaceX/Tesla-Specific Flavor (High-Reliability & Real-Time) – 8
+
+| Topic | Complexity | Key Aspects | Resources/Notes |
+|-------|------------|------------|----------------|
+| Design a Charging Station Network | Medium | Load balancing, availability | Tesla Superchargers |
+| Design a Fleet Management System for Autonomous Vehicles | Hard | Tracking, routing, charging | Tesla-specific |
+| Design a Low-Latency OTA Update System for Fleet | Advanced | Delta updates, rollback safety | Tesla vehicles |
+| Design a Safety-Critical Real-Time Control System | Hard | Redundancy, voting, fault tolerance | SpaceX engines |
+| Design a Telemetry Pipeline for Millions of Sensors | Advanced | Low-latency ingest, anomaly detection | SpaceX: stream processing |
+| Design Edge AI Inference on Vehicles/Satellites | Advanced | On-device ML, cloud fallback | Tesla Autopilot |
+| Design Satellite Constellation Management | Advanced | Inter-satellite links, dynamic routing | Starlink-like |
+| Design a Model Update & Versioning System for Edge Devices | Advanced | Delta updates, rollback, version tracking | Tesla / IoT |
+
+---
+
+## I. Security & Privacy – 3
+
+| Topic | Complexity | Key Aspects | Resources/Notes |
+|-------|------------|------------|----------------|
+| Design a Secure Authentication/Authorization System | Hard | OAuth2, OIDC, RBAC/ABAC, identity federation, token management | Google/Auth0 |
+| Design a Secrets Management System | Medium/Hard | Encryption at rest and in transit, audit logging, dynamic secrets | Vault-like |
+| Design a Data Anonymization / Differential Privacy Pipeline | Advanced | k-anonymity, l-diversity, differential privacy budgets, GDPR | Privacy-preserving data sharing |
+
+---
+
+## J. Observability & Monitoring – 3
+
+| Topic | Complexity | Key Aspects | Resources/Notes |
+|-------|------------|------------|----------------|
+| Design a Distributed Tracing System | Medium | Trace context propagation, sampling, storage | Jaeger/Zipkin-like, OpenTelemetry |
+| Design a Metrics & Alerting System | Medium | Time-series DB, aggregation, alert routing | Prometheus + Alertmanager at scale |
+| Design a Log Aggregation Pipeline | Medium | Log shippers, indexing, storage tiers, query engine | ELK/Loki at petabyte scale |
