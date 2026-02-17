@@ -76,40 +76,42 @@ YouTube — одна из крупнейших видеоплатформ в м�
 ### Диаграмма высокого уровня (Mermaid):
 ```mermaid
 graph TD
-    Client[Клиенты: Web, Mobile, TV] --> Gateway[API Gateway]
-    Gateway --> Upload[Upload Service]
-    Gateway --> Metadata[Metadata Service]
-    Gateway --> User[User Service]
-    Gateway --> Interaction[Interaction Service]
-    Gateway --> Playlist[Playlist Service]
-    Gateway --> Search[Search Service]
-    Gateway --> Recommendation[Recommendation Service]
-
-    Upload --> BlobStorage[Blob Storage]
+    Client[Clients: Web/Mobile/TV] --> LB[Load Balancer]
+    LB --> API[API Gateway]
+    
+    subgraph "Microservices"
+        API --> Upload[Upload Service]
+        API --> Meta[Metadata Service]
+        API --> User[User Service]
+        API --> Interaction[Interaction Service]
+        API --> Playlist[Playlist Service]
+        API --> Search[Search Service]
+        API --> Rec[Recommendation Service]
+        API --> Live[Live Streaming Service]
+    end
+    
     Upload --> Queue[Message Queue]
-    Queue --> Processing[Video Processing Service]
-    Processing --> BlobStorage
-    Processing --> MetadataDB[(Metadata DB)]
-
-    Metadata --> MetadataDB
-    Metadata --> Cache[(Cache)]
-    Metadata --> SearchIndex[Elasticsearch]
-
+    Queue --> Processor[Video Processing Service]
+    Processor --> BlobStore[(Blob Storage)]
+    Processor --> MetaDB[(Metadata DB)]
+    
+    BlobStore --> CDN[CDN]
+    CDN --> Client
+    
+    Meta --> MetaDB
     User --> UserDB[(User DB)]
-
-    Interaction --> NoSQL[(NoSQL DB)]
-    Interaction --> Cache
-
-    Playlist --> MetadataDB
-    Playlist --> NoSQL
-
-    Search --> SearchIndex
-
-    Recommendation --> ML[ML Models / Analytics]
-    Recommendation --> Cache
-
-    Client --> CDN[CDN]
-    CDN --> BlobStorage
+    Interaction --> NoSQL[(NoSQL: likes/comments)]
+    Playlist --> PlaylistDB[(Playlist DB)]
+    Search --> Elastic[(Elasticsearch)]
+    Rec --> ML[ML Models]
+    Rec --> Analytics[(Analytics DB)]
+    
+    MetaDB -.-> Cache[(Redis Cache)]
+    NoSQL -.-> Cache
+    
+    style BlobStore fill:#f9f,stroke:#333,stroke-width:2px
+    style CDN fill:#bbf,stroke:#333,stroke-width:2px
+```
 
    
    
