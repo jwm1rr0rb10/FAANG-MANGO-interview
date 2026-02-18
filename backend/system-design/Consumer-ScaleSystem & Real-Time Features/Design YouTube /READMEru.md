@@ -76,48 +76,59 @@ YouTube — одна из крупнейших видеоплатформ в м�
 ### Диаграмма высокого уровня (Mermaid):
 ```mermaid
 graph TD
-    Client[Clients: Web/Mobile/TV] --> EdgeLB[Edge Load Balancer]
+    Client[Web/Mobile/TV Client]
+
+    %% Edge Layer
+    Client --> EdgeLB[Global Edge LB]
+    Client --> CDN[Global CDN]
+
     EdgeLB --> APIGW[API Gateway]
+    APIGW --> InternalLB[Internal LB]
 
-    APIGW --> InternalLB[Internal Load Balancer]
-
-    subgraph "Microservices Cluster"
-        InternalLB --> Upload[Upload Service]
-        InternalLB --> Meta[Metadata Service]
-        InternalLB --> User[User Service]
-        InternalLB --> Interaction[Interaction Service]
-        InternalLB --> Playlist[Playlist Service]
-        InternalLB --> Search[Search Service]
-        InternalLB --> Rec[Recommendation Service]
-        InternalLB --> Live[Live Streaming Service]
+    %% Core Services
+    subgraph Core Services
+        InternalLB --> UploadSvc[Upload Service]
+        InternalLB --> VideoSvc[Video Service]
+        InternalLB --> UserSvc[User Service]
+        InternalLB --> PlaylistSvc[Playlist Service]
+        InternalLB --> SearchSvc[Search Service]
+        InternalLB --> InteractionSvc[Interaction Service]
+        InternalLB --> NotificationSvc[Notification Service]
+        InternalLB --> WatchHistorySvc[Watch History Service]
     end
 
-    %% Upload pipeline
-    Upload --> Queue[Message Queue]
-    Queue --> Processor[Video Processing Service]
-    Processor --> MediaStorage[(Distributed Media Storage)]
-    Processor --> MetaDB[(Metadata DB)]
+    %% Storage Isolation
+    UserSvc --> UserDB[(User PII DB - isolated)]
+    VideoSvc --> VideoMetaDB[(Video Metadata DB)]
+    PlaylistSvc --> PlaylistDB[(Playlist DB)]
+    InteractionSvc --> InteractionDB[(Likes/Comments DB)]
+    WatchHistorySvc --> HistoryDB[(Watch Progress DB)]
 
-    %% Video delivery path
-    Client --> CDN[Global CDN]
-    CDN -->|Cache Miss| MediaStorage
-    CDN -->|Video Stream| Client
+    %% Media Storage
+    UploadSvc --> Broker[Event Broker]
+    Broker --> Transcoder[Transcoding Service]
+    Transcoder --> ObjectStore[(S3 / MinIO Object Storage)]
 
-    %% Data services
-    Meta --> MetaDB
-    User --> UserDB[(User DB)]
-    Interaction --> NoSQL[(NoSQL DB)]
-    Playlist --> PlaylistDB[(Playlist DB)]
-    Search --> Elastic[(Elasticsearch Cluster)]
-    Rec --> ML[ML Models Cluster]
-    Rec --> Analytics[(Analytics Data Lake)]
+    CDN -->|Cache Miss| ObjectStore
+    CDN -->|HLS/DASH Chunks| Client
 
-    %% Cache layer
-    MetaDB -.-> Redis[(Redis Cluster)]
-    NoSQL -.-> Redis
+    %% Inter-service Communication
+    UploadSvc -->|gRPC validate user| UserSvc
+    UploadSvc -->|event: video_uploaded| Broker
+    Broker --> NotificationSvc
+    NotificationSvc -->|gRPC fetch profile| UserSvc
 
-    style MediaStorage fill:#f9f,stroke:#333,stroke-width:2px
-    style CDN fill:#bbf,stroke:#333,stroke-width:2px
+    %% Search indexing
+    VideoSvc -->|event: video_published| Broker
+    Broker --> SearchIndexer[Search Indexer]
+    SearchIndexer --> Elastic[(Search Index)]
+
+    %% Playlist composition
+    PlaylistSvc -->|gRPC fetch video meta| VideoSvc
+
+    %% Watch resume
+    Client -->|progress updates| WatchHistorySvc
+
 
 ```
 
