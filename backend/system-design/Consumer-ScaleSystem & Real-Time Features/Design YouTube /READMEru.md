@@ -76,41 +76,49 @@ YouTube — одна из крупнейших видеоплатформ в м�
 ### Диаграмма высокого уровня (Mermaid):
 ```mermaid
 graph TD
-    Client[Clients: Web/Mobile/TV] --> LB[Load Balancer]
-    LB --> API[API Gateway]
-    
-    subgraph "Microservices"
-        API --> Upload[Upload Service]
-        API --> Meta[Metadata Service]
-        API --> User[User Service]
-        API --> Interaction[Interaction Service]
-        API --> Playlist[Playlist Service]
-        API --> Search[Search Service]
-        API --> Rec[Recommendation Service]
-        API --> Live[Live Streaming Service]
+    Client[Clients: Web/Mobile/TV] --> EdgeLB[Edge Load Balancer]
+    EdgeLB --> APIGW[API Gateway]
+
+    APIGW --> InternalLB[Internal Load Balancer]
+
+    subgraph "Microservices Cluster"
+        InternalLB --> Upload[Upload Service]
+        InternalLB --> Meta[Metadata Service]
+        InternalLB --> User[User Service]
+        InternalLB --> Interaction[Interaction Service]
+        InternalLB --> Playlist[Playlist Service]
+        InternalLB --> Search[Search Service]
+        InternalLB --> Rec[Recommendation Service]
+        InternalLB --> Live[Live Streaming Service]
     end
-    
+
+    %% Upload pipeline
     Upload --> Queue[Message Queue]
     Queue --> Processor[Video Processing Service]
-    Processor --> BlobStore[(Blob Storage)]
+    Processor --> MediaStorage[(Distributed Media Storage)]
     Processor --> MetaDB[(Metadata DB)]
-    
-    BlobStore --> CDN[CDN]
-    CDN --> Client
-    
+
+    %% Video delivery path
+    Client --> CDN[Global CDN]
+    CDN -->|Cache Miss| MediaStorage
+    CDN -->|Video Stream| Client
+
+    %% Data services
     Meta --> MetaDB
     User --> UserDB[(User DB)]
-    Interaction --> NoSQL[(NoSQL: likes/comments)]
+    Interaction --> NoSQL[(NoSQL DB)]
     Playlist --> PlaylistDB[(Playlist DB)]
-    Search --> Elastic[(Elasticsearch)]
-    Rec --> ML[ML Models]
-    Rec --> Analytics[(Analytics DB)]
-    
-    MetaDB -.-> Cache[(Redis Cache)]
-    NoSQL -.-> Cache
-    
-    style BlobStore fill:#f9f,stroke:#333,stroke-width:2px
+    Search --> Elastic[(Elasticsearch Cluster)]
+    Rec --> ML[ML Models Cluster]
+    Rec --> Analytics[(Analytics Data Lake)]
+
+    %% Cache layer
+    MetaDB -.-> Redis[(Redis Cluster)]
+    NoSQL -.-> Redis
+
+    style MediaStorage fill:#f9f,stroke:#333,stroke-width:2px
     style CDN fill:#bbf,stroke:#333,stroke-width:2px
+
 ```
 
    Да и с большего почти все проблемы от белорусов. 
