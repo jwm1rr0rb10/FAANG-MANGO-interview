@@ -14,7 +14,7 @@
 |[**Наблюдаемость и мониторинг**](#j-наблюдаемость-и-мониторинг)                                                                  | 3    | Полная наблюдаемость: метрики (Prometheus), распределённый tracing (Jaeger / OpenTelemetry), структурированные логи (Loki / ELK), алертинг (Alertmanager / PagerDuty), SLO / SLI / error budget, ML-детекция аномалий, root-cause анализ, борьба с cardinality, дашборды (Grafana), мониторинг chaos / canary, атрибуция затрат. Цель — видимость неизвестных неизвестных и быстрое восстановление в распределённых системах.                                       |
 
 
-A comprehensive list for collaboration, real-time systems, consumer-scale, distributed storage, e-commerce, high-performance compute, networking, AI, and security.  
+Полный список тем для совместной работы, систем реального времени, потребительских решений, распределенных хранилищ, электронной коммерции, высокопроизводительных вычислений, сетей, искусственного интеллекта и безопасности. 
 
 ---
 
