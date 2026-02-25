@@ -29,7 +29,7 @@ A comprehensive list for collaboration, real-time systems, consumer-scale, distr
 | [**Design a Real-time Presence and Status Service**]() | Easy | User online/offline, typing indicators | Common for chat apps; integrate with WebSockets |
 | [**Design a Realtime Document Versioning System with merge semantics**]() | Advanced | Git-like merges, history rollback | Add CRDT for conflict-free merges |
 
----
+---  
 
 ## B. Consumer-Scale Systems & Real-Time Features
 
@@ -118,7 +118,17 @@ A comprehensive list for collaboration, real-time systems, consumer-scale, distr
 
 ---
 
-## G. Search, Recommendations & Personalization (AI-Heavy in 2025)
+
+## G. Observability & Monitoring
+
+| Topic | Complexity | Key Aspects | Resources/Notes |
+|-------|------------|------------|----------------|
+| [**Design a Distributed Tracing System**]() | Medium | Trace context propagation, sampling, storage | Jaeger/Zipkin-like, OpenTelemetry |
+| [**Design a Metrics & Alerting System**]() | Medium | Time-series DB, aggregation, alert routing | Prometheus + Alertmanager at scale |
+| [**Design a Log Aggregation Pipeline**]() | Medium | Log shippers, indexing, storage tiers, query engine | ELK/Loki at petabyte scale |
+
+
+## H. Search, Recommendations & Personalization (AI-Heavy in 2025)
 
 | Topic | Complexity | Key Aspects | Resources/Notes |
 |:-------|:------------|:------------|:----------------|
@@ -134,7 +144,17 @@ A comprehensive list for collaboration, real-time systems, consumer-scale, distr
 
 ---
 
-## H. SpaceX/Tesla-Specific Flavor (High-Reliability & Real-Time)
+## I. Security & Privacy
+
+| Topic | Complexity | Key Aspects | Resources/Notes |
+|-------|------------|------------|----------------|
+| [**Design a Secure Authentication/Authorization System**]() | Hard | OAuth2, OIDC, RBAC/ABAC, identity federation, token management | Google/Auth0 |
+| [**Design a Secrets Management System**]() | Medium/Hard | Encryption at rest and in transit, audit logging, dynamic secrets | Vault-like |
+| [**Design a Data Anonymization / Differential Privacy Pipeline**]() | Advanced | k-anonymity, l-diversity, differential privacy budgets, GDPR | Privacy-preserving data sharing |
+
+---
+
+## J. SpaceX/Tesla-Specific Flavor (High-Reliability & Real-Time)
 
 | Topic | Complexity | Key Aspects | Resources/Notes |
 |-------|------------|------------|----------------|
@@ -148,21 +168,3 @@ A comprehensive list for collaboration, real-time systems, consumer-scale, distr
 | [**Design Satellite Constellation Management**]() | Advanced | Inter-satellite links, dynamic routing | Starlink-like |
 
 ---
-
-## I. Security & Privacy
-
-| Topic | Complexity | Key Aspects | Resources/Notes |
-|-------|------------|------------|----------------|
-| [**Design a Secure Authentication/Authorization System**]() | Hard | OAuth2, OIDC, RBAC/ABAC, identity federation, token management | Google/Auth0 |
-| [**Design a Secrets Management System**]() | Medium/Hard | Encryption at rest and in transit, audit logging, dynamic secrets | Vault-like |
-| [**Design a Data Anonymization / Differential Privacy Pipeline**]() | Advanced | k-anonymity, l-diversity, differential privacy budgets, GDPR | Privacy-preserving data sharing |
-
----
-
-## J. Observability & Monitoring
-
-| Topic | Complexity | Key Aspects | Resources/Notes |
-|-------|------------|------------|----------------|
-| [**Design a Distributed Tracing System**]() | Medium | Trace context propagation, sampling, storage | Jaeger/Zipkin-like, OpenTelemetry |
-| [**Design a Metrics & Alerting System**]() | Medium | Time-series DB, aggregation, alert routing | Prometheus + Alertmanager at scale |
-| [**Design a Log Aggregation Pipeline**]() | Medium | Log shippers, indexing, storage tiers, query engine | ELK/Loki at petabyte scale |
