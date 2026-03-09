@@ -32,25 +32,25 @@ Google Docs — это бесплатный облачный текстовый 
 
 ### Сотрудничество и функциональность
 
-- Docs allows multiple users to edit the same file simultaneously, with real-time cursor tracking and colour-coded changes. A built-in version history logs every revision, enabling users to review or restore past edits. Collaboration tools include comments, suggestions, task assignments, and in-document chat. Offline mode permits continued editing without internet connectivity, syncing automatically once reconnected.  ￼
+- Docs позволяет нескольким пользователям одновременно редактировать один и тот же файл с отслеживанием курсора в реальном времени и цветовой кодировкой изменений. Встроенная история версий регистрирует каждое изменение, позволяя пользователям просматривать или восстанавливать предыдущие правки. Инструменты для совместной работы включают комментарии, предложения, назначение задач и чат внутри документа. Автономный режим позволяет продолжать редактирование без подключения к интернету, автоматически синхронизируясь после повторного подключения.[techtarget](https://www.techtarget.com/whatis/definition/Google-Docs?utm_source=chatgpt.com)
 
 ---
 
-### Features and integrations
+### Возможности и интеграции
 
-Docs supports common file types including .docx, .pdf, and .txt, allowing seamless import and export. Templates, pageless documents, smart chips, and voice typing improve productivity. Integration with other Google apps—Drive, Gmail, Sheets, and Meet—lets users embed charts, reply to comments via email, or launch video calls directly within documents.  ￼
-
----
-
-### AI-powered writing and smart tools
-
-Modern versions of Docs include AI features under Gemini, Google’s generative-AI suite. Users can prompt Gemini to draft, refine, or summarise text, generate structured documents, and access contextual “help me write” suggestions. Additional assistive tools such as Smart Compose, autocorrect, and built-in summaries enhance writing fluency and efficiency.  ￼
+- Google Docs поддерживает распространенные типы файлов, включая .docx, .pdf и .txt, что обеспечивает беспроблемный импорт и экспорт. Шаблоны, документы без страниц, интеллектуальные чипы и голосовой ввод повышают производительность. Интеграция с другими приложениями Google — Drive, Gmail, Sheets и Meet — позволяет пользователям встраивать диаграммы, отвечать на комментарии по электронной почте или запускать видеозвонки непосредственно в документах.[workspace](https://workspace.google.com/intl/gl/products/docs/?utm_source=chatgpt.com)
 
 ---
 
-### Security and access
+### Инструменты для написания текстов с использованием искусственного интеллекта и интеллектуальные инструменты
 
-Documents are encrypted in transit and at rest, managed through user-defined sharing permissions. Workspace administrators gain enterprise-grade controls such as client-side encryption, access logs, and compliance certifications. Users need only a Google Account to access the free version, while business and education tiers offer extended features and support.  ￼
+- Современные версии Docs включают функции искусственного интеллекта в рамках Gemini, пакета генеративного ИИ от Google. Пользователи могут использовать Gemini для создания черновиков, уточнения или резюмирования текста, генерации структурированных документов и получения контекстных подсказок «Помогите мне написать». Дополнительные вспомогательные инструменты, такие как Smart Compose, автокоррекция и встроенные резюмеры, повышают беглость и эффективность письма.[workspace](https://workspace.google.com/intl/en_ie/products/docs/?utm_source=chatgpt.com)
+
+---
+
+### Безопасность и доступ
+
+Документы шифруются при передаче и хранении, управление осуществляется с помощью определяемых пользователем разрешений на совместное использование. Администраторы рабочего пространства получают доступ к функциям корпоративного уровня, таким как шифрование на стороне клиента, журналы доступа и сертификаты соответствия. Для доступа к бесплатной версии пользователям достаточно учетной записи Google, а бизнес- и образовательные тарифы предлагают расширенные возможности и поддержку.[google.es](https://www.google.es/intl/es-419///docs/about/?utm_source=chatgpt.com)
 
 ---
 
