@@ -104,8 +104,8 @@ Broker → fanout только на servers, где есть зрители эт
 SSE-серверы push'ат зрителям.
 
 Вот несколько реальных архитектурных диаграмм для визуализации:
-![]()
-![]()
-![]()
+![High-Level Architecture]()
+![High-Level Architecture]()
+![High-Level Architecture]()
 
 (На первой — детальная схема с commentsService, broadcast-серверами, Redis и Cassandra. На второй-третьей — классический dispatcher + gateway с SSE.)
