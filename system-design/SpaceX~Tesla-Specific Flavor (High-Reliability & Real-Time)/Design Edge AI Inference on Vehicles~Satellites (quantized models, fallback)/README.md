@@ -1,1 +1,0 @@
-# Design Satellite Constellation Management (inter-satellite links, routing)

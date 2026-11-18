@@ -1,1 +1,0 @@
-# Design a Safety-Critical Real-Time Control System (redundancy, voting)

@@ -1,1 +1,0 @@
- # Design a Telemetry Pipeline for Millions of Sensors (rocket/vehicle → ground/cloud)
