@@ -60,22 +60,22 @@ Learn these before the problems. Every design is a combination of them.
 
 | # | Topic | What to know | Status |
 |:-:|:------|:-------------|:------:|
-| 1 | Scaling basics | Vertical vs horizontal scaling, stateless services, load balancing (L4 vs L7, algorithms) | ⬜ |
-| 2 | Caching | Cache-aside, write-through, write-back, TTL, eviction (LRU/LFU), invalidation, cache stampede, hot keys | ⬜ |
-| 3 | CDN | Push vs pull CDN, cache keys, purging, edge caching of dynamic content | ⬜ |
-| 4 | Databases | SQL vs NoSQL, indexes (B-tree vs LSM-tree), transactions, isolation levels | ⬜ |
-| 5 | Replication | Leader-follower, multi-leader, leaderless, sync vs async, replication lag, read-your-writes | ⬜ |
-| 6 | Partitioning | Range vs hash sharding, consistent hashing, rebalancing, hot partitions | ⬜ |
-| 7 | Consistency models | Strong, eventual, causal, linearizability, CAP and PACELC | ⬜ |
-| 8 | Consensus | Raft/Paxos basics, quorums, leader election, split brain, fencing tokens | ⬜ |
-| 9 | Messaging | Queues vs logs (SQS vs Kafka), at-most/at-least/exactly-once, ordering, DLQ, backpressure | ⬜ |
-| 10 | Idempotency | Idempotency keys, deduplication, retries with exponential backoff and jitter | ⬜ |
-| 11 | Distributed transactions | 2PC, saga (choreography vs orchestration), outbox pattern, CDC | ⬜ |
-| 12 | Communication | REST, gRPC, GraphQL, WebSocket, SSE, long polling, webhooks | ⬜ |
-| 13 | Reliability patterns | Timeouts, circuit breaker, bulkhead, rate limiting, graceful degradation | ⬜ |
-| 14 | Storage types | Block vs file vs object storage, blob + metadata split | ⬜ |
-| 15 | Search basics | Inverted index, tokenization, ranking, vector search (ANN, HNSW) | ⬜ |
-| 16 | Observability basics | Metrics, logs, traces, SLI/SLO/error budgets | ⬜ |
+| 1 | Scaling basics | Vertical vs horizontal scaling, stateless services, load balancing (L4 vs L7, algorithms) |    ✅    |
+| 2 | Caching | Cache-aside, write-through, write-back, TTL, eviction (LRU/LFU), invalidation, cache stampede, hot keys |   ⬜    |
+| 3 | CDN | Push vs pull CDN, cache keys, purging, edge caching of dynamic content |   ⬜    |
+| 4 | Databases | SQL vs NoSQL, indexes (B-tree vs LSM-tree), transactions, isolation levels |   ⬜    |
+| 5 | Replication | Leader-follower, multi-leader, leaderless, sync vs async, replication lag, read-your-writes |   ⬜    |
+| 6 | Partitioning | Range vs hash sharding, consistent hashing, rebalancing, hot partitions |   ⬜    |
+| 7 | Consistency models | Strong, eventual, causal, linearizability, CAP and PACELC |   ⬜    |
+| 8 | Consensus | Raft/Paxos basics, quorums, leader election, split brain, fencing tokens |   ⬜    |
+| 9 | Messaging | Queues vs logs (SQS vs Kafka), at-most/at-least/exactly-once, ordering, DLQ, backpressure |   ⬜    |
+| 10 | Idempotency | Idempotency keys, deduplication, retries with exponential backoff and jitter |   ⬜    |
+| 11 | Distributed transactions | 2PC, saga (choreography vs orchestration), outbox pattern, CDC |   ⬜    |
+| 12 | Communication | REST, gRPC, GraphQL, WebSocket, SSE, long polling, webhooks |   ⬜    |
+| 13 | Reliability patterns | Timeouts, circuit breaker, bulkhead, rate limiting, graceful degradation |   ⬜    |
+| 14 | Storage types | Block vs file vs object storage, blob + metadata split |   ⬜    |
+| 15 | Search basics | Inverted index, tokenization, ranking, vector search (ANN, HNSW) |   ⬜    |
+| 16 | Observability basics | Metrics, logs, traces, SLI/SLO/error budgets |   ⬜    |
 
 ---
 
