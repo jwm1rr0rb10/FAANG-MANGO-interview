@@ -4,7 +4,7 @@
 
 > **Уровень:** Medium · **Время на интервью:** 45 мин · **Время на разбор:** ~5 ч
 > **Ключевые аспекты:** устройство одного узла (хэш-таблица, вытеснение, TTL, память), распределение ключей (consistent hashing, hash slots), маршрутизация, репликация и failover, консистентность с базой (leases), горячие ключи, защита от stampede, мульти-регион
-> **Опирается на:** [02-caching](../../02-caching/README_RU.md) (как **использовать** кэш), [05-replication](../../05-replication/README_RU.md), [06-partitioning](../../06-partitioning/README_RU.md), [08-consensus](../../08-consensus/README_RU.md), [13-reliability-patterns](../../13-reliability-patterns/README_RU.md)
+> **Опирается на:** [02-caching](../../01_Fundamentals/02_Caching/README.ru.md) (как **использовать** кэш), [05-replication](../../01_Fundamentals/05_Replication/README.ru.md), [06-partitioning](../../01_Fundamentals/06_Partitioning/README.ru.md), [08-consensus](../../01_Fundamentals/08_Consensus/README.ru.md), [13-reliability-patterns](../../01_Fundamentals/13_Reliability%20patterns/README.ru.md)
 
 ---
 
@@ -51,7 +51,7 @@
 
 ## 0. Чему учит эта задача
 
-В теме [02-caching](../../02-caching/README_RU.md) мы **использовали** кэш: cache-aside, TTL, инвалидация. Здесь нужно **построить сам кэш** — систему вроде Memcached или Redis Cluster, которой пользуются сотни сервисов компании.
+В теме [02-caching](../../01_Fundamentals/02_Caching/README.ru.md) мы **использовали** кэш: cache-aside, TTL, инвалидация. Здесь нужно **построить сам кэш** — систему вроде Memcached или Redis Cluster, которой пользуются сотни сервисов компании.
 
 | Что проверяют | Где это в задаче |
 |:--------------|:-----------------|
@@ -203,7 +203,7 @@ gets(key)                             → (value, cas_token)
 cas(key, value, cas_token, ttl)       → ok | conflict         (compare-and-set)
 ```
 
-📘 **Зачем `cas` (compare-and-set).** Два сервиса прочитали значение счётчика 10, оба увеличили до 11 и записали — одно изменение потеряно (lost update, см. [04-databases](../../04-databases/README_RU.md#9-аномалии-конкурентного-доступа)). `gets` возвращает вместе со значением **версию** (cas token); `cas` записывает, только если версия не изменилась. Это оптимистичная блокировка для кэша.
+📘 **Зачем `cas` (compare-and-set).** Два сервиса прочитали значение счётчика 10, оба увеличили до 11 и записали — одно изменение потеряно (lost update, см. [04-databases](../../01_Fundamentals/04_Databases/README.ru.md#9-аномалии-конкурентного-доступа)). `gets` возвращает вместе со значением **версию** (cas token); `cas` записывает, только если версия не изменилась. Это оптимистичная блокировка для кэша.
 
 ---
 
@@ -252,7 +252,7 @@ flowchart TB
 
 ### 6.2 Вытеснение (eviction)
 
-Когда память заканчивается, нужно выбросить какие-то элементы. Политики подробно разобраны в [02-caching](../../02-caching/README_RU.md#6-вытеснение-lru-lfu-и-другие); здесь важно, как это сделать **эффективно**.
+Когда память заканчивается, нужно выбросить какие-то элементы. Политики подробно разобраны в [02-caching](../../01_Fundamentals/02_Caching/README.ru.md#6-вытеснение-lru-lfu-и-другие); здесь важно, как это сделать **эффективно**.
 
 📘 **Точный LRU за O(1).** Хэш-таблица + двусвязный список:
 
@@ -329,7 +329,7 @@ hash(key) % 160 ≠ hash(key) % 161 почти для всех ключей
 → ~99% ключей «переезжают» → массовые промахи → лавина запросов на базы
 ```
 
-Для кэша это катастрофа: добавление одного сервера опустошает практически весь кэш. Подробно — в [06-partitioning](../../06-partitioning/README_RU.md#4-почему-hash-mod-n--плохая-идея-и-что-вместо-него).
+Для кэша это катастрофа: добавление одного сервера опустошает практически весь кэш. Подробно — в [06-partitioning](../../01_Fundamentals/06_Partitioning/README.ru.md#4-почему-hash-mod-n--плохая-идея-и-что-вместо-него).
 
 ### Consistent hashing
 
@@ -442,7 +442,7 @@ sequenceDiagram
 
 ### Репликация
 
-📘 Репликация в кэше **асинхронная**: primary отвечает клиенту сразу, реплика догоняет. Потеря последних записей при failover допустима — это кэш, данные восстановятся из базы (подробнее о режимах — [05-replication](../../05-replication/README_RU.md)). Реплики можно использовать и для **чтения**, чтобы разгрузить горячие шарды — с риском прочитать чуть устаревшее значение.
+📘 Репликация в кэше **асинхронная**: primary отвечает клиенту сразу, реплика догоняет. Потеря последних записей при failover допустима — это кэш, данные восстановятся из базы (подробнее о режимах — [05-replication](../../01_Fundamentals/05_Replication/README.ru.md)). Реплики можно использовать и для **чтения**, чтобы разгрузить горячие шарды — с риском прочитать чуть устаревшее значение.
 
 ### Обнаружение отказа и failover
 
@@ -471,7 +471,7 @@ sequenceDiagram
 ### Split brain
 
 📘 Если старый primary не упал, а просто оказался за разрывом сети, он может продолжать принимать записи — получатся **два** primary. Для кэша это приводит к расхождению значений. Защиты:
-- выбор нового primary **большинством** наблюдателей (см. [08-consensus](../../08-consensus/README_RU.md));
+- выбор нового primary **большинством** наблюдателей (см. [08-consensus](../../01_Fundamentals/08_Consensus/README.ru.md));
 - старый primary, потерявший связь с большинством, **сам перестаёт принимать записи** (в Redis — `min-replicas-to-write`);
 - после восстановления связи старый primary становится репликой и сбрасывает свои данные.
 
@@ -484,7 +484,7 @@ sequenceDiagram
 
 > 🎤 «Как сделать, чтобы в кэше не оставались устаревшие данные?»
 
-Базовые стратегии (cache-aside, удаление после записи, гонки) разобраны в [02-caching](../../02-caching/README_RU.md#7-инвалидация). Здесь — что нужно **от самого кэша**, чтобы клиенты могли работать корректно.
+Базовые стратегии (cache-aside, удаление после записи, гонки) разобраны в [02-caching](../../01_Fundamentals/02_Caching/README.ru.md#7-инвалидация). Здесь — что нужно **от самого кэша**, чтобы клиенты могли работать корректно.
 
 ### Гонка: устаревший set
 
@@ -534,7 +534,7 @@ sequenceDiagram
 | Приложение удаляет ключ после записи | `db.update(...)`, затем `cache.delete(...)` | Просто | Если приложение упало между шагами — ключ не удалён |
 | **CDC** ⭐ | Сервис инвалидации читает журнал изменений базы (binlog, WAL) и удаляет связанные ключи | Ничего не теряется: каждое закоммиченное изменение попадает в журнал | Нужна инфраструктура CDC и соответствие «строка → ключи кэша» |
 
-Facebook описывал систему, которая читает журнал коммитов MySQL и рассылает удаления в кэши (McSqueal). Это та же идея, что CDC в [11-distributed-transactions](../../11-distributed-transactions/README_RU.md#12-cdc-change-data-capture).
+Facebook описывал систему, которая читает журнал коммитов MySQL и рассылает удаления в кэши (McSqueal). Это та же идея, что CDC в [11-distributed-transactions](../../01_Fundamentals/11_Distributed%20transactions/README.ru.md#12-cdc-change-data-capture).
 
 ### TTL как страховка
 
@@ -709,12 +709,12 @@ flowchart TB
 
 | Концепция | Где разобрана | Как применяется здесь |
 |:----------|:--------------|:----------------------|
-| Cache-aside, инвалидация, политики вытеснения | [02-caching](../../02-caching/README_RU.md) | Как клиенты используют кэш; LRU/LFU |
-| Асинхронная репликация, failover | [05-replication](../../05-replication/README_RU.md) | Реплики шардов |
-| Consistent hashing, слоты, перенос | [06-partitioning](../../06-partitioning/README_RU.md) | Распределение ключей |
-| Выбор лидера большинством, split brain | [08-consensus](../../08-consensus/README_RU.md) | Обнаружение отказов, failover |
-| CDC | [11-distributed-transactions](../../11-distributed-transactions/README_RU.md#12-cdc-change-data-capture) | Инвалидация из журнала базы |
-| Tail latency, hedged-запросы | [13-reliability-patterns](../../13-reliability-patterns/README_RU.md) | Multiget по многим шардам |
+| Cache-aside, инвалидация, политики вытеснения | [02-caching](../../01_Fundamentals/02_Caching/README.ru.md) | Как клиенты используют кэш; LRU/LFU |
+| Асинхронная репликация, failover | [05-replication](../../01_Fundamentals/05_Replication/README.ru.md) | Реплики шардов |
+| Consistent hashing, слоты, перенос | [06-partitioning](../../01_Fundamentals/06_Partitioning/README.ru.md) | Распределение ключей |
+| Выбор лидера большинством, split brain | [08-consensus](../../01_Fundamentals/08_Consensus/README.ru.md) | Обнаружение отказов, failover |
+| CDC | [11-distributed-transactions](../../01_Fundamentals/11_Distributed%20transactions/README.ru.md#12-cdc-change-data-capture) | Инвалидация из журнала базы |
+| Tail latency, hedged-запросы | [13-reliability-patterns](../../01_Fundamentals/13_Reliability%20patterns/README.ru.md) | Multiget по многим шардам |
 
 ### Новые понятия этой задачи
 

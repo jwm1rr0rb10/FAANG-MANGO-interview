@@ -1,11 +1,11 @@
-**English** | [Русский](README_RU.md)
+**English** | [Русский](README.ru.md)
 
 # 11. Distributed Transactions
 
 > **Covers:** why and when they're needed, 2PC and its blocking problem, XA, how Spanner, CockroachDB and Percolator do it, sagas (step types, choreography vs orchestration, isolation anomalies and countermeasures, compensations), TCC, outbox and inbox, CDC, workflow engines (Temporal, Step Functions)
 > **Study time:** ~5 h · **Needed for:** microservices, payments, bookings, sharded databases, any operation spanning several systems
 > **Practice:** interview-style walkthrough — [INTERVIEW.md](./INTERVIEW.md)
-> **Related topics:** [04-databases](../04-databases/README.md#8-transactions-and-acid), [08-consensus](../08-consensus/README.md#2-why-its-hard-failure-models-and-flp), [09-messaging](../09-messaging/README.md#7-the-producer-side-the-dual-write-problem-and-the-outbox), [10-idempotency](../10-idempotency/README.md)
+> **Related topics:** [04-databases](../04_Databases/README.md#8-transactions-and-acid), [08-consensus](../08_Consensus/README.md#2-why-its-hard-failure-models-and-flp), [09-messaging](../09_Messaging/README.md#7-the-producer-side-the-dual-write-problem-and-the-outbox), [10-idempotency](../10_Idempotency/README.md)
 
 ---
 
@@ -300,7 +300,7 @@ A saga is **ACD without I**: intermediate states are visible to other transactio
 | Rule | Why |
 |:-----|:----|
 | **A compensation is a business operation, not a "rollback"** | Charged money isn't "un-charged" but refunded, possibly with a fee; a sent email can't be recalled — you send a correction |
-| **Compensations are idempotent** | They will be retried ([10-idempotency](../10-idempotency/README.md)) |
+| **Compensations are idempotent** | They will be retried ([10-idempotency](../10_Idempotency/README.md)) |
 | **Compensations are retried until they succeed** | They can't be "abandoned" — otherwise the system is permanently inconsistent |
 | **A compensation can fail permanently** | An external API refuses forever → a manual review queue and a support notification |
 | **Not everything can be compensated** | Hence irreversible actions are the pivot step, as late as possible |
@@ -357,7 +357,7 @@ TCC fits limited-quantity resources: seats, rooms, money (a card authorization =
 
 ### Outbox (sending)
 
-Atomically change data **and** publish an event: the event is written to an `outbox` table in the same transaction, and a separate process publishes it to the broker. Details in [09-messaging](../09-messaging/README.md#7-the-producer-side-the-dual-write-problem-and-the-outbox).
+Atomically change data **and** publish an event: the event is written to an `outbox` table in the same transaction, and a separate process publishes it to the broker. Details in [09-messaging](../09_Messaging/README.md#7-the-producer-side-the-dual-write-problem-and-the-outbox).
 
 | Publishing method | How | Pros | Cons |
 |:------------------|:----|:-----|:-----|
@@ -422,11 +422,11 @@ flowchart LR
 | Use | How |
 |:----|:----|
 | Outbox | Publishing events from the outbox table |
-| Cache invalidation | See [02-caching](../02-caching/README.md#7-invalidation) |
+| Cache invalidation | See [02-caching](../02_Caching/README.md#7-invalidation) |
 | Search indexes | Elasticsearch updated from the change stream |
 | Data warehouse and analytics | Near real time instead of nightly exports |
 | Data sync between services | Local copies of other services' data |
-| Zero-downtime migrations | A change stream from the old database to the new (see [06-partitioning](../06-partitioning/README.md#10-moving-from-one-database-to-shards)) |
+| Zero-downtime migrations | A change stream from the old database to the new (see [06-partitioning](../06_Partitioning/README.md#10-moving-from-one-database-to-shards)) |
 
 > [!WARNING]
 > **A PostgreSQL operational trap:** a replication slot retains WAL until the connector has read it. If Debezium is stopped for a few hours, WAL piles up and can **fill the primary's disk** and halt the database. Monitor slot lag and set a limit (`max_slot_wal_keep_size`).

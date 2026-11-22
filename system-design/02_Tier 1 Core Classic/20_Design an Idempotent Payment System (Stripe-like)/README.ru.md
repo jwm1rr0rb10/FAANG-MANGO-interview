@@ -4,7 +4,7 @@
 
 > **Уровень:** Hard · **Время на интервью:** 45–60 мин · **Время на разбор:** ~5–6 ч
 > **Ключевые аспекты:** idempotency keys, state machine платежа, авторизация и списание, работа с платёжными провайдерами и неизвестными результатами, вебхуки, бухгалтерия двойной записи, согласованность состояния, реестра и событий, сверка с отчётами провайдеров и банков, выплаты продавцам, валюты, PCI DSS и токенизация, антифрод
-> **Опирается на:** [10-idempotency](../../10-idempotency/README_RU.md), [11-distributed-transactions](../../11-distributed-transactions/README_RU.md), [12-communication](../../12-communication/README_RU.md#9-вебхуки), [04-databases](../../04-databases/README_RU.md), [13-reliability-patterns](../../13-reliability-patterns/README_RU.md), [Tier 1 · 17 Ad Click Aggregator](../17-ad-click-aggregator/README_RU.md#12-deep-dive-6-сверка-и-биллинг)
+> **Опирается на:** [10-idempotency](../../01_Fundamentals/10_Idempotency/README.ru.md), [11-distributed-transactions](../../01_Fundamentals/11_Distributed%20transactions/README.ru.md), [12-communication](../../01_Fundamentals/12_Communication/README.ru.md#9-вебхуки), [04-databases](../../01_Fundamentals/04_Databases/README.ru.md), [13-reliability-patterns](../../01_Fundamentals/13_Reliability%20patterns/README.ru.md), [Tier 1 · 17 Ad Click Aggregator](../17_Design%20an%20Ad%20Click%20Aggregator/README.ru.md#12-deep-dive-6-сверка-и-биллинг)
 
 ---
 
@@ -264,7 +264,7 @@ flowchart TB
 | Ключ уже есть, параметры **другие** | Ошибка `422`: ключ использован для другого запроса |
 | Ключ уже есть, операция **ещё выполняется** | `409 Conflict`: повторите позже |
 
-Stripe хранит ключи 24 часа — за это время клиент успевает повторить запрос (см. [10-idempotency](../../10-idempotency/README_RU.md)).
+Stripe хранит ключи 24 часа — за это время клиент успевает повторить запрос (см. [10-idempotency](../../01_Fundamentals/10_Idempotency/README.ru.md)).
 
 ### Реализация
 
@@ -396,7 +396,7 @@ sequenceDiagram
 
 | Правило | Почему |
 |:--------|:-------|
-| **Проверка подписи** | Защита от поддельных уведомлений «платёж успешен» (см. [12-communication](../../12-communication/README_RU.md#9-вебхуки)) |
+| **Проверка подписи** | Защита от поддельных уведомлений «платёж успешен» (см. [12-communication](../../01_Fundamentals/12_Communication/README.ru.md#9-вебхуки)) |
 | **Дедупликация по event id** (уникальный индекс) | Провайдер повторяет вебхуки при ошибках |
 | **Порядок не гарантирован** | Применять только переходы вперёд; при сомнениях — запросить актуальный статус у провайдера |
 | Быстрый ответ `200` | Сохранить событие и обработать асинхронно, иначе провайдер повторит |
@@ -474,7 +474,7 @@ sequenceDiagram
 
 ### Проблема двойной записи
 
-Если сначала обновить статус в базе, а потом отправить событие в Kafka, — падение между шагами теряет событие. Если наоборот — событие уходит, а статус не обновлён (см. [11-distributed-transactions](../../11-distributed-transactions/README_RU.md)).
+Если сначала обновить статус в базе, а потом отправить событие в Kafka, — падение между шагами теряет событие. Если наоборот — событие уходит, а статус не обновлён (см. [11-distributed-transactions](../../01_Fundamentals/11_Distributed%20transactions/README.ru.md)).
 
 ### Решение: одна транзакция + outbox
 
@@ -639,12 +639,12 @@ flowchart LR
 
 | Концепция | Где разобрана | Как применяется здесь |
 |:----------|:--------------|:----------------------|
-| Idempotency keys | [10-idempotency](../../10-idempotency/README_RU.md) | Повторы запросов на всех границах |
-| Outbox, саги | [11-distributed-transactions](../../11-distributed-transactions/README_RU.md) | Состояние + события, взаимодействие с провайдером |
-| Вебхуки | [12-communication](../../12-communication/README_RU.md#9-вебхуки) | Уведомления провайдеров и торговцам |
-| Транзакции, оптимистичная блокировка | [04-databases](../../04-databases/README_RU.md) | State machine, атомарные фазы |
-| Circuit breaker | [13-reliability-patterns](../../13-reliability-patterns/README_RU.md) | Отказ провайдера |
-| Реестр корректировок, сверка | [Tier 1 · 17](../17-ad-click-aggregator/README_RU.md#12-deep-dive-6-сверка-и-биллинг) | Похожий подход к точности денег |
+| Idempotency keys | [10-idempotency](../../01_Fundamentals/10_Idempotency/README.ru.md) | Повторы запросов на всех границах |
+| Outbox, саги | [11-distributed-transactions](../../01_Fundamentals/11_Distributed%20transactions/README.ru.md) | Состояние + события, взаимодействие с провайдером |
+| Вебхуки | [12-communication](../../01_Fundamentals/12_Communication/README.ru.md#9-вебхуки) | Уведомления провайдеров и торговцам |
+| Транзакции, оптимистичная блокировка | [04-databases](../../01_Fundamentals/04_Databases/README.ru.md) | State machine, атомарные фазы |
+| Circuit breaker | [13-reliability-patterns](../../01_Fundamentals/13_Reliability%20patterns/README.ru.md) | Отказ провайдера |
+| Реестр корректировок, сверка | [Tier 1 · 17](../17_Design%20an%20Ad%20Click%20Aggregator/README.ru.md#12-deep-dive-6-сверка-и-биллинг) | Похожий подход к точности денег |
 
 ### Новые понятия этой задачи
 

@@ -1,10 +1,10 @@
-**English** | [Русский](README_RU.md)
+**English** | [Русский](README.ru.md)
 
 # Tier 1 · 17. Ad Click Aggregator
 
 > **Level:** Hard · **Interview time:** 45–60 min · **Study time:** ~5 h
 > **Key aspects:** capturing clicks without loss, end-to-end exactly-once counting, dedup, event-time windows and late events, filtering fraudulent clicks, an OLAP store for aggregates, reconciling the stream with batch processing, billing and budget control
-> **Builds on:** [09-messaging](../../09-messaging/README.md), [10-idempotency](../../10-idempotency/README.md), [11-distributed-transactions](../../11-distributed-transactions/README.md), [Tier 1 · 16 Top-K](../16-top-k-leaderboard/README.md#7-deep-dive-2-sliding-windows-and-decay) (windows, watermarks), [Tier 1 · 09 YouTube](../09-youtube-netflix/README.md#11-deep-dive-5-counting-views) (counting views)
+> **Builds on:** [09-messaging](../../01_Fundamentals/09_Messaging/README.md), [10-idempotency](../../01_Fundamentals/10_Idempotency/README.md), [11-distributed-transactions](../../01_Fundamentals/11_Distributed%20transactions/README.md), [Tier 1 · 16 Top-K](../16_Design%20Top-K%20or%20Leaderboard%20or%20Trending/README.md#7-deep-dive-2-sliding-windows-and-decay) (windows, watermarks), [Tier 1 · 09 YouTube](../09_Design%20YouTube%20or%20Netflix/README.md#11-deep-dive-5-counting-views) (counting views)
 
 ---
 
@@ -52,7 +52,7 @@ Callouts: **TIP** — a good technique, **WARNING** — a trap, **IMPORTANT** �
 
 ## 0. What This Problem Teaches
 
-On the surface the problem resembles [Top-K](../16-top-k-leaderboard/README.md): a stream of events, windows, aggregates. The key difference — **the advertiser pays money for every click**. So approximations are unacceptable: you can't lose a click (lost revenue), and you can't count one twice (the advertiser overpays, which means lawsuits and lost trust).
+On the surface the problem resembles [Top-K](../16_Design%20Top-K%20or%20Leaderboard%20or%20Trending/README.md): a stream of events, windows, aggregates. The key difference — **the advertiser pays money for every click**. So approximations are unacceptable: you can't lose a click (lost revenue), and you can't count one twice (the advertiser overpays, which means lawsuits and lost trust).
 
 | What's tested | Where it shows up |
 |:--------------|:------------------|
@@ -447,7 +447,7 @@ flowchart LR
 |:------|:----------------|
 | An ad's clicks for an hour by minute | The per-minute table, filtered by ad_id |
 | A campaign for a month by country | The daily rollup |
-| A campaign's top 10 ads for an hour | Aggregation in OLAP or a precomputed top-K (see [Tier 1 · 16](../16-top-k-leaderboard/README.md)) |
+| A campaign's top 10 ads for an hour | Aggregation in OLAP or a precomputed top-K (see [Tier 1 · 16](../16_Design%20Top-K%20or%20Leaderboard%20or%20Trending/README.md)) |
 | Popular dashboards | A one-minute result cache |
 
 ---
@@ -580,11 +580,11 @@ flowchart LR
 
 | Concept | Where it's covered | How it applies here |
 |:--------|:-------------------|:--------------------|
-| Kafka, the idempotent producer | [09-messaging](../../09-messaging/README.md) | The click log |
-| Idempotency, dedup | [10-idempotency](../../10-idempotency/README.md) | click_id, upserting totals |
-| Transactional writes, the outbox | [11-distributed-transactions](../../11-distributed-transactions/README.md) | An alternative to an idempotent upsert |
-| Windows, watermarks, lambda/kappa | [Tier 1 · 16](../16-top-k-leaderboard/README.md) | Per-minute event-time windows |
-| Counting views and anti-fraud | [Tier 1 · 09](../09-youtube-netflix/README.md#11-deep-dive-5-counting-views) | A similar pipeline with looser accuracy requirements |
+| Kafka, the idempotent producer | [09-messaging](../../01_Fundamentals/09_Messaging/README.md) | The click log |
+| Idempotency, dedup | [10-idempotency](../../01_Fundamentals/10_Idempotency/README.md) | click_id, upserting totals |
+| Transactional writes, the outbox | [11-distributed-transactions](../../01_Fundamentals/11_Distributed%20transactions/README.md) | An alternative to an idempotent upsert |
+| Windows, watermarks, lambda/kappa | [Tier 1 · 16](../16_Design%20Top-K%20or%20Leaderboard%20or%20Trending/README.md) | Per-minute event-time windows |
+| Counting views and anti-fraud | [Tier 1 · 09](../09_Design%20YouTube%20or%20Netflix/README.md#11-deep-dive-5-counting-views) | A similar pipeline with looser accuracy requirements |
 
 ### New terms in this problem
 

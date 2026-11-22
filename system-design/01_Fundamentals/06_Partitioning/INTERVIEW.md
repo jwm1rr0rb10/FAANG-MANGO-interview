@@ -1,4 +1,4 @@
-**English** | [Русский](INTERVIEW_RU.md) · Theory: [README.md](./README.md)
+**English** | [Русский](INTERVIEW.ru.md) · Theory: [README.md](./README.md)
 
 # 06. Partitioning: Sharding a Multi-Tenant SaaS Database
 

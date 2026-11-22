@@ -4,8 +4,8 @@
 
 > **Что внутри:** почему поиск — отдельная система, инвертированный индекс, анализ текста (токенизация, стемминг, синонимы), типы запросов, ранжирование (TF-IDF, BM25, многоэтапное ранжирование), устройство Lucene/Elasticsearch, конвейер индексации, масштабирование, автодополнение, векторный поиск (ANN, HNSW, IVF, PQ), гибридный поиск
 > **Время на изучение:** ~5 ч · **Нужно для:** поиска по товарам, документам, сообщениям, логам; автодополнения; RAG и рекомендаций
-> **Практика:** разбор в формате интервью — [INTERVIEW_RU.md](./INTERVIEW_RU.md)
-> **Связанные темы:** [04-databases](../04-databases/README_RU.md#5-индексы-и-b-tree), [06-partitioning](../06-partitioning/README_RU.md#7-вторичные-индексы), [11-distributed-transactions](../11-distributed-transactions/README_RU.md#12-cdc-change-data-capture) (CDC)
+> **Практика:** разбор в формате интервью — [INTERVIEW_RU.md](./INTERVIEW.ru.md)
+> **Связанные темы:** [04-databases](../04_Databases/README.ru.md#5-индексы-и-b-tree), [06-partitioning](../06_Partitioning/README.ru.md#7-вторичные-индексы), [11-distributed-transactions](../11_Distributed%20transactions/README.ru.md#12-cdc-change-data-capture) (CDC)
 
 ---
 
@@ -290,7 +290,7 @@ flowchart LR
 
 | Практика | Зачем |
 |:---------|:------|
-| **CDC из базы** вместо двойной записи из приложения | Индекс не расходится с базой при сбоях (см. [11-distributed-transactions](../11-distributed-transactions/README_RU.md#12-cdc-change-data-capture)) |
+| **CDC из базы** вместо двойной записи из приложения | Индекс не расходится с базой при сбоях (см. [11-distributed-transactions](../11_Distributed%20transactions/README.ru.md#12-cdc-change-data-capture)) |
 | **Bulk-индексация** | Пачки документов вместо одиночных запросов |
 | **Внешнее версионирование** | Индекс принимает документ, только если его версия новее — события, пришедшие не по порядку, не перезапишут свежие данные |
 | **Денормализация** | В документ кладутся все нужные для поиска поля (имя категории, бренда, рейтинг): JOIN в поиске нет |
@@ -330,7 +330,7 @@ sequenceDiagram
 | **Защита от тяжёлых запросов** | Таймауты, ограничения на wildcard в начале слова и огромные агрегации, circuit breakers по памяти |
 
 > [!TIP]
-> Каждый запрос без routing идёт во **все** шарды. Задержка запроса — это задержка самого медленного шарда (tail latency amplification, см. [06-partitioning](../06-partitioning/README_RU.md#7-вторичные-индексы)). Меньше шардов на запрос — стабильнее p99.
+> Каждый запрос без routing идёт во **все** шарды. Задержка запроса — это задержка самого медленного шарда (tail latency amplification, см. [06-partitioning](../06_Partitioning/README.ru.md#7-вторичные-индексы)). Меньше шардов на запрос — стабильнее p99.
 
 ---
 

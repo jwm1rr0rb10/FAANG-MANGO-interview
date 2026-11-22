@@ -1,4 +1,4 @@
-[English](INTERVIEW.md) | **Русский** · Теория: [README_RU.md](./README_RU.md)
+[English](INTERVIEW.md) | **Русский** · Теория: [README_RU.md](./README.ru.md)
 
 # 01. Scaling Basics: от 1 000 до 10 млн пользователей
 

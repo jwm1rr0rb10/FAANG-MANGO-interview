@@ -1,4 +1,4 @@
-[English](INTERVIEW.md) | **Русский** · Теория: [README_RU.md](./README_RU.md)
+[English](INTERVIEW.md) | **Русский** · Теория: [README_RU.md](./README.ru.md)
 
 # 14. Storage Types: хранилище фото и видео для соцсети
 
@@ -303,7 +303,7 @@ flowchart TB
 | Защита хранилища | Бакеты недоступны напрямую из интернета — только через CDN (origin access control) |
 | Origin shield | Один промежуточный уровень кэша, чтобы промахи сотен PoP не били по хранилищу |
 
-Подробнее — в [03-cdn](../03-cdn/README_RU.md).
+Подробнее — в [03-cdn](../03_CDN/README.ru.md).
 
 ---
 
@@ -495,7 +495,7 @@ flowchart LR
 
 ### Что почитать
 
-- Теория по теме: [README_RU.md](./README_RU.md)
+- Теория по теме: [README_RU.md](./README.ru.md)
 - Beaver et al., *Finding a needle in Haystack: Facebook's photo storage*
 - Muralidhar et al., *f4: Facebook's Warm BLOB Storage System*
 - Документация AWS S3: multipart upload, presigned URLs, lifecycle, Object Lock

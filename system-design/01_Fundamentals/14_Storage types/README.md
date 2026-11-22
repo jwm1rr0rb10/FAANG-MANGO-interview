@@ -1,11 +1,11 @@
-**English** | [Русский](README_RU.md)
+**English** | [Русский](README.ru.md)
 
 # 14. Storage Types
 
 > **Covers:** block, file and object storage; how object storage works internally (metadata, erasure coding, durability); splitting blobs from metadata; uploading large files; the small files problem; storage classes and lifecycle; deletion and data protection
 > **Study time:** ~3–4 h · **Needed for:** any problem with files, photos, video, backups, logs or analytics (Instagram, YouTube, Dropbox, S3)
 > **Practice:** interview-style walkthrough — [INTERVIEW.md](./INTERVIEW.md)
-> **Related topics:** [03-cdn](../03-cdn/README.md), [04-databases](../04-databases/README.md#4-how-a-database-stores-data-pages-wal-buffer-pool), [05-replication](../05-replication/README.md)
+> **Related topics:** [03-cdn](../03_CDN/README.md), [04-databases](../04_Databases/README.md#4-how-a-database-stores-data-pages-wal-buffer-pool), [05-replication](../05_Replication/README.md)
 
 ---
 

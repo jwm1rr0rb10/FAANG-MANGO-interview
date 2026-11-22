@@ -1,4 +1,4 @@
-**English** | [Русский](INTERVIEW_RU.md) · Theory: [README.md](./README.md)
+**English** | [Русский](INTERVIEW.ru.md) · Theory: [README.md](./README.md)
 
 # 04. Databases: Storage for a Hotel Booking System
 

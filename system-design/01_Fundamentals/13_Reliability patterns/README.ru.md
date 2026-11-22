@@ -4,8 +4,8 @@
 
 > **Что внутри:** каскадные и метастабильные сбои, математика доступности, таймауты и дедлайны, circuit breaker, bulkhead и изоляция (cells, shuffle sharding), rate limiting, load shedding и приоритизация, адаптивные лимиты конкурентности, graceful degradation и fallback, статическая стабильность, хаос-инжиниринг, безопасные деплои
 > **Время на изучение:** ~5 ч · **Нужно для:** любой системы с зависимостями; обязательно на уровне Senior+
-> **Практика:** разбор в формате интервью — [INTERVIEW_RU.md](./INTERVIEW_RU.md)
-> **Связанные темы:** [10-idempotency](../10-idempotency/README_RU.md#9-таймауты-retry-budget-и-circuit-breaker) (ретраи, backoff, retry budget), [09-messaging](../09-messaging/README_RU.md#10-backpressure-и-управление-потоком) (backpressure), [01-scaling-basics](../01-scaling-basics/README_RU.md#9-health-checks-и-жизненный-цикл-сервера) (health checks)
+> **Практика:** разбор в формате интервью — [INTERVIEW_RU.md](./INTERVIEW.ru.md)
+> **Связанные темы:** [10-idempotency](../10_Idempotency/README.ru.md#9-таймауты-retry-budget-и-circuit-breaker) (ретраи, backoff, retry budget), [09-messaging](../09_Messaging/README.ru.md#10-backpressure-и-управление-потоком) (backpressure), [01-scaling-basics](../01_Scaling%20basics/README.ru.md#9-health-checks-и-жизненный-цикл-сервера) (health checks)
 
 ---
 
@@ -359,7 +359,7 @@ AWS описывает паттерн «постоянной работы»: с�
 | **N+1, N+2** | Ёмкости хватает при потере одного или двух узлов (или зон) |
 | **Несколько AZ** | Переживает отказ дата-центра |
 | **Независимость отказов** | Разные стойки, зоны, версии; не обновлять всё одновременно |
-| **Health checks** | Быстро выводить неисправные экземпляры из ротации (см. [01-scaling-basics](../01-scaling-basics/README_RU.md#9-health-checks-и-жизненный-цикл-сервера)) |
+| **Health checks** | Быстро выводить неисправные экземпляры из ротации (см. [01-scaling-basics](../01_Scaling%20basics/README.ru.md#9-health-checks-и-жизненный-цикл-сервера)) |
 
 ### Статическая стабильность
 

@@ -1,4 +1,4 @@
-**English** | [Русский](INTERVIEW_RU.md) · Theory: [README.md](./README.md)
+**English** | [Русский](INTERVIEW.ru.md) · Theory: [README.md](./README.md)
 
 # 11. Distributed Transactions: Booking a Trip (Flight + Hotel + Car)
 
@@ -296,7 +296,7 @@ def book_trip(trip):
 | Property | How it's provided |
 |:---------|:------------------|
 | Survives restarts | The engine stores history and restores state |
-| Idempotent partner calls | A deterministic key `trip_id:step` → a retry doesn't create a second booking (see [10-idempotency](../10-idempotency/README.md)) |
+| Idempotent partner calls | A deterministic key `trip_id:step` → a retry doesn't create a second booking (see [10-idempotency](../10_Idempotency/README.md)) |
 | Step timeouts | Set per activity; on timeout — query the partner's status, then decide |
 | Visibility | Each trip is a workflow with history in the engine's UI |
 

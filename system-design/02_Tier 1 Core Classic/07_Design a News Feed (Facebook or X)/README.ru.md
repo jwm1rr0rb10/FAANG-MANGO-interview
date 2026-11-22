@@ -4,7 +4,7 @@
 
 > **Уровень:** Hard · **Время на интервью:** 45–60 мин · **Время на разбор:** ~5–6 ч
 > **Ключевые аспекты:** fan-out на запись vs на чтение, гибрид для знаменитостей, кэш ленты, гидратация постов, ранжирование, пагинация и консистентность, удаление и приватность, горячие посты и счётчики
-> **Опирается на:** [02-caching](../../02-caching/README_RU.md), [06-partitioning](../../06-partitioning/README_RU.md#8-горячие-партиции-и-перекос), [09-messaging](../../09-messaging/README_RU.md), [15-search-basics](../../15-search-basics/README_RU.md#6-многоэтапное-ранжирование-и-метрики-качества), [Tier 1 · 04 ID Generator](../04-unique-id-generator/README_RU.md), [Tier 1 · 06 Chat](../06-chat-system/README_RU.md#12-deep-dive-6-групповые-чаты)
+> **Опирается на:** [02-caching](../../01_Fundamentals/02_Caching/README.ru.md), [06-partitioning](../../01_Fundamentals/06_Partitioning/README.ru.md#8-горячие-партиции-и-перекос), [09-messaging](../../01_Fundamentals/09_Messaging/README.ru.md), [15-search-basics](../../01_Fundamentals/15_Search%20basics/README.ru.md#6-многоэтапное-ранжирование-и-метрики-качества), [Tier 1 · 04 ID Generator](../04_Design%20a%20Unique%20ID%20Generator/README.ru.md), [Tier 1 · 06 Chat](../06_Design%20a%20Chat%20System%20%28WhatsApp%20or%20Messenger%29/README.ru.md#12-deep-dive-6-групповые-чаты)
 
 ---
 
@@ -107,7 +107,7 @@
 | Как быстро пост виден подписчикам? | Секунды; до минуты допустимо | Асинхронная доставка в ленты |
 | Задержка открытия ленты? | p99 < 200 мс | Лента должна собираться почти из кэша |
 | Сколько раз в день открывают ленту? | ~10 раз | Чтений намного больше, чем публикаций |
-| Медиа? | Фото и видео | Отдельное хранилище и CDN (см. [14-storage-types](../../14-storage-types/README_RU.md)) |
+| Медиа? | Фото и видео | Отдельное хранилище и CDN (см. [14-storage-types](../../01_Fundamentals/14_Storage%20types/README.ru.md)) |
 | Приватность? | Закрытые аккаунты, блокировки, удаление постов | Фильтрация при чтении |
 
 ### Функциональные требования
@@ -419,7 +419,7 @@ sequenceDiagram
 
 > 🎤 «Как решить, какие посты показать первыми?»
 
-Ранжированная лента — та же **воронка**, что в поиске (см. [15-search-basics](../../15-search-basics/README_RU.md#6-многоэтапное-ранжирование-и-метрики-качества)):
+Ранжированная лента — та же **воронка**, что в поиске (см. [15-search-basics](../../01_Fundamentals/15_Search%20basics/README.ru.md#6-многоэтапное-ранжирование-и-метрики-качества)):
 
 ```mermaid
 flowchart LR
@@ -483,7 +483,7 @@ flowchart LR
 - клиент **оптимистично** показывает свой пост сразу после публикации;
 - при чтении своей ленты подмешивать собственные последние посты из таблицы постов автора».
 
-📘 Это гарантия **read-your-writes** из [07-consistency-models](../../07-consistency-models/README_RU.md#7-сессионные-гарантии): автор всегда видит свои изменения, а остальные — с небольшой задержкой.
+📘 Это гарантия **read-your-writes** из [07-consistency-models](../../01_Fundamentals/07_Consistency%20models/README.ru.md#7-сессионные-гарантии): автор всегда видит свои изменения, а остальные — с небольшой задержкой.
 
 ---
 
@@ -523,7 +523,7 @@ flowchart LR
 
 ### Горячий пост в кэше
 
-Один пост — один ключ в кэше постов — миллионы чтений в секунду → перегрузка одного узла кэша (см. [Tier 1 · 03](../03-distributed-cache/README_RU.md#11-deep-dive-6-горячие-ключи-и-stampede)).
+Один пост — один ключ в кэше постов — миллионы чтений в секунду → перегрузка одного узла кэша (см. [Tier 1 · 03](../03_Design%20a%20Distributed%20Cache/README.ru.md#11-deep-dive-6-горячие-ключи-и-stampede)).
 
 | Решение | Как |
 |:--------|:----|
@@ -602,13 +602,13 @@ flowchart LR
 
 | Концепция | Где разобрана | Как применяется здесь |
 |:----------|:--------------|:----------------------|
-| Кэширование, горячие ключи | [02-caching](../../02-caching/README_RU.md), [Tier 1 · 03](../03-distributed-cache/README_RU.md) | Кэш лент, кэш постов, горячие посты |
-| Перекос, горячие партиции | [06-partitioning](../../06-partitioning/README_RU.md#8-горячие-партиции-и-перекос) | Знаменитости, шардированные счётчики |
-| Read-your-writes | [07-consistency-models](../../07-consistency-models/README_RU.md#7-сессионные-гарантии) | Свой пост сразу в ленте |
-| Асинхронные события | [09-messaging](../../09-messaging/README_RU.md) | Fan-out через Kafka |
-| Многоэтапное ранжирование | [15-search-basics](../../15-search-basics/README_RU.md#6-многоэтапное-ранжирование-и-метрики-качества) | Ранжирование ленты |
-| Snowflake ID | [Tier 1 · 04](../04-unique-id-generator/README_RU.md) | ID постов, упорядоченные по времени |
-| Fan-out на запись vs чтение | [Tier 1 · 06](../06-chat-system/README_RU.md#12-deep-dive-6-групповые-чаты) | Та же идея, что для групп и каналов |
+| Кэширование, горячие ключи | [02-caching](../../01_Fundamentals/02_Caching/README.ru.md), [Tier 1 · 03](../03_Design%20a%20Distributed%20Cache/README.ru.md) | Кэш лент, кэш постов, горячие посты |
+| Перекос, горячие партиции | [06-partitioning](../../01_Fundamentals/06_Partitioning/README.ru.md#8-горячие-партиции-и-перекос) | Знаменитости, шардированные счётчики |
+| Read-your-writes | [07-consistency-models](../../01_Fundamentals/07_Consistency%20models/README.ru.md#7-сессионные-гарантии) | Свой пост сразу в ленте |
+| Асинхронные события | [09-messaging](../../01_Fundamentals/09_Messaging/README.ru.md) | Fan-out через Kafka |
+| Многоэтапное ранжирование | [15-search-basics](../../01_Fundamentals/15_Search%20basics/README.ru.md#6-многоэтапное-ранжирование-и-метрики-качества) | Ранжирование ленты |
+| Snowflake ID | [Tier 1 · 04](../04_Design%20a%20Unique%20ID%20Generator/README.ru.md) | ID постов, упорядоченные по времени |
+| Fan-out на запись vs чтение | [Tier 1 · 06](../06_Design%20a%20Chat%20System%20%28WhatsApp%20or%20Messenger%29/README.ru.md#12-deep-dive-6-групповые-чаты) | Та же идея, что для групп и каналов |
 
 ### Новые понятия этой задачи
 
@@ -701,4 +701,4 @@ Pull 5 000 источников на каждое чтение — дорого.
 - Facebook Engineering, *Serving Facebook Multifeed: Efficiency, performance gains through redesign* (2015)
 - Alex Xu, *System Design Interview*, Vol. 1 — глава «Design a News Feed System»
 - Instagram Engineering, статьи о ранжировании ленты
-- Темы Fundamentals: [02-caching](../../02-caching/README_RU.md), [06-partitioning](../../06-partitioning/README_RU.md), [15-search-basics](../../15-search-basics/README_RU.md)
+- Темы Fundamentals: [02-caching](../../01_Fundamentals/02_Caching/README.ru.md), [06-partitioning](../../01_Fundamentals/06_Partitioning/README.ru.md), [15-search-basics](../../01_Fundamentals/15_Search%20basics/README.ru.md)

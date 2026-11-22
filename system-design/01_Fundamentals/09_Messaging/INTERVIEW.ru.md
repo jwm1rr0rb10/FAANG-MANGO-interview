@@ -1,4 +1,4 @@
-[English](INTERVIEW.md) | **Русский** · Теория: [README_RU.md](./README_RU.md)
+[English](INTERVIEW.md) | **Русский** · Теория: [README_RU.md](./README.ru.md)
 
 # 09. Messaging: событийная обработка заказов в интернет-магазине
 
@@ -535,7 +535,7 @@ Order service — владелец статуса: он потребляет р�
 
 ### Что почитать
 
-- Теория по теме: [README_RU.md](./README_RU.md)
+- Теория по теме: [README_RU.md](./README.ru.md)
 - Chris Richardson, microservices.io — Transactional outbox, Saga, Idempotent consumer
 - Документация Debezium: Outbox Event Router
 - Confluent: Error handling patterns for Kafka (retry topics, DLQ)

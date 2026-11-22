@@ -4,7 +4,7 @@
 
 > **Уровень:** Hard · **Время на интервью:** 45–60 мин · **Время на разбор:** ~5 ч
 > **Ключевые аспекты:** приём кликов без потерь, подсчёт exactly-once от начала до конца, дедупликация, окна по времени события и запаздывающие события, фильтрация мошеннических кликов, OLAP-хранилище агрегатов, сверка потока с пакетной обработкой, биллинг и контроль бюджета
-> **Опирается на:** [09-messaging](../../09-messaging/README_RU.md), [10-idempotency](../../10-idempotency/README_RU.md), [11-distributed-transactions](../../11-distributed-transactions/README_RU.md), [Tier 1 · 16 Top-K](../16-top-k-leaderboard/README_RU.md#7-deep-dive-2-скользящие-окна-и-затухание) (окна, watermark), [Tier 1 · 09 YouTube](../09-youtube-netflix/README_RU.md#11-deep-dive-5-подсчёт-просмотров) (подсчёт просмотров)
+> **Опирается на:** [09-messaging](../../01_Fundamentals/09_Messaging/README.ru.md), [10-idempotency](../../01_Fundamentals/10_Idempotency/README.ru.md), [11-distributed-transactions](../../01_Fundamentals/11_Distributed%20transactions/README.ru.md), [Tier 1 · 16 Top-K](../16_Design%20Top-K%20or%20Leaderboard%20or%20Trending/README.ru.md#7-deep-dive-2-скользящие-окна-и-затухание) (окна, watermark), [Tier 1 · 09 YouTube](../09_Design%20YouTube%20or%20Netflix/README.ru.md#11-deep-dive-5-подсчёт-просмотров) (подсчёт просмотров)
 
 ---
 
@@ -52,7 +52,7 @@
 
 ## 0. Чему учит эта задача
 
-Внешне задача похожа на [Top-K](../16-top-k-leaderboard/README_RU.md): поток событий, окна, агрегаты. Ключевое отличие — **за каждый клик рекламодатель платит деньги**. Поэтому приближения недопустимы: нельзя потерять клик (недополученная выручка) и нельзя посчитать дважды (рекламодатель переплатит, а это судебные иски и потеря доверия).
+Внешне задача похожа на [Top-K](../16_Design%20Top-K%20or%20Leaderboard%20or%20Trending/README.ru.md): поток событий, окна, агрегаты. Ключевое отличие — **за каждый клик рекламодатель платит деньги**. Поэтому приближения недопустимы: нельзя потерять клик (недополученная выручка) и нельзя посчитать дважды (рекламодатель переплатит, а это судебные иски и потеря доверия).
 
 | Что проверяют | Где это в задаче |
 |:--------------|:-----------------|
@@ -447,7 +447,7 @@ flowchart LR
 |:-------|:------------------|
 | Клики объявления за час по минутам | Минутная таблица, фильтр по ad_id |
 | Кампания за месяц по странам | Суточная свёртка |
-| Топ-10 объявлений кампании за час | Агрегация в OLAP или предвычисленный top-K (см. [Tier 1 · 16](../16-top-k-leaderboard/README_RU.md)) |
+| Топ-10 объявлений кампании за час | Агрегация в OLAP или предвычисленный top-K (см. [Tier 1 · 16](../16_Design%20Top-K%20or%20Leaderboard%20or%20Trending/README.ru.md)) |
 | Популярные дашборды | Кэш результатов на минуту |
 
 ---
@@ -580,11 +580,11 @@ flowchart LR
 
 | Концепция | Где разобрана | Как применяется здесь |
 |:----------|:--------------|:----------------------|
-| Kafka, идемпотентный продюсер | [09-messaging](../../09-messaging/README_RU.md) | Журнал кликов |
-| Идемпотентность, дедупликация | [10-idempotency](../../10-idempotency/README_RU.md) | click_id, upsert итогов |
-| Транзакционная запись, outbox | [11-distributed-transactions](../../11-distributed-transactions/README_RU.md) | Альтернатива идемпотентному upsert |
-| Окна, watermark, lambda/kappa | [Tier 1 · 16](../16-top-k-leaderboard/README_RU.md) | Минутные окна по времени события |
-| Подсчёт просмотров и антифрод | [Tier 1 · 09](../09-youtube-netflix/README_RU.md#11-deep-dive-5-подсчёт-просмотров) | Похожий конвейер с меньшими требованиями к точности |
+| Kafka, идемпотентный продюсер | [09-messaging](../../01_Fundamentals/09_Messaging/README.ru.md) | Журнал кликов |
+| Идемпотентность, дедупликация | [10-idempotency](../../01_Fundamentals/10_Idempotency/README.ru.md) | click_id, upsert итогов |
+| Транзакционная запись, outbox | [11-distributed-transactions](../../01_Fundamentals/11_Distributed%20transactions/README.ru.md) | Альтернатива идемпотентному upsert |
+| Окна, watermark, lambda/kappa | [Tier 1 · 16](../16_Design%20Top-K%20or%20Leaderboard%20or%20Trending/README.ru.md) | Минутные окна по времени события |
+| Подсчёт просмотров и антифрод | [Tier 1 · 09](../09_Design%20YouTube%20or%20Netflix/README.ru.md#11-deep-dive-5-подсчёт-просмотров) | Похожий конвейер с меньшими требованиями к точности |
 
 ### Новые понятия этой задачи
 

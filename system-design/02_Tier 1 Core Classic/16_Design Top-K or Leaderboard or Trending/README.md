@@ -1,10 +1,10 @@
-**English** | [Русский](README_RU.md)
+**English** | [Русский](README.ru.md)
 
 # Tier 1 · 16. Top-K / Leaderboard / Trends
 
 > **Level:** Medium · **Interview time:** 45 min · **Study time:** ~4 h
 > **Key aspects:** exact vs approximate counting, partitioning by key and merging top-K, sliding windows and decay, count-min sketch, Space-Saving, hot keys, trending vs popular, the lambda architecture, a leaderboard on Redis sorted sets, a user's rank at scale
-> **Builds on:** [09-messaging](../../09-messaging/README.md), [06-partitioning](../../06-partitioning/README.md#8-hot-partitions-and-skew), [02-caching](../../02-caching/README.md), [Tier 1 · 15 Autocomplete](../15-search-autocomplete/README.md#9-deep-dive-4-real-time-trends) (trends, count-min sketch)
+> **Builds on:** [09-messaging](../../01_Fundamentals/09_Messaging/README.md), [06-partitioning](../../01_Fundamentals/06_Partitioning/README.md#8-hot-partitions-and-skew), [02-caching](../../01_Fundamentals/02_Caching/README.md), [Tier 1 · 15 Autocomplete](../15_Design%20Typeahead%20or%20Search%20Autocomplete/README.md#9-deep-dive-4-real-time-trends) (trends, count-min sketch)
 
 ---
 
@@ -359,7 +359,7 @@ On an event for item x:
 | An exact top-K, billions of keys | Partitioning by key, counters per partition |
 | Approximate frequencies of any item | A count-min sketch |
 | An approximate top-K in fixed memory | Space-Saving, or a count-min sketch + a heap |
-| The number of unique items | HyperLogLog (see the [URL shortener](../01-url-shortener/README.md#9-deep-dive-3-click-analytics)) |
+| The number of unique items | HyperLogLog (see the [URL shortener](../01_Design%20a%20URL%20Shortener%20%28TinyURL%29/README.md#9-deep-dive-3-click-analytics)) |
 
 ---
 
@@ -520,11 +520,11 @@ ZCARD lb:weekly:2026-48                         ← the total number of players
 
 | Concept | Where it's covered | How it applies here |
 |:--------|:-------------------|:--------------------|
-| Kafka, partitioning by key | [09-messaging](../../09-messaging/README.md) | All of an item's events in one partition |
-| Hot keys and skew | [06-partitioning](../../06-partitioning/README.md#8-hot-partitions-and-skew) | Viral items |
-| Redis, caching | [02-caching](../../02-caching/README.md) | Sorted sets, ready results |
-| Count-min sketch, trends | [Tier 1 · 15](../15-search-autocomplete/README.md#9-deep-dive-4-real-time-trends) | Approximate counting |
-| HyperLogLog | [Tier 1 · 01](../01-url-shortener/README.md#9-deep-dive-3-click-analytics) | Unique viewers |
+| Kafka, partitioning by key | [09-messaging](../../01_Fundamentals/09_Messaging/README.md) | All of an item's events in one partition |
+| Hot keys and skew | [06-partitioning](../../01_Fundamentals/06_Partitioning/README.md#8-hot-partitions-and-skew) | Viral items |
+| Redis, caching | [02-caching](../../01_Fundamentals/02_Caching/README.md) | Sorted sets, ready results |
+| Count-min sketch, trends | [Tier 1 · 15](../15_Design%20Typeahead%20or%20Search%20Autocomplete/README.md#9-deep-dive-4-real-time-trends) | Approximate counting |
+| HyperLogLog | [Tier 1 · 01](../01_Design%20a%20URL%20Shortener%20%28TinyURL%29/README.md#9-deep-dive-3-click-analytics) | Unique viewers |
 
 ### New terms in this problem
 

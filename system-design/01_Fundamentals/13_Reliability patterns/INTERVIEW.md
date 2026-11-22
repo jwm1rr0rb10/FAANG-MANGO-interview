@@ -1,4 +1,4 @@
-**English** | [Русский](INTERVIEW_RU.md) · Theory: [README.md](./README.md)
+**English** | [Русский](INTERVIEW.ru.md) · Theory: [README.md](./README.md)
 
 # 13. Reliability Patterns: Making a Video Streaming Service Resilient
 

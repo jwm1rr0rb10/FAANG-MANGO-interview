@@ -1,4 +1,4 @@
-[English](INTERVIEW.md) | **Русский** · Теория: [README_RU.md](./README_RU.md)
+[English](INTERVIEW.md) | **Русский** · Теория: [README_RU.md](./README.ru.md)
 
 # 03. CDN: доставка контента для глобального медиа-сайта
 
@@ -507,7 +507,7 @@ Multi-CDN: DNS steering с health checks переключает трафик н�
 
 ### Что почитать
 
-- Теория по теме: [README_RU.md](./README_RU.md)
+- Теория по теме: [README_RU.md](./README.ru.md)
 - Документация Fastly по surrogate keys и soft purge
 - Документация Cloudflare по cache keys, tiered cache и Workers
 - Документация AWS CloudFront по signed URLs и origin shield

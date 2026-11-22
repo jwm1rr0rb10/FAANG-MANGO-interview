@@ -4,7 +4,7 @@
 
 > **Уровень:** Hard · **Время на интервью:** 45–60 мин · **Время на разбор:** ~5–6 ч
 > **Ключевые аспекты:** разбиение файлов на блоки (фиксированное и по содержимому), дедупликация, синхронизация только изменённых блоков, сервис метаданных и журнал изменений, уведомления клиентов, конфликты при одновременных правках, общие папки и права, версии и корзина, клиентский движок синхронизации
-> **Опирается на:** [14-storage-types](../../14-storage-types/README_RU.md#9-загрузка-больших-файлов), [04-databases](../../04-databases/README_RU.md), [06-partitioning](../../06-partitioning/README_RU.md), [12-communication](../../12-communication/README_RU.md#7-сервер--клиент-polling-long-polling-sse-websocket), [Tier 1 · 06 Chat](../06-chat-system/README_RU.md#10-deep-dive-4-доставка-онлайн-офлайн-и-синхронизация)
+> **Опирается на:** [14-storage-types](../../01_Fundamentals/14_Storage%20types/README.ru.md#9-загрузка-больших-файлов), [04-databases](../../01_Fundamentals/04_Databases/README.ru.md), [06-partitioning](../../01_Fundamentals/06_Partitioning/README.ru.md), [12-communication](../../01_Fundamentals/12_Communication/README.ru.md#7-сервер--клиент-polling-long-polling-sse-websocket), [Tier 1 · 06 Chat](../06_Design%20a%20Chat%20System%20%28WhatsApp%20or%20Messenger%29/README.ru.md#10-deep-dive-4-доставка-онлайн-офлайн-и-синхронизация)
 
 ---
 
@@ -195,7 +195,7 @@ POST /v1/shares                { folder_id, members: [{user, role}] }
 POST /v1/links                 { file_id, access: "view", expires_at }
 ```
 
-📘 **`base_version` в commit.** Клиент сообщает, на основе какой версии файла сделано изменение. Если на сервере уже другая версия (кто-то успел изменить файл), commit отклоняется — это **оптимистичная блокировка** (см. [04-databases](../../04-databases/README_RU.md#11-управление-конкурентным-доступом-блокировки-mvcc-оптимистичный-подход)). Клиент получает конфликт и обрабатывает его (deep dive 5).
+📘 **`base_version` в commit.** Клиент сообщает, на основе какой версии файла сделано изменение. Если на сервере уже другая версия (кто-то успел изменить файл), commit отклоняется — это **оптимистичная блокировка** (см. [04-databases](../../01_Fundamentals/04_Databases/README.ru.md#11-управление-конкурентным-доступом-блокировки-mvcc-оптимистичный-подход)). Клиент получает конфликт и обрабатывает его (deep dive 5).
 
 ---
 
@@ -357,7 +357,7 @@ flowchart TB
 
 ### Хранение по содержимому
 
-📘 Ключ блока — **криптографический хэш** его содержимого (SHA-256). Одинаковые блоки дают одинаковый хэш и хранятся один раз (см. [14-storage-types](../../14-storage-types/README_RU.md#8-паттерн-blob-отдельно-метаданные-отдельно)).
+📘 Ключ блока — **криптографический хэш** его содержимого (SHA-256). Одинаковые блоки дают одинаковый хэш и хранятся один раз (см. [14-storage-types](../../01_Fundamentals/14_Storage%20types/README.ru.md#8-паттерн-blob-отдельно-метаданные-отдельно)).
 
 ```
 blocks: hash → { storage_key, size, ref_count }
@@ -394,7 +394,7 @@ blocks: hash → { storage_key, size, ref_count }
 
 ### Хранилище блоков
 
-- Объектное хранилище с erasure coding и репликацией между зонами (см. [14-storage-types](../../14-storage-types/README_RU.md#7-репликация-vs-erasure-coding)).
+- Объектное хранилище с erasure coding и репликацией между зонами (см. [14-storage-types](../../01_Fundamentals/14_Storage%20types/README.ru.md#7-репликация-vs-erasure-coding)).
 - На масштабе эксабайтов собственное хранилище может быть дешевле облачного: Dropbox описывал переход на собственную систему Magic Pocket.
 - Мелкие блоки упаковываются в большие объекты хранилища, чтобы не создавать миллиарды мелких объектов.
 
@@ -444,7 +444,7 @@ sequenceDiagram
 
 ### Журнал пространства имён
 
-📘 Каждое изменение в пространстве имён получает порядковый номер `seq` и записывается в **журнал**. Каждое устройство хранит **курсор** — последний обработанный `seq` для каждого пространства имён, к которому у него есть доступ. Это та же идея, что поток обновлений в [чате](../06-chat-system/README_RU.md#10-deep-dive-4-доставка-онлайн-офлайн-и-синхронизация).
+📘 Каждое изменение в пространстве имён получает порядковый номер `seq` и записывается в **журнал**. Каждое устройство хранит **курсор** — последний обработанный `seq` для каждого пространства имён, к которому у него есть доступ. Это та же идея, что поток обновлений в [чате](../06_Design%20a%20Chat%20System%20%28WhatsApp%20or%20Messenger%29/README.ru.md#10-deep-dive-4-доставка-онлайн-офлайн-и-синхронизация).
 
 ```mermaid
 sequenceDiagram
@@ -467,7 +467,7 @@ sequenceDiagram
 | Элемент | Зачем |
 |:--------|:------|
 | **Уведомление без данных** | Сервис уведомлений говорит только «есть изменения» — он лёгкий и не зависит от метаданных |
-| **Long polling** | Простой и надёжный способ держать миллионы ожидающих клиентов через прокси и мобильные сети (см. [12-communication](../../12-communication/README_RU.md#7-сервер--клиент-polling-long-polling-sse-websocket)); WebSocket — тоже вариант |
+| **Long polling** | Простой и надёжный способ держать миллионы ожидающих клиентов через прокси и мобильные сети (см. [12-communication](../../01_Fundamentals/12_Communication/README.ru.md#7-сервер--клиент-polling-long-polling-sse-websocket)); WebSocket — тоже вариант |
 | **Delta по курсору** | Клиент получает только изменения после своего курсора, по порядку |
 | **Курсор на клиенте** | Сервер не хранит состояние каждого устройства |
 | **Локальный кэш блоков** | Скачиваются только недостающие блоки |
@@ -687,11 +687,11 @@ flowchart TB
 
 | Концепция | Где разобрана | Как применяется здесь |
 |:----------|:--------------|:----------------------|
-| Blob + метаданные, хранение по хэшу, erasure coding | [14-storage-types](../../14-storage-types/README_RU.md) | Хранилище блоков |
-| Оптимистичная блокировка | [04-databases](../../04-databases/README_RU.md#11-управление-конкурентным-доступом-блокировки-mvcc-оптимистичный-подход) | `base_version` при commit |
-| Шардирование по ключу сущности | [06-partitioning](../../06-partitioning/README_RU.md) | Метаданные по namespace |
-| Long polling | [12-communication](../../12-communication/README_RU.md#7-сервер--клиент-polling-long-polling-sse-websocket) | Уведомления клиентов |
-| Журнал и курсоры | [Tier 1 · 06](../06-chat-system/README_RU.md#10-deep-dive-4-доставка-онлайн-офлайн-и-синхронизация) | Синхронизация устройств |
+| Blob + метаданные, хранение по хэшу, erasure coding | [14-storage-types](../../01_Fundamentals/14_Storage%20types/README.ru.md) | Хранилище блоков |
+| Оптимистичная блокировка | [04-databases](../../01_Fundamentals/04_Databases/README.ru.md#11-управление-конкурентным-доступом-блокировки-mvcc-оптимистичный-подход) | `base_version` при commit |
+| Шардирование по ключу сущности | [06-partitioning](../../01_Fundamentals/06_Partitioning/README.ru.md) | Метаданные по namespace |
+| Long polling | [12-communication](../../01_Fundamentals/12_Communication/README.ru.md#7-сервер--клиент-polling-long-polling-sse-websocket) | Уведомления клиентов |
+| Журнал и курсоры | [Tier 1 · 06](../06_Design%20a%20Chat%20System%20%28WhatsApp%20or%20Messenger%29/README.ru.md#10-deep-dive-4-доставка-онлайн-офлайн-и-синхронизация) | Синхронизация устройств |
 
 ### Новые понятия этой задачи
 
@@ -785,4 +785,4 @@ rsync сравнивает два конкретных файла между д�
 - Tridgell, Mackerras, *The rsync algorithm* (1996)
 - Dropbox Tech Blog: *Inside the Magic Pocket* (2016), *Rewriting the heart of our sync engine* (2020)
 - Alex Xu, *System Design Interview*, Vol. 1 — глава «Design Google Drive»
-- Темы Fundamentals: [14-storage-types](../../14-storage-types/README_RU.md), [04-databases](../../04-databases/README_RU.md)
+- Темы Fundamentals: [14-storage-types](../../01_Fundamentals/14_Storage%20types/README.ru.md), [04-databases](../../01_Fundamentals/04_Databases/README.ru.md)

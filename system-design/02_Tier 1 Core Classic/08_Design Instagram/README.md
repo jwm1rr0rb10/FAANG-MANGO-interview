@@ -1,10 +1,10 @@
-**English** | [Русский](README_RU.md)
+**English** | [Русский](README.ru.md)
 
 # Tier 1 · 08. Instagram
 
 > **Level:** Medium · **Interview time:** 45 min · **Study time:** ~4–5 h
 > **Key aspects:** publishing media from phone to feed, the processing pipeline, delivering images and video via CDN, the feed (reusing hybrid fan-out), stories with a 24-hour TTL, likes and comments, the profile and social graph, sharding by user
-> **Builds on:** [14-storage-types](../../14-storage-types/INTERVIEW.md) (media storage), [03-cdn](../../03-cdn/README.md), [Tier 1 · 07 News Feed](../07-news-feed/README.md), [Tier 1 · 04 ID Generator](../04-unique-id-generator/README.md#12-deep-dive-6-library-or-service), [Tier 1 · 05 Notifications](../05-notification-system/README.md)
+> **Builds on:** [14-storage-types](../../01_Fundamentals/14_Storage%20types/INTERVIEW.md) (media storage), [03-cdn](../../01_Fundamentals/03_CDN/README.md), [Tier 1 · 07 News Feed](../07_Design%20a%20News%20Feed%20%28Facebook%20or%20X%29/README.md), [Tier 1 · 04 ID Generator](../04_Design%20a%20Unique%20ID%20Generator/README.md#12-deep-dive-6-library-or-service), [Tier 1 · 05 Notifications](../05_Design%20a%20Notification%20System%20%28push%2C%20email%2C%20SMS%29/README.md)
 
 ---
 
@@ -287,7 +287,7 @@ sequenceDiagram
 | Step | Decision | Why |
 |:-----|:---------|:----|
 | **Processing on the client** | The photo is downscaled to ~1080 px and compressed before upload | A camera original is 5–10 MB; afterwards it's hundreds of KB. Faster uploads on mobile networks, less storage |
-| **Uploading directly** | A presigned URL into object storage | Hundreds of TB per day don't pass through API servers (see [14-storage-types](../../14-storage-types/README.md#8-the-pattern-blobs-separate-from-metadata)) |
+| **Uploading directly** | A presigned URL into object storage | Hundreds of TB per day don't pass through API servers (see [14-storage-types](../../01_Fundamentals/14_Storage%20types/README.md#8-the-pattern-blobs-separate-from-metadata)) |
 | **Uploading early** | The client starts uploading media while the user writes the caption and picks a filter | By the time "Share" is tapped the media is already on the server — publishing feels instant |
 | **Resumable uploads** | Multipart with resumption for video | Mobile networks drop |
 | **The processing pipeline** | Sizes (150, 320, 640, 1080 px), formats (WebP/AVIF, JPEG as a fallback), several video qualities, a preview frame | Devices need different sizes (see deep dive 2) |
@@ -341,7 +341,7 @@ flowchart LR
 
 > 🎤 "How does the feed work?"
 
-🗣️ "The same as in [News Feed](../07-news-feed/README.md): hybrid fan-out (push for ordinary authors into feed caches, pull for celebrities), hydration, ranking, cursor pagination. Instagram specifics:
+🗣️ "The same as in [News Feed](../07_Design%20a%20News%20Feed%20%28Facebook%20or%20X%29/README.md): hybrid fan-out (push for ordinary authors into feed caches, pull for celebrities), hydration, ranking, cursor pagination. Instagram specifics:
 
 | Specific | How to handle it |
 |:---------|:-----------------|
@@ -403,7 +403,7 @@ For users with thousands of follows, the tray result is cached for a minute."
 
 ### The view marker: a watermark
 
-📘 Storing "viewed story X" for **every** viewer–story pair means hundreds of billions of records per day. Instead — a **watermark** per (viewer, author) pair, like read receipts in [chat](../06-chat-system/README.md#11-deep-dive-5-delivery-and-read-receipts):
+📘 Storing "viewed story X" for **every** viewer–story pair means hundreds of billions of records per day. Instead — a **watermark** per (viewer, author) pair, like read receipts in [chat](../06_Design%20a%20Chat%20System%20%28WhatsApp%20or%20Messenger%29/README.md#11-deep-dive-5-delivery-and-read-receipts):
 
 ```
 story_seen (viewer = Anna, author = Boris) → last_seen_story_id = 7031
@@ -444,13 +444,13 @@ Story IDs are Snowflake IDs, ordered by time, so "everything up to X was seen" i
 | Task | Solution |
 |:-----|:---------|
 | **Liking once** | A `(post_id, user_id)` record with uniqueness; a repeat like is a no-op; deleting it removes the like |
-| **The like counter** | Not `UPDATE likes = likes + 1` per like: events to Kafka → an aggregator once a second, or sharded counters (see [News Feed](../07-news-feed/README.md#13-deep-dive-7-hot-posts-and-counters)) |
+| **The like counter** | Not `UPDATE likes = likes + 1` per like: events to Kafka → an aggregator once a second, or sharded counters (see [News Feed](../07_Design%20a%20News%20Feed%20%28Facebook%20or%20X%29/README.md#13-deep-dive-7-hot-posts-and-counters)) |
 | **Display** | "1.2M" — single-digit precision isn't needed; more precise for the author, with a delay |
 | **"Liked by Anna and 2,345 others"** | Intersecting likers with the viewer's follows: for popular posts, check only a small set of the viewer's close friends against the likes table |
 | **"Did I like it"** | Check `(post_id, my_user_id)` during hydration — batched for the whole feed page |
 | **Comments** | Partition `(post_id, bucket)`, sorted by time; for popular posts — ranking "top" comments first |
 | **Comment spam** | A classifier and rate limiting per comment author |
-| **Notifying the author** | Aggregated: "Anna and 120 others liked your photo" (see [Notifications](../05-notification-system/README.md#10-deep-dive-4-bulk-sends-and-aggregation)) |
+| **Notifying the author** | Aggregated: "Anna and 120 others liked your photo" (see [Notifications](../05_Design%20a%20Notification%20System%20%28push%2C%20email%2C%20SMS%29/README.md#10-deep-dive-4-bulk-sends-and-aggregation)) |
 
 ---
 
@@ -477,7 +477,7 @@ Story IDs are Snowflake IDs, ordered by time, so "everything up to X was seen" i
 
 🗣️ "By **user** (`author_id`): a user's profile, posts, stories and grid live in one shard — queries for 'an author's posts' and 'an author's stories' never leave it.
 
-Instagram described such a scheme on PostgreSQL: thousands of **logical shards** (schemas) spread over a smaller number of physical servers, and IDs embedding the logical shard number (41 bits of time, 13 bits of shard, 10 bits of sequence — see [Tier 1 · 04](../04-unique-id-generator/README.md#12-deep-dive-6-library-or-service)). A post's ID immediately tells which shard holds it, with no separate lookup."
+Instagram described such a scheme on PostgreSQL: thousands of **logical shards** (schemas) spread over a smaller number of physical servers, and IDs embedding the logical shard number (41 bits of time, 13 bits of shard, 10 bits of sequence — see [Tier 1 · 04](../04_Design%20a%20Unique%20ID%20Generator/README.md#12-deep-dive-6-library-or-service)). A post's ID immediately tells which shard holds it, with no separate lookup."
 
 | Data | Shard key | Why |
 |:-----|:----------|:----|
@@ -488,7 +488,7 @@ Instagram described such a scheme on PostgreSQL: thousands of **logical shards**
 | Feed caches, story watermarks | viewer_id | Reads are by viewer |
 
 > [!NOTE]
-> Logical shards make growth easier: when physical servers are added, logical shards move whole, with no rehashing of data (more in [06-partitioning](../../06-partitioning/README.md)).
+> Logical shards make growth easier: when physical servers are added, logical shards move whole, with no rehashing of data (more in [06-partitioning](../../01_Fundamentals/06_Partitioning/README.md)).
 
 ---
 
@@ -517,7 +517,7 @@ Instagram described such a scheme on PostgreSQL: thousands of **logical shards**
 |:-------|:----|
 | **In-house caching nodes inside ISPs** | Media traffic is the biggest cost |
 | **More processing on the device** | Compression, formats, previews — savings in the pipeline and uploads |
-| **Tiered media storage** | Old posts in warm and cold classes (see [14-storage-types](../../14-storage-types/INTERVIEW.md#10-deep-dive-4-storage-classes-and-cost)) |
+| **Tiered media storage** | Old posts in warm and cold classes (see [14-storage-types](../../01_Fundamentals/14_Storage%20types/INTERVIEW.md#10-deep-dive-4-storage-classes-and-cost)) |
 | **Recommendations take a larger share of the feed** | Candidate generation on vectors and an interest graph |
 | **Regional processing** | The pipeline and storage closer to users |
 
@@ -529,12 +529,12 @@ Instagram described such a scheme on PostgreSQL: thousands of **logical shards**
 
 | Solution | Where it's covered | How it applies here |
 |:---------|:-------------------|:--------------------|
-| Blobs + metadata, presigned URLs, a pipeline, storage classes | [14-storage-types](../../14-storage-types/INTERVIEW.md) | Uploading and storing media |
-| CDN, origin shield, immutable URLs | [03-cdn](../../03-cdn/README.md) | Media delivery |
-| Hybrid fan-out, the feed cache, hydration | [Tier 1 · 07](../07-news-feed/README.md) | The post feed |
-| Watermarks | [Tier 1 · 06](../06-chat-system/README.md#11-deep-dive-5-delivery-and-read-receipts) | Story views |
-| IDs with an embedded shard | [Tier 1 · 04](../04-unique-id-generator/README.md#12-deep-dive-6-library-or-service) | Sharding by user |
-| Aggregated notifications | [Tier 1 · 05](../05-notification-system/README.md) | Likes, comments |
+| Blobs + metadata, presigned URLs, a pipeline, storage classes | [14-storage-types](../../01_Fundamentals/14_Storage%20types/INTERVIEW.md) | Uploading and storing media |
+| CDN, origin shield, immutable URLs | [03-cdn](../../01_Fundamentals/03_CDN/README.md) | Media delivery |
+| Hybrid fan-out, the feed cache, hydration | [Tier 1 · 07](../07_Design%20a%20News%20Feed%20%28Facebook%20or%20X%29/README.md) | The post feed |
+| Watermarks | [Tier 1 · 06](../06_Design%20a%20Chat%20System%20%28WhatsApp%20or%20Messenger%29/README.md#11-deep-dive-5-delivery-and-read-receipts) | Story views |
+| IDs with an embedded shard | [Tier 1 · 04](../04_Design%20a%20Unique%20ID%20Generator/README.md#12-deep-dive-6-library-or-service) | Sharding by user |
+| Aggregated notifications | [Tier 1 · 05](../05_Design%20a%20Notification%20System%20%28push%2C%20email%2C%20SMS%29/README.md) | Likes, comments |
 
 ### New terms in this problem
 
@@ -626,4 +626,4 @@ It's a separate feed made almost entirely of recommendations (not follows): cand
 - Instagram Engineering articles on upload and feed performance
 - Alex Xu, *System Design Interview*, Vol. 1 — chapters "Design a News Feed System" and "Design YouTube"
 - The BlurHash specification (blurha.sh)
-- Problems: [Tier 1 · 07 News Feed](../07-news-feed/README.md), [14-storage-types: interview walkthrough](../../14-storage-types/INTERVIEW.md)
+- Problems: [Tier 1 · 07 News Feed](../07_Design%20a%20News%20Feed%20%28Facebook%20or%20X%29/README.md), [14-storage-types: interview walkthrough](../../01_Fundamentals/14_Storage%20types/INTERVIEW.md)

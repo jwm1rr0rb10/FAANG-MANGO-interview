@@ -1,11 +1,11 @@
-**English** | [Русский](README_RU.md)
+**English** | [Русский](README.ru.md)
 
 # 06. Partitioning (Sharding)
 
 > **Covers:** choosing a partition key, range vs hash, consistent hashing, fixed and dynamic partitions, rebalancing, request routing, secondary indexes, hot partitions, cross-shard operations, moving from one database to shards
 > **Study time:** ~4–5 h · **Needed for:** any problem where data or writes don't fit on one node
 > **Practice:** interview-style walkthrough — [INTERVIEW.md](./INTERVIEW.md)
-> **Related topics:** [01-scaling-basics](../01-scaling-basics/README.md#8-load-balancing-algorithms) (consistent hashing), [04-databases](../04-databases/README.md), [05-replication](../05-replication/README.md)
+> **Related topics:** [01-scaling-basics](../01_Scaling%20basics/README.md#8-load-balancing-algorithms) (consistent hashing), [04-databases](../04_Databases/README.md), [05-replication](../05_Replication/README.md)
 
 ---
 
@@ -175,7 +175,7 @@ A separate service stores where each key or group of keys lives: `tenant_42 → 
 
 ### Geo-partitioning
 
-A user's data lives in their region (EU, US, APAC). It reduces latency and addresses data residency requirements (GDPR). More in [05-replication](../05-replication/README.md#12-multi-region-and-operations).
+A user's data lives in their region (EU, US, APAC). It reduces latency and addresses data residency requirements (GDPR). More in [05-replication](../05_Replication/README.md#12-multi-region-and-operations).
 
 ### Comparison
 
@@ -228,7 +228,7 @@ flowchart LR
 
 ### Fix 2: consistent hashing
 
-Nodes and keys are placed on a hash ring; a key belongs to the first node clockwise. Adding a node moves only the keys of the neighboring arc (~1/N). **Virtual nodes** (100–256 points per physical node) even out the distribution. Details in [01-scaling-basics](../01-scaling-basics/README.md#8-load-balancing-algorithms).
+Nodes and keys are placed on a hash ring; a key belongs to the first node clockwise. Adding a node moves only the keys of the neighboring arc (~1/N). **Virtual nodes** (100–256 points per physical node) even out the distribution. Details in [01-scaling-basics](../01_Scaling%20basics/README.md#8-load-balancing-algorithms).
 
 **Where:** Cassandra (vnodes), DynamoDB (internally), Riak, distributed caches.
 
@@ -403,7 +403,7 @@ If a query goes to 100 shards and **each** is slow 1% of the time, the whole que
 | **Time buckets** | Key `(channel_id, bucket)`, where the bucket is a week or 10-day window number | Reading long history spans several partitions |
 | **Sharded counters** | A like counter split into N sub-counters; the total is their sum | Reads sum N values |
 | **Dedicated shard** | A large customer gets its own shard (directory approach) | Manual management |
-| **Cache in front of the hot key** | L1/Redis for reads (see [02-caching](../02-caching/README.md#8-common-problems-stampede-penetration-avalanche-hot-keys)) | Helps reads only |
+| **Cache in front of the hot key** | L1/Redis for reads (see [02-caching](../02_Caching/README.md#8-common-problems-stampede-penetration-avalanche-hot-keys)) | Helps reads only |
 | **Adaptive capacity** | The database gives the hot partition more resources or splits it | Not available everywhere (e.g. DynamoDB has it) |
 
 > [!NOTE]

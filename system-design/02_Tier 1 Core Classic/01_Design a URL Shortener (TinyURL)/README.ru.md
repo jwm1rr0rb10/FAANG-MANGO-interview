@@ -4,7 +4,7 @@
 
 > **Уровень:** Easy (но на Senior+ ждут глубины) · **Время на интервью:** 45 мин · **Время на разбор:** ~4 ч
 > **Ключевые аспекты:** генерация коротких кодов (base62, счётчики, диапазоны, хэши), задержка редиректа, кэширование, аналитика кликов, защита от злоупотреблений
-> **Опирается на:** [01-scaling-basics](../../01-scaling-basics/README_RU.md), [02-caching](../../02-caching/README_RU.md), [03-cdn](../../03-cdn/README_RU.md), [04-databases](../../04-databases/README_RU.md), [06-partitioning](../../06-partitioning/README_RU.md), [09-messaging](../../09-messaging/README_RU.md)
+> **Опирается на:** [01-scaling-basics](../../01_Fundamentals/01_Scaling%20basics/README.ru.md), [02-caching](../../01_Fundamentals/02_Caching/README.ru.md), [03-cdn](../../01_Fundamentals/03_CDN/README.ru.md), [04-databases](../../01_Fundamentals/04_Databases/README.ru.md), [06-partitioning](../../01_Fundamentals/06_Partitioning/README.ru.md), [09-messaging](../../01_Fundamentals/09_Messaging/README.ru.md)
 
 ---
 
@@ -226,7 +226,7 @@ Content-Type: application/json
 | `409 Conflict` | Алиас уже занят |
 | `429 Too Many Requests` | Превышен лимит создания |
 
-📘 **Зачем `Idempotency-Key`.** Клиент отправил запрос, а ответ потерялся (таймаут). Он повторяет запрос. Без ключа сервер создаст **вторую** ссылку на тот же URL — у пользователя окажутся две разные короткие ссылки, и статистика разделится. С ключом сервер узнаёт повтор и возвращает уже созданную ссылку. Подробнее — в [10-idempotency](../../10-idempotency/README_RU.md).
+📘 **Зачем `Idempotency-Key`.** Клиент отправил запрос, а ответ потерялся (таймаут). Он повторяет запрос. Без ключа сервер создаст **вторую** ссылку на тот же URL — у пользователя окажутся две разные короткие ссылки, и статистика разделится. С ключом сервер узнаёт повтор и возвращает уже созданную ссылку. Подробнее — в [10-idempotency](../../01_Fundamentals/10_Idempotency/README.ru.md).
 
 ### Редирект
 
@@ -295,7 +295,7 @@ links
 
 🗣️ «Беру **key-value хранилище** (DynamoDB или Cassandra) с ключом партиции `code`. Для кабинета — отдельная таблица `links_by_owner (owner_id, created_at, code)`, которую заполняем при создании ссылки. PostgreSQL тоже рабочий вариант — главное, что ключ шардирования = `code`, и каждый редирект идёт ровно в один шард».
 
-📘 **Почему ключ партиции — `code`.** Редирект знает только код. Если данные разложены по хэшу кода, сервис сразу знает, в каком шарде искать, — один сетевой запрос. Если бы шардирование было по `owner_id`, для редиректа пришлось бы спрашивать все шарды. Подробнее — в [06-partitioning](../../06-partitioning/README_RU.md).
+📘 **Почему ключ партиции — `code`.** Редирект знает только код. Если данные разложены по хэшу кода, сервис сразу знает, в каком шарде искать, — один сетевой запрос. Если бы шардирование было по `owner_id`, для редиректа пришлось бы спрашивать все шарды. Подробнее — в [06-partitioning](../../01_Fundamentals/06_Partitioning/README.ru.md).
 
 ---
 
@@ -865,14 +865,14 @@ flowchart TB
 
 | Вопрос | Решение | Почему |
 |:-------|:--------|:-------|
-| Как направить пользователя в ближайший регион | GeoDNS или Anycast | См. [01-scaling-basics](../../01-scaling-basics/README_RU.md) |
+| Как направить пользователя в ближайший регион | GeoDNS или Anycast | См. [01-scaling-basics](../../01_Fundamentals/01_Scaling%20basics/README.ru.md) |
 | Где создавать ссылки | В любом регионе | Каждому региону **свой набор блоков номеров** — коллизий нет без межрегиональной координации |
 | Как данные попадают в другие регионы | Асинхронная репликация (DynamoDB Global Tables, Cassandra multi-DC) | Синхронная между континентами добавила бы 100+ мс к созданию |
 | Ссылку создали в EU и сразу открыли в US, реплика не успела | Fallback: при промахе в локальной реплике запросить регион-владелец | Регион-владелец определяется по номеру блока, «зашитому» в номер |
 | Пользовательские алиасы | Записываются в один «домашний» регион или через консенсусное хранилище | Уникальность строки, выбранной человеком, требует глобальной координации; операция редкая, задержка допустима |
 
 > [!NOTE]
-> Здесь хорошо видна идея из [07-consistency-models](../../07-consistency-models/README_RU.md): для **уникальности** нужна строгая координация (диапазоны, консенсус для алиасов), а для **чтения** достаточно eventual consistency с fallback.
+> Здесь хорошо видна идея из [07-consistency-models](../../01_Fundamentals/07_Consistency%20models/README.ru.md): для **уникальности** нужна строгая координация (диапазоны, консенсус для алиасов), а для **чтения** достаточно eventual consistency с fallback.
 
 ---
 
@@ -911,15 +911,15 @@ flowchart TB
 
 | Концепция | Где разобрана | Как применяется здесь |
 |:----------|:--------------|:----------------------|
-| Stateless-сервисы и балансировка | [01-scaling-basics](../../01-scaling-basics/README_RU.md) | Redirect и write service масштабируются горизонтально |
-| Cache-aside, негативное кэширование, горячие ключи | [02-caching](../../02-caching/README_RU.md) | Redis, локальный кэш, кэш «кода нет» |
-| CDN и edge | [03-cdn](../../03-cdn/README_RU.md) | Популярные редиректы на edge |
-| Key-value модель, условная вставка | [04-databases](../../04-databases/README_RU.md) | Таблица `links`, уникальность алиасов |
-| Партиционирование по ключу | [06-partitioning](../../06-partitioning/README_RU.md) | Ключ = `code`, редирект в один шард |
-| Модели консистентности | [07-consistency-models](../../07-consistency-models/README_RU.md) | Строго — уникальность; eventual — чтение |
-| Асинхронные события | [09-messaging](../../09-messaging/README_RU.md) | Клики через Kafka |
-| Идемпотентность | [10-idempotency](../../10-idempotency/README_RU.md) | `Idempotency-Key` при создании |
-| Rate limiting | [13-reliability-patterns](../../13-reliability-patterns/README_RU.md#6-rate-limiting) | Защита от спама и перебора |
+| Stateless-сервисы и балансировка | [01-scaling-basics](../../01_Fundamentals/01_Scaling%20basics/README.ru.md) | Redirect и write service масштабируются горизонтально |
+| Cache-aside, негативное кэширование, горячие ключи | [02-caching](../../01_Fundamentals/02_Caching/README.ru.md) | Redis, локальный кэш, кэш «кода нет» |
+| CDN и edge | [03-cdn](../../01_Fundamentals/03_CDN/README.ru.md) | Популярные редиректы на edge |
+| Key-value модель, условная вставка | [04-databases](../../01_Fundamentals/04_Databases/README.ru.md) | Таблица `links`, уникальность алиасов |
+| Партиционирование по ключу | [06-partitioning](../../01_Fundamentals/06_Partitioning/README.ru.md) | Ключ = `code`, редирект в один шард |
+| Модели консистентности | [07-consistency-models](../../01_Fundamentals/07_Consistency%20models/README.ru.md) | Строго — уникальность; eventual — чтение |
+| Асинхронные события | [09-messaging](../../01_Fundamentals/09_Messaging/README.ru.md) | Клики через Kafka |
+| Идемпотентность | [10-idempotency](../../01_Fundamentals/10_Idempotency/README.ru.md) | `Idempotency-Key` при создании |
+| Rate limiting | [13-reliability-patterns](../../01_Fundamentals/13_Reliability%20patterns/README.ru.md#6-rate-limiting) | Защита от спама и перебора |
 
 ### Новые понятия этой задачи
 
@@ -1022,4 +1022,4 @@ HyperLogLog по идентификатору посетителя (хэш IP + 
 - Документация DynamoDB: conditional writes, TTL, Global Tables
 - Burton H. Bloom, *Space/Time Trade-offs in Hash Coding with Allowable Errors* (1970) — оригинальная статья о Bloom filter
 - Flajolet et al., *HyperLogLog: the analysis of a near-optimal cardinality estimation algorithm* (2007)
-- Темы Fundamentals: [02-caching](../../02-caching/README_RU.md), [06-partitioning](../../06-partitioning/README_RU.md), [09-messaging](../../09-messaging/README_RU.md)
+- Темы Fundamentals: [02-caching](../../01_Fundamentals/02_Caching/README.ru.md), [06-partitioning](../../01_Fundamentals/06_Partitioning/README.ru.md), [09-messaging](../../01_Fundamentals/09_Messaging/README.ru.md)

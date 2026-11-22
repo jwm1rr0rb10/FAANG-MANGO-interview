@@ -4,7 +4,7 @@
 
 > **Уровень:** Medium · **Время на интервью:** 45 мин · **Время на разбор:** ~4 ч
 > **Ключевые аспекты:** префиксное дерево (trie) с заранее вычисленными top-k, ранжирование по популярности с затуханием во времени, офлайн-конвейер сборки и онлайн-обслуживание, атомарная подмена снимков, слой трендов в реальном времени, шардирование и кэширование, оптимизации клиента, персонализация и фильтрация
-> **Опирается на:** [15-search-basics](../../15-search-basics/README_RU.md#10-автодополнение), [02-caching](../../02-caching/README_RU.md), [03-cdn](../../03-cdn/README_RU.md), [06-partitioning](../../06-partitioning/README_RU.md), [09-messaging](../../09-messaging/README_RU.md)
+> **Опирается на:** [15-search-basics](../../01_Fundamentals/15_Search%20basics/README.ru.md#10-автодополнение), [02-caching](../../01_Fundamentals/02_Caching/README.ru.md), [03-cdn](../../01_Fundamentals/03_CDN/README.ru.md), [06-partitioning](../../01_Fundamentals/06_Partitioning/README.ru.md), [09-messaging](../../01_Fundamentals/09_Messaging/README.ru.md)
 
 ---
 
@@ -570,11 +570,11 @@ flowchart LR
 
 | Концепция | Где разобрана | Как применяется здесь |
 |:----------|:--------------|:----------------------|
-| Автодополнение в поисковых движках | [15-search-basics](../../15-search-basics/README_RU.md#10-автодополнение) | Edge n-граммы, completion suggester, FST |
-| Кэширование | [02-caching](../../02-caching/README_RU.md) | Локальный кэш сервиса |
-| CDN, `Cache-Control` | [03-cdn](../../03-cdn/README_RU.md) | Кэширование коротких префиксов на edge |
-| Партиционирование по диапазонам, перекос | [06-partitioning](../../06-partitioning/README_RU.md) | Шардирование дерева |
-| Потоковая обработка | [09-messaging](../../09-messaging/README_RU.md) | Логи поисков, слой трендов |
+| Автодополнение в поисковых движках | [15-search-basics](../../01_Fundamentals/15_Search%20basics/README.ru.md#10-автодополнение) | Edge n-граммы, completion suggester, FST |
+| Кэширование | [02-caching](../../01_Fundamentals/02_Caching/README.ru.md) | Локальный кэш сервиса |
+| CDN, `Cache-Control` | [03-cdn](../../01_Fundamentals/03_CDN/README.ru.md) | Кэширование коротких префиксов на edge |
+| Партиционирование по диапазонам, перекос | [06-partitioning](../../01_Fundamentals/06_Partitioning/README.ru.md) | Шардирование дерева |
+| Потоковая обработка | [09-messaging](../../01_Fundamentals/09_Messaging/README.ru.md) | Логи поисков, слой трендов |
 
 ### Новые понятия этой задачи
 
@@ -602,7 +602,7 @@ flowchart LR
 <details>
 <summary><b>Как подсказывать по середине запроса («плова» → «рецепт плова»)?</b></summary>
 
-Это уже не префиксный поиск. Варианты: индексировать запрос по каждому слову (суффиксам по словам) — тогда «плова» ведёт к «рецепт плова»; или использовать полнотекстовый поисковый движок с edge n-граммами по каждому слову (см. [15-search-basics](../../15-search-basics/README_RU.md#10-автодополнение)). Это увеличивает размер индекса.
+Это уже не префиксный поиск. Варианты: индексировать запрос по каждому слову (суффиксам по словам) — тогда «плова» ведёт к «рецепт плова»; или использовать полнотекстовый поисковый движок с edge n-граммами по каждому слову (см. [15-search-basics](../../01_Fundamentals/15_Search%20basics/README.ru.md#10-автодополнение)). Это увеличивает размер индекса.
 </details>
 
 <details>
@@ -667,4 +667,4 @@ flowchart LR
 - Документация Elasticsearch: completion suggester; Lucene FST
 - Cormode, Muthukrishnan, *An Improved Data Stream Summary: The Count-Min Sketch and its Applications* (2005)
 - Metwally, Agrawal, El Abbadi, *Efficient Computation of Frequent and Top-k Elements in Data Streams* (2005) — Space-Saving
-- Тема Fundamentals: [15-search-basics](../../15-search-basics/README_RU.md)
+- Тема Fundamentals: [15-search-basics](../../01_Fundamentals/15_Search%20basics/README.ru.md)

@@ -4,7 +4,7 @@
 
 > **Уровень:** Medium · **Время на интервью:** 45 мин · **Время на разбор:** ~4 ч
 > **Ключевые аспекты:** точный и приближённый подсчёт, партиционирование по ключу и слияние top-K, скользящие окна и затухание, count-min sketch, Space-Saving, горячие ключи, тренды против популярности, lambda-архитектура, лидерборд на sorted sets в Redis, ранг пользователя на масштабе
-> **Опирается на:** [09-messaging](../../09-messaging/README_RU.md), [06-partitioning](../../06-partitioning/README_RU.md#8-горячие-партиции-и-перекос), [02-caching](../../02-caching/README_RU.md), [Tier 1 · 15 Autocomplete](../15-search-autocomplete/README_RU.md#9-deep-dive-4-тренды-в-реальном-времени) (тренды, count-min sketch)
+> **Опирается на:** [09-messaging](../../01_Fundamentals/09_Messaging/README.ru.md), [06-partitioning](../../01_Fundamentals/06_Partitioning/README.ru.md#8-горячие-партиции-и-перекос), [02-caching](../../01_Fundamentals/02_Caching/README.ru.md), [Tier 1 · 15 Autocomplete](../15_Design%20Typeahead%20or%20Search%20Autocomplete/README.ru.md#9-deep-dive-4-тренды-в-реальном-времени) (тренды, count-min sketch)
 
 ---
 
@@ -359,7 +359,7 @@ w = 272 000, d = 5:
 | Точный top-K, ключей миллиарды | Партиционирование по ключу, счётчики на партиции |
 | Приближённые частоты любых элементов | Count-min sketch |
 | Приближённый top-K в фиксированной памяти | Space-Saving или count-min sketch + куча |
-| Число уникальных элементов | HyperLogLog (см. [URL shortener](../01-url-shortener/README_RU.md#9-deep-dive-3-аналитика-кликов)) |
+| Число уникальных элементов | HyperLogLog (см. [URL shortener](../01_Design%20a%20URL%20Shortener%20%28TinyURL%29/README.ru.md#9-deep-dive-3-аналитика-кликов)) |
 
 ---
 
@@ -520,11 +520,11 @@ ZCARD lb:weekly:2026-48                         ← всего игроков
 
 | Концепция | Где разобрана | Как применяется здесь |
 |:----------|:--------------|:----------------------|
-| Kafka, партиционирование по ключу | [09-messaging](../../09-messaging/README_RU.md) | Все события элемента — в одной партиции |
-| Горячие ключи и перекос | [06-partitioning](../../06-partitioning/README_RU.md#8-горячие-партиции-и-перекос) | Вирусные элементы |
-| Redis, кэширование | [02-caching](../../02-caching/README_RU.md) | Sorted sets, готовые результаты |
-| Count-min sketch, тренды | [Tier 1 · 15](../15-search-autocomplete/README_RU.md#9-deep-dive-4-тренды-в-реальном-времени) | Приближённый подсчёт |
-| HyperLogLog | [Tier 1 · 01](../01-url-shortener/README_RU.md#9-deep-dive-3-аналитика-кликов) | Уникальные зрители |
+| Kafka, партиционирование по ключу | [09-messaging](../../01_Fundamentals/09_Messaging/README.ru.md) | Все события элемента — в одной партиции |
+| Горячие ключи и перекос | [06-partitioning](../../01_Fundamentals/06_Partitioning/README.ru.md#8-горячие-партиции-и-перекос) | Вирусные элементы |
+| Redis, кэширование | [02-caching](../../01_Fundamentals/02_Caching/README.ru.md) | Sorted sets, готовые результаты |
+| Count-min sketch, тренды | [Tier 1 · 15](../15_Design%20Typeahead%20or%20Search%20Autocomplete/README.ru.md#9-deep-dive-4-тренды-в-реальном-времени) | Приближённый подсчёт |
+| HyperLogLog | [Tier 1 · 01](../01_Design%20a%20URL%20Shortener%20%28TinyURL%29/README.ru.md#9-deep-dive-3-аналитика-кликов) | Уникальные зрители |
 
 ### Новые понятия этой задачи
 

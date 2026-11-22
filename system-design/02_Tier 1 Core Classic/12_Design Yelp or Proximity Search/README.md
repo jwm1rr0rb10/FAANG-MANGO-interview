@@ -1,10 +1,10 @@
-**English** | [Русский](README_RU.md)
+**English** | [Русский](README.ru.md)
 
 # Tier 1 · 12. Yelp / Nearby Search
 
 > **Level:** Medium · **Interview time:** 45 min · **Study time:** ~4 h
 > **Key aspects:** geo indexes for static objects (quadtree, geohash, BKD trees in a search engine), k-nearest search, filtering and ranking by distance and rating, the Bayesian average, combining text and geo search, caching under read-heavy load, reviews and rating aggregation, map-viewport queries
-> **Builds on:** [Tier 1 · 11 Uber](../11-uber/README.md#8-deep-dive-2-geospatial-indexes) (geo indexes), [15-search-basics](../../15-search-basics/README.md), [02-caching](../../02-caching/README.md), [05-replication](../../05-replication/README.md), [11-distributed-transactions](../../11-distributed-transactions/README.md#12-cdc-change-data-capture)
+> **Builds on:** [Tier 1 · 11 Uber](../11_Design%20Uber%20or%20Ride-Sharing/README.md#8-deep-dive-2-geospatial-indexes) (geo indexes), [15-search-basics](../../01_Fundamentals/15_Search%20basics/README.md), [02-caching](../../01_Fundamentals/02_Caching/README.md), [05-replication](../../01_Fundamentals/05_Replication/README.md), [11-distributed-transactions](../../01_Fundamentals/11_Distributed%20transactions/README.md#12-cdc-change-data-capture)
 
 ---
 
@@ -235,7 +235,7 @@ flowchart TB
 
 > 🎤 "Which geo index would you choose, and why not the same one as for Uber?"
 
-The basics of geohash, quadtree, S2 and H3 are covered in [Uber](../11-uber/README.md#8-deep-dive-2-geospatial-indexes). Here — the choice for static data.
+The basics of geohash, quadtree, S2 and H3 are covered in [Uber](../11_Design%20Uber%20or%20Ride-Sharing/README.md#8-deep-dive-2-geospatial-indexes). Here — the choice for static data.
 
 ### The uneven density problem
 
@@ -388,7 +388,7 @@ score = w1 × f(distance)              ← decreases with distance (e.g. exponen
 | By distance | Distance only (after filters) |
 | By rating | The Bayesian rating, within a radius limit |
 
-🗣️ "The weights are tuned on metrics (clicks, calls, directions, reservations) through A/B tests; at large scale — a ranking model, as in [15-search-basics](../../15-search-basics/README.md#6-multi-stage-ranking-and-quality-metrics)."
+🗣️ "The weights are tuned on metrics (clicks, calls, directions, reservations) through A/B tests; at large scale — a ranking model, as in [15-search-basics](../../01_Fundamentals/15_Search%20basics/README.md#6-multi-stage-ranking-and-quality-metrics)."
 
 ---
 
@@ -498,7 +498,7 @@ sequenceDiagram
 
 | Principle | Why |
 |:----------|:----|
-| **CDC**, not dual writes from the app | The index won't drift from the DB on failures (see [11-distributed-transactions](../../11-distributed-transactions/README.md#12-cdc-change-data-capture)) |
+| **CDC**, not dual writes from the app | The index won't drift from the DB on failures (see [11-distributed-transactions](../../01_Fundamentals/11_Distributed%20transactions/README.md#12-cdc-change-data-capture)) |
 | Moderating significant changes | Changing an address or name could be fraud — review before publishing |
 | The owner sees the change immediately | The owner's view of the page comes from the primary, not the cache (read-your-writes) |
 
@@ -543,7 +543,7 @@ GET /v1/search?bbox=min_lat,min_lng,max_lat,max_lng&zoom=14&q=cafe
 
 ### Pagination
 
-- Cursor pagination, as in [search](../../15-search-basics/README.md#9-scaling-search): `search_after` on (score, id), with no deep offsets.
+- Cursor pagination, as in [search](../../01_Fundamentals/15_Search%20basics/README.md#9-scaling-search): `search_after` on (score, id), with no deep offsets.
 - For stability while scrolling — pin the search point and query time in the cursor: if the user moves slightly, the pages don't get shuffled.
 
 ---
@@ -586,7 +586,7 @@ GET /v1/search?bbox=min_lat,min_lng,max_lat,max_lng&zoom=14&q=cafe
 |:-------|:----|
 | **Sharding the index by region** | The index no longer fits on one node |
 | **ML ranking** | Personalization, context (time of day, weather) |
-| **Vector search** | "A cozy place for a date" — a semantic query (see [15-search-basics](../../15-search-basics/README.md#11-vector-search)) |
+| **Vector search** | "A cozy place for a date" — a semantic query (see [15-search-basics](../../01_Fundamentals/15_Search%20basics/README.md#11-vector-search)) |
 | **Precomputed results for popular cells and queries** | Near-zero latency for frequent searches |
 
 ---
@@ -597,11 +597,11 @@ GET /v1/search?bbox=min_lat,min_lng,max_lat,max_lng&zoom=14&q=cafe
 
 | Concept | Where it's covered | How it applies here |
 |:--------|:-------------------|:--------------------|
-| Geo indexes | [Tier 1 · 11 Uber](../11-uber/README.md#8-deep-dive-2-geospatial-indexes) | The basics of geohash, quadtree, S2, H3 |
-| Search engines, BM25, filters | [15-search-basics](../../15-search-basics/README.md) | Text + geo + ranking |
-| Caching | [02-caching](../../02-caching/README.md) | A per-cell query cache, business pages |
-| Read replicas | [05-replication](../../05-replication/README.md) | Read-heavy load |
-| CDC | [11-distributed-transactions](../../11-distributed-transactions/README.md#12-cdc-change-data-capture) | Updating the index |
+| Geo indexes | [Tier 1 · 11 Uber](../11_Design%20Uber%20or%20Ride-Sharing/README.md#8-deep-dive-2-geospatial-indexes) | The basics of geohash, quadtree, S2, H3 |
+| Search engines, BM25, filters | [15-search-basics](../../01_Fundamentals/15_Search%20basics/README.md) | Text + geo + ranking |
+| Caching | [02-caching](../../01_Fundamentals/02_Caching/README.md) | A per-cell query cache, business pages |
+| Read replicas | [05-replication](../../01_Fundamentals/05_Replication/README.md) | Read-heavy load |
+| CDC | [11-distributed-transactions](../../01_Fundamentals/11_Distributed%20transactions/README.md#12-cdc-change-data-capture) | Updating the index |
 
 ### New terms in this problem
 
@@ -693,4 +693,4 @@ Aggregate anonymized visit data (locations with consent, check-ins) by hour of t
 - Finkel, Bentley, *Quad Trees: A Data Structure for Retrieval on Composite Keys* (1974)
 - Elasticsearch documentation: geo queries, geo_point, function_score
 - PostGIS documentation
-- The [Tier 1 · 11 Uber](../11-uber/README.md) walkthrough — geo indexes for moving objects
+- The [Tier 1 · 11 Uber](../11_Design%20Uber%20or%20Ride-Sharing/README.md) walkthrough — geo indexes for moving objects

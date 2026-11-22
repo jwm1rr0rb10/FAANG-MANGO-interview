@@ -1,4 +1,4 @@
-[English](INTERVIEW.md) | **Русский** · Теория: [README_RU.md](./README_RU.md)
+[English](INTERVIEW.md) | **Русский** · Теория: [README_RU.md](./README.ru.md)
 
 # 11. Distributed Transactions: бронирование поездки (перелёт + отель + авто)
 
@@ -296,7 +296,7 @@ def book_trip(trip):
 | Свойство | Как обеспечено |
 |:---------|:---------------|
 | Переживает перезапуск | Движок хранит историю и восстанавливает состояние |
-| Идемпотентность вызовов партнёров | Детерминированный ключ `trip_id:шаг` → повтор не создаёт вторую бронь (см. [10-idempotency](../10-idempotency/README_RU.md)) |
+| Идемпотентность вызовов партнёров | Детерминированный ключ `trip_id:шаг` → повтор не создаёт вторую бронь (см. [10-idempotency](../10_Idempotency/README.ru.md)) |
 | Таймауты шагов | Задаются на activity; при таймауте — запрос статуса у партнёра, затем решение |
 | Видимость | Каждая поездка — workflow с историей в UI движка |
 
@@ -528,7 +528,7 @@ stateDiagram-v2
 
 ### Что почитать
 
-- Теория по теме: [README_RU.md](./README_RU.md)
+- Теория по теме: [README_RU.md](./README.ru.md)
 - Chris Richardson, *Microservices Patterns* — глава 4 «Managing transactions with sagas»
 - Caitie McCaffrey, *Applying the Saga Pattern*
 - Документация Temporal: Saga pattern

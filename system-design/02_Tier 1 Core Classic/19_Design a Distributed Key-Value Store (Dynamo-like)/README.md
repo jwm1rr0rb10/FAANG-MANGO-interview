@@ -1,10 +1,10 @@
-**English** | [Русский](README_RU.md)
+**English** | [Русский](README.ru.md)
 
 # Tier 1 · 19. Distributed Key-Value Store (like Dynamo)
 
 > **Level:** Hard · **Interview time:** 45–60 min · **Study time:** ~5–6 h
 > **Key aspects:** consistent hashing and virtual nodes, replication and quorums (N, W, R), versions and conflicts (last-write-wins, vector clocks, CRDTs), sloppy quorums and hinted handoff, read repair, anti-entropy with Merkle trees, gossip and failure detection, an LSM storage engine, tunable consistency, multiple data centers
-> **Builds on:** [05-replication](../../05-replication/README.md#9-leaderless-and-quorums), [06-partitioning](../../06-partitioning/README.md), [07-consistency-models](../../07-consistency-models/README.md), [04-databases](../../04-databases/README.md#7-b-tree-vs-lsm-tree), [Tier 1 · 03 Distributed Cache](../03-distributed-cache/README.md#7-deep-dive-2-distributing-keys-across-nodes)
+> **Builds on:** [05-replication](../../01_Fundamentals/05_Replication/README.md#9-leaderless-and-quorums), [06-partitioning](../../01_Fundamentals/06_Partitioning/README.md), [07-consistency-models](../../01_Fundamentals/07_Consistency%20models/README.md), [04-databases](../../01_Fundamentals/04_Databases/README.md#7-b-tree-vs-lsm-tree), [Tier 1 · 03 Distributed Cache](../03_Design%20a%20Distributed%20Cache/README.md#7-deep-dive-2-distributing-keys-across-nodes)
 
 ---
 
@@ -206,7 +206,7 @@ flowchart TB
 
 > 🎤 "How are keys distributed across nodes, and what happens when a node is added?"
 
-Consistent hashing is covered in detail in [Distributed Cache](../03-distributed-cache/README.md#7-deep-dive-2-distributing-keys-across-nodes) and [06-partitioning](../../06-partitioning/README.md). In short, and what matters for a store:
+Consistent hashing is covered in detail in [Distributed Cache](../03_Design%20a%20Distributed%20Cache/README.md#7-deep-dive-2-distributing-keys-across-nodes) and [06-partitioning](../../01_Fundamentals/06_Partitioning/README.md). In short, and what matters for a store:
 
 | Decision | Why |
 |:---------|:----|
@@ -285,7 +285,7 @@ N = 3, W = 1, R = 1:  1 + 1 = 2 ≤ 3
 📘 The coordinator waits for the **fastest** W (or R) responses out of N. A slow replica doesn't hold up the request as long as there are enough others. That matters for p99: with W = 2 of 3, one "lagging" machine doesn't affect latency.
 
 > [!WARNING]
-> **R + W > N doesn't give linearizability.** Anomalies are possible: a write fails to reach W acknowledgments but lands on one replica anyway (the client got an error, yet the value is partially written); a sloppy quorum (deep dive 4) writes to "foreign" nodes; concurrent writes create conflicting versions. Quorums give "usually fresh reads", not strong consistency (see [07-consistency-models](../../07-consistency-models/README.md)).
+> **R + W > N doesn't give linearizability.** Anomalies are possible: a write fails to reach W acknowledgments but lands on one replica anyway (the client got an error, yet the value is partially written); a sloppy quorum (deep dive 4) writes to "foreign" nodes; concurrent writes create conflicting versions. Quorums give "usually fresh reads", not strong consistency (see [07-consistency-models](../../01_Fundamentals/07_Consistency%20models/README.md)).
 
 ---
 
@@ -508,7 +508,7 @@ sequenceDiagram
 
 > 🎤 "How does each node store data so it can sustain 10,000 writes per second?"
 
-📘 An **LSM tree** (log-structured merge tree) optimizes for writes (see [04-databases](../../04-databases/README.md#7-b-tree-vs-lsm-tree)):
+📘 An **LSM tree** (log-structured merge tree) optimizes for writes (see [04-databases](../../01_Fundamentals/04_Databases/README.md#7-b-tree-vs-lsm-tree)):
 
 ```mermaid
 flowchart LR
@@ -627,11 +627,11 @@ flowchart LR
 
 | Concept | Where it's covered | How it applies here |
 |:--------|:-------------------|:--------------------|
-| Leaderless replication, quorums | [05-replication](../../05-replication/README.md#9-leaderless-and-quorums) | N, W, R |
-| Consistent hashing | [06-partitioning](../../06-partitioning/README.md), [Tier 1 · 03](../03-distributed-cache/README.md) | The ring and virtual nodes |
-| CAP, eventual consistency | [07-consistency-models](../../07-consistency-models/README.md) | The AP choice, quorum anomalies |
-| LSM trees | [04-databases](../../04-databases/README.md#7-b-tree-vs-lsm-tree) | A node's storage engine |
-| Paxos, consensus | [08-consensus](../../08-consensus/README.md) | Lightweight transactions |
+| Leaderless replication, quorums | [05-replication](../../01_Fundamentals/05_Replication/README.md#9-leaderless-and-quorums) | N, W, R |
+| Consistent hashing | [06-partitioning](../../01_Fundamentals/06_Partitioning/README.md), [Tier 1 · 03](../03_Design%20a%20Distributed%20Cache/README.md) | The ring and virtual nodes |
+| CAP, eventual consistency | [07-consistency-models](../../01_Fundamentals/07_Consistency%20models/README.md) | The AP choice, quorum anomalies |
+| LSM trees | [04-databases](../../01_Fundamentals/04_Databases/README.md#7-b-tree-vs-lsm-tree) | A node's storage engine |
+| Paxos, consensus | [08-consensus](../../01_Fundamentals/08_Consensus/README.md) | Lightweight transactions |
 
 ### New terms in this problem
 
@@ -669,7 +669,7 @@ Not via "read — add — write" (concurrent updates get lost under LWW), but wi
 <details>
 <summary><b>How do you provide read-your-writes for a user?</b></summary>
 
-Options: read and write at `QUORUM` (R + W > N); pin the user's session to one coordinator and read from the same replicas; or keep the version of the last write on the client and require reads no older than it (see session guarantees in [07-consistency-models](../../07-consistency-models/README.md#7-session-guarantees)).
+Options: read and write at `QUORUM` (R + W > N); pin the user's session to one coordinator and read from the same replicas; or keep the version of the last write on the client and require reads no older than it (see session guarantees in [07-consistency-models](../../01_Fundamentals/07_Consistency%20models/README.md#7-session-guarantees)).
 </details>
 
 <details>

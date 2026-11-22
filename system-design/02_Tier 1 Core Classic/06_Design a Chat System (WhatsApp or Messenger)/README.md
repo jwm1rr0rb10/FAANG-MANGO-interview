@@ -1,10 +1,10 @@
-**English** | [Русский](README_RU.md)
+**English** | [Русский](README.ru.md)
 
 # Tier 1 · 06. Chat System (WhatsApp / Messenger)
 
 > **Level:** Hard · **Interview time:** 45–60 min · **Study time:** ~6 h
 > **Key aspects:** WebSocket gateways and a session registry, the send path and acknowledgments, message ordering within a chat, history storage, online and offline delivery, sync after reconnecting, "delivered" and "read" receipts, group chats, presence and "typing", multiple devices, end-to-end encryption
-> **Builds on:** [12-communication](../../12-communication/README.md#8-scaling-websockets), [06-partitioning](../../06-partitioning/README.md), [07-consistency-models](../../07-consistency-models/README.md), [09-messaging](../../09-messaging/README.md), [Tier 1 · 04 ID Generator](../04-unique-id-generator/README.md), [Tier 1 · 05 Notifications](../05-notification-system/README.md)
+> **Builds on:** [12-communication](../../01_Fundamentals/12_Communication/README.md#8-scaling-websockets), [06-partitioning](../../01_Fundamentals/06_Partitioning/README.md), [07-consistency-models](../../01_Fundamentals/07_Consistency%20models/README.md), [09-messaging](../../01_Fundamentals/09_Messaging/README.md), [Tier 1 · 04 ID Generator](../04_Design%20a%20Unique%20ID%20Generator/README.md), [Tier 1 · 05 Notifications](../05_Design%20a%20Notification%20System%20%28push%2C%20email%2C%20SMS%29/README.md)
 
 ---
 
@@ -159,7 +159,7 @@ Media:            separately in object storage; much larger than text
 
 | Conclusion | Design consequence |
 |:-----------|:-------------------|
-| 200M persistent connections | A separate gateway tier with no business logic (as in [12-communication](../../12-communication/README.md#8-scaling-websockets)) |
+| 200M persistent connections | A separate gateway tier with no business logic (as in [12-communication](../../01_Fundamentals/12_Communication/README.md#8-scaling-websockets)) |
 | ~700K message writes per second | Write-optimized storage (LSM: Cassandra, ScyllaDB, HBase) |
 | Petabytes per year | Sharding by chat, cold storage for old messages |
 | Receipts outnumber messages | They must be aggregated (watermarks), not stored one per message |
@@ -198,7 +198,7 @@ POST /v1/conversations                                { type: "group", members: 
 POST /v1/media/uploads                                → a presigned URL (see Storage types)
 ```
 
-📘 **Why `client_msg_id`.** A client sent a message, and the connection dropped before the acknowledgment. After reconnecting, the client sends **the same** message with the same `client_msg_id`. The server recognizes the retry and returns the `msg_id` and `seq` it already assigned instead of creating a duplicate (see [10-idempotency](../../10-idempotency/README.md)).
+📘 **Why `client_msg_id`.** A client sent a message, and the connection dropped before the acknowledgment. After reconnecting, the client sends **the same** message with the same `client_msg_id`. The server recognizes the retry and returns the `msg_id` and `seq` it already assigned instead of creating a duplicate (see [10-idempotency](../../01_Fundamentals/10_Idempotency/README.md)).
 
 ---
 
@@ -242,7 +242,7 @@ user_updates  ((user_id, bucket), update_seq, conv_id, kind, payload)
 | Sessions (user → gateways) | Redis | Ephemeral data, fast reads |
 | Presence | Redis with TTLs | Ephemeral |
 
-📘 **Why the partition is `(conv_id, bucket)` rather than just `conv_id`.** A chat used for years can accumulate millions of messages. A partition with unbounded size becomes a problem: slow reads, skewed load, compaction trouble. A bucket (e.g. 10,000 messages or 10 days) keeps partitions bounded. Discord described exactly this scheme — `(channel_id, bucket)` with a time-based bucket (see [06-partitioning](../../06-partitioning/README.md#8-hot-partitions-and-skew)).
+📘 **Why the partition is `(conv_id, bucket)` rather than just `conv_id`.** A chat used for years can accumulate millions of messages. A partition with unbounded size becomes a problem: slow reads, skewed load, compaction trouble. A bucket (e.g. 10,000 messages or 10 days) keeps partitions bounded. Discord described exactly this scheme — `(channel_id, bucket)` with a time-based bucket (see [06-partitioning](../../01_Fundamentals/06_Partitioning/README.md#8-hot-partitions-and-skew)).
 
 ---
 
@@ -312,7 +312,7 @@ sequenceDiagram
 
 > 🎤 "How do you hold 200 million connections?"
 
-Scaling WebSockets is covered in detail in [12-communication](../../12-communication/README.md#8-scaling-websockets). In short, for chat:
+Scaling WebSockets is covered in detail in [12-communication](../../01_Fundamentals/12_Communication/README.md#8-scaling-websockets). In short, for chat:
 
 | Aspect | Decision |
 |:-------|:---------|
@@ -334,7 +334,7 @@ Scaling WebSockets is covered in detail in [12-communication](../../12-communica
 
 ### Why not the send time
 
-📘 Phone clocks differ by seconds and minutes, server clocks by milliseconds. If you sort by time, two near-simultaneous messages end up in different orders for different participants. A Snowflake ID also gives only an **approximate** order across nodes (see [Tier 1 · 04](../04-unique-id-generator/README.md#10-deep-dive-4-what-time-ordered-means)).
+📘 Phone clocks differ by seconds and minutes, server clocks by milliseconds. If you sort by time, two near-simultaneous messages end up in different orders for different participants. A Snowflake ID also gives only an **approximate** order across nodes (see [Tier 1 · 04](../04_Design%20a%20Unique%20ID%20Generator/README.md#10-deep-dive-4-what-time-ordered-means)).
 
 ### The fix: a sequence number from the chat's owner
 
@@ -350,7 +350,7 @@ Each message in a chat gets a **seq** — a monotonically increasing number with
 
 ### Protecting against two owners
 
-During rebalancing or a failure, two instances may briefly both believe they own the same chat and assign the same `seq` to different messages. The protection is a **conditional write** to storage: `INSERT … IF NOT EXISTS` on the key `(conv_id, seq)`; the loser gets a conflict, rereads `last_seq` and retries. It's fencing at the data level (see [08-consensus](../../08-consensus/README.md#10-split-brain-and-fencing-tokens)).
+During rebalancing or a failure, two instances may briefly both believe they own the same chat and assign the same `seq` to different messages. The protection is a **conditional write** to storage: `INSERT … IF NOT EXISTS` on the key `(conv_id, seq)`; the loser gets a conflict, rereads `last_seq` and retries. It's fencing at the data level (see [08-consensus](../../01_Fundamentals/08_Consensus/README.md#10-split-brain-and-fencing-tokens)).
 
 ### Idempotency
 
@@ -387,7 +387,7 @@ The client shows the message **immediately** with a "sending" status (a clock �
 
 | Requirement | Why Cassandra / ScyllaDB / HBase fit |
 |:------------|:-------------------------------------|
-| Huge write volume | An LSM tree: a write is an append to a log and to memory, with no random updates on disk (see [04-databases](../../04-databases/README.md#7-b-tree-vs-lsm-tree)) |
+| Huge write volume | An LSM tree: a write is an append to a log and to memory, with no random updates on disk (see [04-databases](../../01_Fundamentals/04_Databases/README.md#7-b-tree-vs-lsm-tree)) |
 | Reading "the last 50 messages of a chat" | One partition, data sorted by `seq` — one sequential read |
 | Horizontal scaling | Adding nodes, partitioning by key |
 | Multi-region | Built-in cross-datacenter replication |
@@ -458,7 +458,7 @@ sequenceDiagram
 | Recipient state | What fan-out does |
 |:----------------|:------------------|
 | Online (has sessions in the registry) | Publishes the message to the gateway's channel; the gateway sends it to the device; the device acknowledges |
-| Offline | Writes the event to `user_updates`; sends a push notification via the notification system (see [Tier 1 · 05](../05-notification-system/README.md)) |
+| Offline | Writes the event to `user_updates`; sends a push notification via the notification system (see [Tier 1 · 05](../05_Design%20a%20Notification%20System%20%28push%2C%20email%2C%20SMS%29/README.md)) |
 | Online, but the device didn't acknowledge within N seconds | Treat that device as offline: a push + sync on the next connect |
 
 > [!TIP]
@@ -577,7 +577,7 @@ sequenceDiagram
 | Delivery | Only to online members with the chat open, via the gateways |
 | Ending | The indicator fades by itself after a few seconds without new events |
 
-📘 **Different guarantees for different events** — the same idea as in [12-communication](../../12-communication/README.md): messages are at-least-once with storage and sync; receipts are stored as watermarks; presence and "typing" are best-effort, with no storage.
+📘 **Different guarantees for different events** — the same idea as in [12-communication](../../01_Fundamentals/12_Communication/README.md): messages are at-least-once with storage and sync; receipts are stored as watermarks; presence and "typing" are best-effort, with no storage.
 
 ---
 
@@ -630,7 +630,7 @@ Photos and videos don't go through the WebSocket or the chat service:
 2. The message carries only a **reference** (`media_ref`) and metadata (size, thumbnail, the decryption key — inside the encrypted body).
 3. Recipients download via a CDN.
 
-Details in [14-storage-types](../../14-storage-types/README.md#8-the-pattern-blobs-separate-from-metadata).
+Details in [14-storage-types](../../01_Fundamentals/14_Storage%20types/README.md#8-the-pattern-blobs-separate-from-metadata).
 
 ### Multiple regions
 
@@ -682,14 +682,14 @@ Details in [14-storage-types](../../14-storage-types/README.md#8-the-pattern-blo
 
 | Concept | Where it's covered | How it applies here |
 |:--------|:-------------------|:--------------------|
-| WebSocket gateways, a session registry, pub/sub | [12-communication](../../12-communication/README.md#8-scaling-websockets) | The connection layer and delivery |
-| LSM stores, wide-column | [04-databases](../../04-databases/README.md#7-b-tree-vs-lsm-tree) | Storing messages |
-| Bucketed partitions | [06-partitioning](../../06-partitioning/README.md#8-hot-partitions-and-skew) | `(conv_id, bucket)` |
-| Ordering within an entity | [07-consistency-models](../../07-consistency-models/README.md) | `seq` from the chat owner |
-| Fencing against two owners | [08-consensus](../../08-consensus/README.md#10-split-brain-and-fencing-tokens) | A conditional write on `(conv_id, seq)` |
-| Idempotency | [10-idempotency](../../10-idempotency/README.md) | `client_msg_id` |
-| Push notifications | [Tier 1 · 05](../05-notification-system/README.md) | Offline delivery |
-| Media through object storage | [14-storage-types](../../14-storage-types/README.md) | Photos and videos |
+| WebSocket gateways, a session registry, pub/sub | [12-communication](../../01_Fundamentals/12_Communication/README.md#8-scaling-websockets) | The connection layer and delivery |
+| LSM stores, wide-column | [04-databases](../../01_Fundamentals/04_Databases/README.md#7-b-tree-vs-lsm-tree) | Storing messages |
+| Bucketed partitions | [06-partitioning](../../01_Fundamentals/06_Partitioning/README.md#8-hot-partitions-and-skew) | `(conv_id, bucket)` |
+| Ordering within an entity | [07-consistency-models](../../01_Fundamentals/07_Consistency%20models/README.md) | `seq` from the chat owner |
+| Fencing against two owners | [08-consensus](../../01_Fundamentals/08_Consensus/README.md#10-split-brain-and-fencing-tokens) | A conditional write on `(conv_id, seq)` |
+| Idempotency | [10-idempotency](../../01_Fundamentals/10_Idempotency/README.md) | `client_msg_id` |
+| Push notifications | [Tier 1 · 05](../05_Design%20a%20Notification%20System%20%28push%2C%20email%2C%20SMS%29/README.md) | Offline delivery |
+| Media through object storage | [14-storage-types](../../01_Fundamentals/14_Storage%20types/README.md) | Photos and videos |
 
 ### New terms in this problem
 

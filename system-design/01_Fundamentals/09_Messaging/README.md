@@ -1,11 +1,11 @@
-**English** | [Русский](README_RU.md)
+**English** | [Русский](README.ru.md)
 
 # 09. Messaging
 
 > **Covers:** why asynchrony, queues vs logs (SQS/RabbitMQ vs Kafka), how Kafka and queues work, delivery semantics (at-most/at-least/exactly-once), idempotency, the outbox, message ordering, retries and DLQs, backpressure, scaling consumers, event schemas
 > **Study time:** ~5 h · **Needed for:** almost any problem with background jobs, events, microservices or data streams
 > **Practice:** interview-style walkthrough — [INTERVIEW.md](./INTERVIEW.md)
-> **Related topics:** [05-replication](../05-replication/README.md) (replication in Kafka), [06-partitioning](../06-partitioning/README.md) (partitions), [08-consensus](../08-consensus/README.md)
+> **Related topics:** [05-replication](../05_Replication/README.md) (replication in Kafka), [06-partitioning](../06_Partitioning/README.md) (partitions), [08-consensus](../08_Consensus/README.md)
 
 ---
 
@@ -157,7 +157,7 @@ flowchart LR
 | **Rebalance** | Reassigning partitions when a consumer joins or leaves |
 | **Retention** | How long messages are kept: by time (e.g. 7 days) or by size |
 | **Log compaction** | Keep only the **latest** value per key (for "current state", CDC) |
-| **Replication** | Each partition is replicated: a leader + followers, ISR (see [05-replication](../05-replication/README.md#11-comparing-approaches-and-real-systems)) |
+| **Replication** | Each partition is replicated: a leader + followers, ISR (see [05-replication](../05_Replication/README.md#11-comparing-approaches-and-real-systems)) |
 
 ### Why Kafka is fast
 

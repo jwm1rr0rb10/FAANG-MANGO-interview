@@ -1,4 +1,4 @@
-[English](INTERVIEW.md) | **Русский** · Теория: [README_RU.md](./README_RU.md)
+[English](INTERVIEW.md) | **Русский** · Теория: [README_RU.md](./README.ru.md)
 
 # 15. Search Basics: поиск товаров на маркетплейсе
 
@@ -522,7 +522,7 @@ flowchart LR
 
 ### Что почитать
 
-- Теория по теме: [README_RU.md](./README_RU.md)
+- Теория по теме: [README_RU.md](./README.ru.md)
 - Manning, Raghavan, Schütze, *Introduction to Information Retrieval*
 - Документация Elasticsearch: relevance tuning, search_after, aliases
 - Cormack et al., *Reciprocal Rank Fusion*

@@ -1,10 +1,10 @@
-**English** | [Русский](README_RU.md)
+**English** | [Русский](README.ru.md)
 
 # Tier 1 · 10. Dropbox / Google Drive
 
 > **Level:** Hard · **Interview time:** 45–60 min · **Study time:** ~5–6 h
 > **Key aspects:** splitting files into blocks (fixed-size and content-defined), dedup, syncing only changed blocks, a metadata service and change journal, client notifications, conflicts from concurrent edits, shared folders and permissions, versions and trash, the client sync engine
-> **Builds on:** [14-storage-types](../../14-storage-types/README.md#9-uploading-large-files), [04-databases](../../04-databases/README.md), [06-partitioning](../../06-partitioning/README.md), [12-communication](../../12-communication/README.md#7-server--client-polling-long-polling-sse-websocket), [Tier 1 · 06 Chat](../06-chat-system/README.md#10-deep-dive-4-online-and-offline-delivery-and-sync)
+> **Builds on:** [14-storage-types](../../01_Fundamentals/14_Storage%20types/README.md#9-uploading-large-files), [04-databases](../../01_Fundamentals/04_Databases/README.md), [06-partitioning](../../01_Fundamentals/06_Partitioning/README.md), [12-communication](../../01_Fundamentals/12_Communication/README.md#7-server--client-polling-long-polling-sse-websocket), [Tier 1 · 06 Chat](../06_Design%20a%20Chat%20System%20%28WhatsApp%20or%20Messenger%29/README.md#10-deep-dive-4-online-and-offline-delivery-and-sync)
 
 ---
 
@@ -195,7 +195,7 @@ POST /v1/shares                { folder_id, members: [{user, role}] }
 POST /v1/links                 { file_id, access: "view", expires_at }
 ```
 
-📘 **`base_version` in commit.** The client states which version of the file its change is based on. If the server already has a different version (someone changed the file in the meantime), the commit is rejected — this is **optimistic locking** (see [04-databases](../../04-databases/README.md#11-concurrency-control-locks-mvcc-optimistic-approach)). The client gets a conflict and handles it (deep dive 5).
+📘 **`base_version` in commit.** The client states which version of the file its change is based on. If the server already has a different version (someone changed the file in the meantime), the commit is rejected — this is **optimistic locking** (see [04-databases](../../01_Fundamentals/04_Databases/README.md#11-concurrency-control-locks-mvcc-optimistic-approach)). The client gets a conflict and handles it (deep dive 5).
 
 ---
 
@@ -357,7 +357,7 @@ For file sync, blocks on the order of megabytes are typical: metadata stays mana
 
 ### Content-addressed storage
 
-📘 A block's key is a **cryptographic hash** of its content (SHA-256). Identical blocks produce the same hash and are stored once (see [14-storage-types](../../14-storage-types/README.md#8-the-pattern-blobs-separate-from-metadata)).
+📘 A block's key is a **cryptographic hash** of its content (SHA-256). Identical blocks produce the same hash and are stored once (see [14-storage-types](../../01_Fundamentals/14_Storage%20types/README.md#8-the-pattern-blobs-separate-from-metadata)).
 
 ```
 blocks: hash → { storage_key, size, ref_count }
@@ -394,7 +394,7 @@ Block h7 is part of:
 
 ### The block store
 
-- Object storage with erasure coding and cross-zone replication (see [14-storage-types](../../14-storage-types/README.md#7-replication-vs-erasure-coding)).
+- Object storage with erasure coding and cross-zone replication (see [14-storage-types](../../01_Fundamentals/14_Storage%20types/README.md#7-replication-vs-erasure-coding)).
 - At exabyte scale, an in-house store can be cheaper than the cloud: Dropbox described moving to its own system, Magic Pocket.
 - Small blocks are packed into larger storage objects to avoid creating billions of tiny objects.
 
@@ -444,7 +444,7 @@ sequenceDiagram
 
 ### The namespace journal
 
-📘 Every change in a namespace gets a sequence number `seq` and is written to the **journal**. Each device stores a **cursor** — the last processed `seq` — for each namespace it has access to. It's the same idea as the update stream in [chat](../06-chat-system/README.md#10-deep-dive-4-online-and-offline-delivery-and-sync).
+📘 Every change in a namespace gets a sequence number `seq` and is written to the **journal**. Each device stores a **cursor** — the last processed `seq` — for each namespace it has access to. It's the same idea as the update stream in [chat](../06_Design%20a%20Chat%20System%20%28WhatsApp%20or%20Messenger%29/README.md#10-deep-dive-4-online-and-offline-delivery-and-sync).
 
 ```mermaid
 sequenceDiagram
@@ -467,7 +467,7 @@ sequenceDiagram
 | Element | Why |
 |:--------|:----|
 | **A notification without data** | The notification service only says "there are changes" — it's lightweight and independent of metadata |
-| **Long polling** | A simple, reliable way to hold millions of waiting clients through proxies and mobile networks (see [12-communication](../../12-communication/README.md#7-server--client-polling-long-polling-sse-websocket)); WebSocket is an option too |
+| **Long polling** | A simple, reliable way to hold millions of waiting clients through proxies and mobile networks (see [12-communication](../../01_Fundamentals/12_Communication/README.md#7-server--client-polling-long-polling-sse-websocket)); WebSocket is an option too |
 | **Delta by cursor** | The client gets only changes after its cursor, in order |
 | **The cursor lives on the client** | The server keeps no per-device state |
 | **A local block cache** | Only missing blocks are downloaded |
@@ -687,11 +687,11 @@ Comparing each with the synced tree shows **who** changed a file: only locally �
 
 | Concept | Where it's covered | How it applies here |
 |:--------|:-------------------|:--------------------|
-| Blobs + metadata, content addressing, erasure coding | [14-storage-types](../../14-storage-types/README.md) | The block store |
-| Optimistic locking | [04-databases](../../04-databases/README.md#11-concurrency-control-locks-mvcc-optimistic-approach) | `base_version` on commit |
-| Sharding by entity key | [06-partitioning](../../06-partitioning/README.md) | Metadata by namespace |
-| Long polling | [12-communication](../../12-communication/README.md#7-server--client-polling-long-polling-sse-websocket) | Client notifications |
-| Journals and cursors | [Tier 1 · 06](../06-chat-system/README.md#10-deep-dive-4-online-and-offline-delivery-and-sync) | Syncing devices |
+| Blobs + metadata, content addressing, erasure coding | [14-storage-types](../../01_Fundamentals/14_Storage%20types/README.md) | The block store |
+| Optimistic locking | [04-databases](../../01_Fundamentals/04_Databases/README.md#11-concurrency-control-locks-mvcc-optimistic-approach) | `base_version` on commit |
+| Sharding by entity key | [06-partitioning](../../01_Fundamentals/06_Partitioning/README.md) | Metadata by namespace |
+| Long polling | [12-communication](../../01_Fundamentals/12_Communication/README.md#7-server--client-polling-long-polling-sse-websocket) | Client notifications |
+| Journals and cursors | [Tier 1 · 06](../06_Design%20a%20Chat%20System%20%28WhatsApp%20or%20Messenger%29/README.md#10-deep-dive-4-online-and-offline-delivery-and-sync) | Syncing devices |
 
 ### New terms in this problem
 
@@ -785,4 +785,4 @@ A preview service assembles the file from its blocks, generates thumbnails and v
 - Tridgell, Mackerras, *The rsync algorithm* (1996)
 - Dropbox Tech Blog: *Inside the Magic Pocket* (2016), *Rewriting the heart of our sync engine* (2020)
 - Alex Xu, *System Design Interview*, Vol. 1 — chapter "Design Google Drive"
-- Fundamentals topics: [14-storage-types](../../14-storage-types/README.md), [04-databases](../../04-databases/README.md)
+- Fundamentals topics: [14-storage-types](../../01_Fundamentals/14_Storage%20types/README.md), [04-databases](../../01_Fundamentals/04_Databases/README.md)

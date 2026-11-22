@@ -4,7 +4,7 @@
 
 > **Уровень:** Medium · **Время на интервью:** 45 мин · **Время на разбор:** ~4 ч
 > **Ключевые аспекты:** геоиндексы для статичных объектов (quadtree, geohash, BKD-деревья в поисковом движке), поиск k ближайших, фильтры и ранжирование по расстоянию и рейтингу, байесовское среднее, совмещение текстового и геопоиска, кэширование при read-heavy нагрузке, отзывы и агрегация рейтинга, запросы по области карты
-> **Опирается на:** [Tier 1 · 11 Uber](../11-uber/README_RU.md#8-deep-dive-2-геопространственные-индексы) (геоиндексы), [15-search-basics](../../15-search-basics/README_RU.md), [02-caching](../../02-caching/README_RU.md), [05-replication](../../05-replication/README_RU.md), [11-distributed-transactions](../../11-distributed-transactions/README_RU.md#12-cdc-change-data-capture)
+> **Опирается на:** [Tier 1 · 11 Uber](../11_Design%20Uber%20or%20Ride-Sharing/README.ru.md#8-deep-dive-2-геопространственные-индексы) (геоиндексы), [15-search-basics](../../01_Fundamentals/15_Search%20basics/README.ru.md), [02-caching](../../01_Fundamentals/02_Caching/README.ru.md), [05-replication](../../01_Fundamentals/05_Replication/README.ru.md), [11-distributed-transactions](../../01_Fundamentals/11_Distributed%20transactions/README.ru.md#12-cdc-change-data-capture)
 
 ---
 
@@ -235,7 +235,7 @@ flowchart TB
 
 > 🎤 «Какой геоиндекс выбрать и почему не тот же, что в Uber?»
 
-Основы geohash, quadtree, S2 и H3 разобраны в [Uber](../11-uber/README_RU.md#8-deep-dive-2-геопространственные-индексы). Здесь — выбор под статичные данные.
+Основы geohash, quadtree, S2 и H3 разобраны в [Uber](../11_Design%20Uber%20or%20Ride-Sharing/README.ru.md#8-deep-dive-2-геопространственные-индексы). Здесь — выбор под статичные данные.
 
 ### Проблема неравномерной плотности
 
@@ -388,7 +388,7 @@ score = w1 × f(расстояние)            ← убывает с расс�
 | По расстоянию | Только расстояние (после фильтров) |
 | По рейтингу | Байесовский рейтинг, с ограничением радиуса |
 
-🗣️ «Веса подбираются по метрикам (клики, звонки, маршруты, бронирования) через A/B-тесты; на большом масштабе — модель ранжирования, как в [15-search-basics](../../15-search-basics/README_RU.md#6-многоэтапное-ранжирование-и-метрики-качества)».
+🗣️ «Веса подбираются по метрикам (клики, звонки, маршруты, бронирования) через A/B-тесты; на большом масштабе — модель ранжирования, как в [15-search-basics](../../01_Fundamentals/15_Search%20basics/README.ru.md#6-многоэтапное-ранжирование-и-метрики-качества)».
 
 ---
 
@@ -498,7 +498,7 @@ sequenceDiagram
 
 | Принцип | Почему |
 |:--------|:-------|
-| **CDC**, а не двойная запись из приложения | Индекс не разойдётся с БД при сбоях (см. [11-distributed-transactions](../../11-distributed-transactions/README_RU.md#12-cdc-change-data-capture)) |
+| **CDC**, а не двойная запись из приложения | Индекс не разойдётся с БД при сбоях (см. [11-distributed-transactions](../../01_Fundamentals/11_Distributed%20transactions/README.ru.md#12-cdc-change-data-capture)) |
 | Модерация важных изменений | Смена адреса или названия может быть мошенничеством — проверка перед публикацией |
 | Владелец видит изменение сразу | Карточка для владельца — из primary, а не из кэша (read-your-writes) |
 
@@ -543,7 +543,7 @@ GET /v1/search?bbox=min_lat,min_lng,max_lat,max_lng&zoom=14&q=кафе
 
 ### Пагинация
 
-- Курсорная пагинация, как в [поиске](../../15-search-basics/README_RU.md#9-масштабирование-поиска): `search_after` по (score, id), без глубоких offset.
+- Курсорная пагинация, как в [поиске](../../01_Fundamentals/15_Search%20basics/README.ru.md#9-масштабирование-поиска): `search_after` по (score, id), без глубоких offset.
 - Для стабильности при прокрутке — фиксировать точку поиска и время запроса в курсоре: если пользователь немного сместился, страницы не перемешиваются.
 
 ---
@@ -586,7 +586,7 @@ GET /v1/search?bbox=min_lat,min_lng,max_lat,max_lng&zoom=14&q=кафе
 |:----------|:-------|
 | **Шардирование индекса по регионам** | Индекс перестаёт помещаться на одном узле |
 | **ML-ранжирование** | Персонализация, контекст (время суток, погода) |
-| **Векторный поиск** | «Уютное место для свидания» — смысловой запрос (см. [15-search-basics](../../15-search-basics/README_RU.md#11-векторный-поиск)) |
+| **Векторный поиск** | «Уютное место для свидания» — смысловой запрос (см. [15-search-basics](../../01_Fundamentals/15_Search%20basics/README.ru.md#11-векторный-поиск)) |
 | **Предвычисленные результаты для популярных ячеек и запросов** | Почти нулевая задержка для частых поисков |
 
 ---
@@ -597,11 +597,11 @@ GET /v1/search?bbox=min_lat,min_lng,max_lat,max_lng&zoom=14&q=кафе
 
 | Концепция | Где разобрана | Как применяется здесь |
 |:----------|:--------------|:----------------------|
-| Геоиндексы | [Tier 1 · 11 Uber](../11-uber/README_RU.md#8-deep-dive-2-геопространственные-индексы) | Основы geohash, quadtree, S2, H3 |
-| Поисковые движки, BM25, фильтры | [15-search-basics](../../15-search-basics/README_RU.md) | Текст + гео + ранжирование |
-| Кэширование | [02-caching](../../02-caching/README_RU.md) | Кэш запросов по ячейкам, карточки |
-| Реплики для чтения | [05-replication](../../05-replication/README_RU.md) | Read-heavy нагрузка |
-| CDC | [11-distributed-transactions](../../11-distributed-transactions/README_RU.md#12-cdc-change-data-capture) | Обновление индекса |
+| Геоиндексы | [Tier 1 · 11 Uber](../11_Design%20Uber%20or%20Ride-Sharing/README.ru.md#8-deep-dive-2-геопространственные-индексы) | Основы geohash, quadtree, S2, H3 |
+| Поисковые движки, BM25, фильтры | [15-search-basics](../../01_Fundamentals/15_Search%20basics/README.ru.md) | Текст + гео + ранжирование |
+| Кэширование | [02-caching](../../01_Fundamentals/02_Caching/README.ru.md) | Кэш запросов по ячейкам, карточки |
+| Реплики для чтения | [05-replication](../../01_Fundamentals/05_Replication/README.ru.md) | Read-heavy нагрузка |
+| CDC | [11-distributed-transactions](../../01_Fundamentals/11_Distributed%20transactions/README.ru.md#12-cdc-change-data-capture) | Обновление индекса |
 
 ### Новые понятия этой задачи
 
@@ -693,4 +693,4 @@ PostGIS (расширение PostgreSQL с R-tree/GiST индексами) — 
 - Finkel, Bentley, *Quad Trees: A Data Structure for Retrieval on Composite Keys* (1974)
 - Документация Elasticsearch: geo queries, geo_point, function_score
 - Документация PostGIS
-- Разбор [Tier 1 · 11 Uber](../11-uber/README_RU.md) — геоиндексы для движущихся объектов
+- Разбор [Tier 1 · 11 Uber](../11_Design%20Uber%20or%20Ride-Sharing/README.ru.md) — геоиндексы для движущихся объектов

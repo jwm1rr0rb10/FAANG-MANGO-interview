@@ -1,11 +1,11 @@
-**English** | [Русский](README_RU.md)
+**English** | [Русский](README.ru.md)
 
 # 04. Databases
 
 > **Covers:** data models, SQL vs NoSQL, how storage works, indexes (B-tree vs LSM-tree), transactions and ACID, isolation levels and anomalies, concurrency control
 > **Study time:** ~5–6 h · **Needed for:** every problem — every design has storage
 > **Practice:** interview-style walkthrough — [INTERVIEW.md](./INTERVIEW.md)
-> **Related topics:** [01-scaling-basics](../01-scaling-basics/README.md), [02-caching](../02-caching/README.md). Replication, partitioning and consistency models are covered in upcoming topics.
+> **Related topics:** [01-scaling-basics](../01_Scaling%20basics/README.md), [02-caching](../02_Caching/README.md). Replication, partitioning and consistency models are covered in upcoming topics.
 
 ---
 

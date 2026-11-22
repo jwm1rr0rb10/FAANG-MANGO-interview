@@ -1,11 +1,11 @@
-**English** | [Русский](README_RU.md)
+**English** | [Русский](README.ru.md)
 
 # 03. CDN
 
 > **Covers:** how a CDN works, push vs pull, cache keys, TTL and headers, purging, edge caching of dynamic content, security, multi-CDN
 > **Study time:** ~3–4 h · **Needed for:** any problem with static assets, media, video or a global audience
 > **Practice:** interview-style walkthrough — [INTERVIEW.md](./INTERVIEW.md)
-> **Related topics:** [02-caching](../02-caching/README.md), [01-scaling-basics](../01-scaling-basics/README.md)
+> **Related topics:** [02-caching](../02_Caching/README.md), [01-scaling-basics](../01_Scaling%20basics/README.md)
 
 ---
 
@@ -155,7 +155,7 @@ sequenceDiagram
 
 ### Request collapsing
 
-If thousands of users request a **new** object at once that isn't cached yet, the edge doesn't send thousands of requests to the origin. It sends **one**, and the rest wait for its response. This is the CDN version of single flight from the [caching](../02-caching/README.md#8-common-problems-stampede-penetration-avalanche-hot-keys) topic.
+If thousands of users request a **new** object at once that isn't cached yet, the edge doesn't send thousands of requests to the origin. It sends **one**, and the rest wait for its response. This is the CDN version of single flight from the [caching](../02_Caching/README.md#8-common-problems-stampede-penetration-avalanche-hot-keys) topic.
 
 ### What happens to an expired object
 

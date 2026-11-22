@@ -1,10 +1,10 @@
-**English** | [Русский](README_RU.md)
+**English** | [Русский](README.ru.md)
 
 # Tier 1 · 08. Search Autocomplete / Typeahead
 
 > **Level:** Medium · **Interview time:** 45 min · **Study time:** ~4 h
 > **Key aspects:** a prefix tree (trie) with precomputed top-k, ranking by popularity with time decay, an offline build pipeline and online serving, atomic snapshot swaps, a real-time trending layer, sharding and caching, client-side optimizations, personalization and filtering
-> **Builds on:** [15-search-basics](../../15-search-basics/README.md#10-autocomplete), [02-caching](../../02-caching/README.md), [03-cdn](../../03-cdn/README.md), [06-partitioning](../../06-partitioning/README.md), [09-messaging](../../09-messaging/README.md)
+> **Builds on:** [15-search-basics](../../01_Fundamentals/15_Search%20basics/README.md#10-autocomplete), [02-caching](../../01_Fundamentals/02_Caching/README.md), [03-cdn](../../01_Fundamentals/03_CDN/README.md), [06-partitioning](../../01_Fundamentals/06_Partitioning/README.md), [09-messaging](../../01_Fundamentals/09_Messaging/README.md)
 
 ---
 
@@ -570,11 +570,11 @@ If the tree stops fitting — shard by **prefix ranges** balanced by request vol
 
 | Concept | Where it's covered | How it applies here |
 |:--------|:-------------------|:--------------------|
-| Autocomplete in search engines | [15-search-basics](../../15-search-basics/README.md#10-autocomplete) | Edge n-grams, the completion suggester, FSTs |
-| Caching | [02-caching](../../02-caching/README.md) | The service's local cache |
-| CDN, `Cache-Control` | [03-cdn](../../03-cdn/README.md) | Caching short prefixes at the edge |
-| Range partitioning, skew | [06-partitioning](../../06-partitioning/README.md) | Sharding the tree |
-| Stream processing | [09-messaging](../../09-messaging/README.md) | Search logs, the trending layer |
+| Autocomplete in search engines | [15-search-basics](../../01_Fundamentals/15_Search%20basics/README.md#10-autocomplete) | Edge n-grams, the completion suggester, FSTs |
+| Caching | [02-caching](../../01_Fundamentals/02_Caching/README.md) | The service's local cache |
+| CDN, `Cache-Control` | [03-cdn](../../01_Fundamentals/03_CDN/README.md) | Caching short prefixes at the edge |
+| Range partitioning, skew | [06-partitioning](../../01_Fundamentals/06_Partitioning/README.md) | Sharding the tree |
+| Stream processing | [09-messaging](../../01_Fundamentals/09_Messaging/README.md) | Search logs, the trending layer |
 
 ### New terms in this problem
 
@@ -602,7 +602,7 @@ A B-tree index can search by prefix, but the query still returns every match, wh
 <details>
 <summary><b>How do you suggest from the middle of a query ("chili" → "recipe for chili")?</b></summary>
 
-That's no longer prefix search. Options: index each query by every word (word-level suffixes) — so "chili" leads to "recipe for chili"; or use a full-text search engine with edge n-grams per word (see [15-search-basics](../../15-search-basics/README.md#10-autocomplete)). It increases the index size.
+That's no longer prefix search. Options: index each query by every word (word-level suffixes) — so "chili" leads to "recipe for chili"; or use a full-text search engine with edge n-grams per word (see [15-search-basics](../../01_Fundamentals/15_Search%20basics/README.md#10-autocomplete)). It increases the index size.
 </details>
 
 <details>
@@ -667,4 +667,4 @@ Search finds **documents** for a query and ranks them by relevance; autocomplete
 - Elasticsearch documentation: the completion suggester; Lucene FSTs
 - Cormode, Muthukrishnan, *An Improved Data Stream Summary: The Count-Min Sketch and its Applications* (2005)
 - Metwally, Agrawal, El Abbadi, *Efficient Computation of Frequent and Top-k Elements in Data Streams* (2005) — Space-Saving
-- Fundamentals topic: [15-search-basics](../../15-search-basics/README.md)
+- Fundamentals topic: [15-search-basics](../../01_Fundamentals/15_Search%20basics/README.md)

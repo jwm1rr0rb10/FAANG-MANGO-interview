@@ -1,4 +1,4 @@
-[English](INTERVIEW.md) | **Русский** · Теория: [README_RU.md](./README_RU.md)
+[English](INTERVIEW.md) | **Русский** · Теория: [README_RU.md](./README.ru.md)
 
 # 13. Reliability Patterns: устойчивость видеостримингового сервиса
 
@@ -541,7 +541,7 @@ flowchart LR
 
 ### Что почитать
 
-- Теория по теме: [README_RU.md](./README_RU.md)
+- Теория по теме: [README_RU.md](./README.ru.md)
 - Google SRE Book — «Addressing Cascading Failures»
 - Bronson et al., *Metastable Failures in Distributed Systems*
 - Amazon Builders' Library: *Using load shedding to avoid overload*

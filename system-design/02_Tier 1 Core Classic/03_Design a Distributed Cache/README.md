@@ -1,10 +1,10 @@
-**English** | [Русский](README_RU.md)
+**English** | [Русский](README.ru.md)
 
 # Tier 1 · 03. Distributed Cache (Memcached / Redis Cluster)
 
 > **Level:** Medium · **Interview time:** 45 min · **Study time:** ~5 h
 > **Key aspects:** single-node internals (hash table, eviction, TTL, memory), key distribution (consistent hashing, hash slots), routing, replication and failover, consistency with the database (leases), hot keys, stampede protection, multi-region
-> **Builds on:** [02-caching](../../02-caching/README.md) (how to **use** a cache), [05-replication](../../05-replication/README.md), [06-partitioning](../../06-partitioning/README.md), [08-consensus](../../08-consensus/README.md), [13-reliability-patterns](../../13-reliability-patterns/README.md)
+> **Builds on:** [02-caching](../../01_Fundamentals/02_Caching/README.md) (how to **use** a cache), [05-replication](../../01_Fundamentals/05_Replication/README.md), [06-partitioning](../../01_Fundamentals/06_Partitioning/README.md), [08-consensus](../../01_Fundamentals/08_Consensus/README.md), [13-reliability-patterns](../../01_Fundamentals/13_Reliability%20patterns/README.md)
 
 ---
 
@@ -51,7 +51,7 @@ Callouts: **TIP** — a good technique, **WARNING** — a trap, **IMPORTANT** �
 
 ## 0. What This Problem Teaches
 
-In [02-caching](../../02-caching/README.md) we **used** a cache: cache-aside, TTL, invalidation. Here you have to **build the cache itself** — a system like Memcached or Redis Cluster that hundreds of the company's services rely on.
+In [02-caching](../../01_Fundamentals/02_Caching/README.md) we **used** a cache: cache-aside, TTL, invalidation. Here you have to **build the cache itself** — a system like Memcached or Redis Cluster that hundreds of the company's services rely on.
 
 | What's tested | Where it shows up |
 |:--------------|:------------------|
@@ -203,7 +203,7 @@ gets(key)                             → (value, cas_token)
 cas(key, value, cas_token, ttl)       → ok | conflict         (compare-and-set)
 ```
 
-📘 **Why `cas` (compare-and-set).** Two services read a counter value of 10, both increment it to 11 and write — one update is lost (a lost update, see [04-databases](../../04-databases/README.md#9-concurrency-anomalies)). `gets` returns a **version** (a cas token) along with the value; `cas` writes only if the version hasn't changed. It's optimistic locking for a cache.
+📘 **Why `cas` (compare-and-set).** Two services read a counter value of 10, both increment it to 11 and write — one update is lost (a lost update, see [04-databases](../../01_Fundamentals/04_Databases/README.md#9-concurrency-anomalies)). `gets` returns a **version** (a cas token) along with the value; `cas` writes only if the version hasn't changed. It's optimistic locking for a cache.
 
 ---
 
@@ -252,7 +252,7 @@ flowchart TB
 
 ### 6.2 Eviction
 
-When memory runs out, something has to go. The policies are covered in [02-caching](../../02-caching/README.md#6-eviction-lru-lfu-and-others); what matters here is doing it **efficiently**.
+When memory runs out, something has to go. The policies are covered in [02-caching](../../01_Fundamentals/02_Caching/README.md#6-eviction-lru-lfu-and-others); what matters here is doing it **efficiently**.
 
 📘 **Exact LRU in O(1).** A hash table + a doubly linked list:
 
@@ -329,7 +329,7 @@ hash(key) % 160 ≠ hash(key) % 161 for almost every key
 → ~99% of keys "move" → mass misses → an avalanche of database requests
 ```
 
-For a cache this is a disaster: adding one server empties practically the whole cache. Details in [06-partitioning](../../06-partitioning/README.md#4-why-hash-mod-n-is-a-bad-idea-and-what-to-use-instead).
+For a cache this is a disaster: adding one server empties practically the whole cache. Details in [06-partitioning](../../01_Fundamentals/06_Partitioning/README.md#4-why-hash-mod-n-is-a-bad-idea-and-what-to-use-instead).
 
 ### Consistent hashing
 
@@ -442,7 +442,7 @@ With an unlucky distribution (hot keys on that node), the database may not cope.
 
 ### Replication
 
-📘 Replication in a cache is **asynchronous**: the primary answers the client immediately, and the replica catches up. Losing the last writes on failover is acceptable — it's a cache, and data is restored from the database (more on modes in [05-replication](../../05-replication/README.md)). Replicas can also serve **reads** to offload hot shards — at the risk of reading a slightly stale value.
+📘 Replication in a cache is **asynchronous**: the primary answers the client immediately, and the replica catches up. Losing the last writes on failover is acceptable — it's a cache, and data is restored from the database (more on modes in [05-replication](../../01_Fundamentals/05_Replication/README.md)). Replicas can also serve **reads** to offload hot shards — at the risk of reading a slightly stale value.
 
 ### Failure detection and failover
 
@@ -471,7 +471,7 @@ sequenceDiagram
 ### Split brain
 
 📘 If the old primary didn't die but just ended up behind a network partition, it can keep accepting writes — giving **two** primaries. For a cache this causes diverging values. Protections:
-- the new primary is chosen by a **majority** of observers (see [08-consensus](../../08-consensus/README.md));
+- the new primary is chosen by a **majority** of observers (see [08-consensus](../../01_Fundamentals/08_Consensus/README.md));
 - an old primary that lost contact with the majority **stops accepting writes by itself** (in Redis — `min-replicas-to-write`);
 - once connectivity returns, the old primary becomes a replica and discards its data.
 
@@ -484,7 +484,7 @@ sequenceDiagram
 
 > 🎤 "How do you keep stale data from lingering in the cache?"
 
-The basic strategies (cache-aside, delete-after-write, races) are covered in [02-caching](../../02-caching/README.md#7-invalidation). Here — what's needed **from the cache itself** so clients can behave correctly.
+The basic strategies (cache-aside, delete-after-write, races) are covered in [02-caching](../../01_Fundamentals/02_Caching/README.md#7-invalidation). Here — what's needed **from the cache itself** so clients can behave correctly.
 
 ### The race: a stale set
 
@@ -534,7 +534,7 @@ sequenceDiagram
 | The application deletes the key after writing | `db.update(...)`, then `cache.delete(...)` | Simple | If the app crashes between the steps, the key isn't deleted |
 | **CDC** ⭐ | An invalidation service reads the database's change log (binlog, WAL) and deletes the related keys | Nothing is lost: every committed change lands in the log | Needs CDC infrastructure and a "row → cache keys" mapping |
 
-Facebook described a system that reads the MySQL commit log and broadcasts deletes to caches (McSqueal). It's the same idea as CDC in [11-distributed-transactions](../../11-distributed-transactions/README.md#12-cdc-change-data-capture).
+Facebook described a system that reads the MySQL commit log and broadcasts deletes to caches (McSqueal). It's the same idea as CDC in [11-distributed-transactions](../../01_Fundamentals/11_Distributed%20transactions/README.md#12-cdc-change-data-capture).
 
 ### TTL as a safety net
 
@@ -709,12 +709,12 @@ flowchart TB
 
 | Concept | Where it's covered | How it applies here |
 |:--------|:-------------------|:--------------------|
-| Cache-aside, invalidation, eviction policies | [02-caching](../../02-caching/README.md) | How clients use the cache; LRU/LFU |
-| Async replication, failover | [05-replication](../../05-replication/README.md) | Shard replicas |
-| Consistent hashing, slots, migration | [06-partitioning](../../06-partitioning/README.md) | Key distribution |
-| Majority-based leader election, split brain | [08-consensus](../../08-consensus/README.md) | Failure detection, failover |
-| CDC | [11-distributed-transactions](../../11-distributed-transactions/README.md#12-cdc-change-data-capture) | Invalidation from the database log |
-| Tail latency, hedged requests | [13-reliability-patterns](../../13-reliability-patterns/README.md) | Multigets across many shards |
+| Cache-aside, invalidation, eviction policies | [02-caching](../../01_Fundamentals/02_Caching/README.md) | How clients use the cache; LRU/LFU |
+| Async replication, failover | [05-replication](../../01_Fundamentals/05_Replication/README.md) | Shard replicas |
+| Consistent hashing, slots, migration | [06-partitioning](../../01_Fundamentals/06_Partitioning/README.md) | Key distribution |
+| Majority-based leader election, split brain | [08-consensus](../../01_Fundamentals/08_Consensus/README.md) | Failure detection, failover |
+| CDC | [11-distributed-transactions](../../01_Fundamentals/11_Distributed%20transactions/README.md#12-cdc-change-data-capture) | Invalidation from the database log |
+| Tail latency, hedged requests | [13-reliability-patterns](../../01_Fundamentals/13_Reliability%20patterns/README.md) | Multigets across many shards |
 
 ### New terms in this problem
 

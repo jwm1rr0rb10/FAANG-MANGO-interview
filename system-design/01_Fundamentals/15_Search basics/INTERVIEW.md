@@ -1,4 +1,4 @@
-**English** | [Русский](INTERVIEW_RU.md) · Theory: [README.md](./README.md)
+**English** | [Русский](INTERVIEW.ru.md) · Theory: [README.md](./README.md)
 
 # 15. Search Basics: Product Search for a Marketplace
 

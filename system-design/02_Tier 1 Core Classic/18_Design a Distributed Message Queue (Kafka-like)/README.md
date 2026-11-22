@@ -1,10 +1,10 @@
-**English** | [Русский](README_RU.md)
+**English** | [Русский](README.ru.md)
 
 # Tier 1 · 18. Distributed Message Queue (like Kafka)
 
 > **Level:** Hard · **Interview time:** 45–60 min · **Study time:** ~5–6 h
 > **Key aspects:** an append-only partitioned log, segments and indexes, why it's fast (sequential I/O, page cache, zero-copy, batching), replication (ISR, high watermark, acks), the controller and metadata (KRaft), consumer groups and rebalancing, offsets and delivery semantics, exactly-once (idempotent producer, transactions), retention, compaction, tiered storage
-> **Builds on:** [09-messaging](../../09-messaging/README.md) (how to **use** a broker), [05-replication](../../05-replication/README.md), [08-consensus](../../08-consensus/README.md), [06-partitioning](../../06-partitioning/README.md), [10-idempotency](../../10-idempotency/README.md)
+> **Builds on:** [09-messaging](../../01_Fundamentals/09_Messaging/README.md) (how to **use** a broker), [05-replication](../../01_Fundamentals/05_Replication/README.md), [08-consensus](../../01_Fundamentals/08_Consensus/README.md), [06-partitioning](../../01_Fundamentals/06_Partitioning/README.md), [10-idempotency](../../01_Fundamentals/10_Idempotency/README.md)
 
 ---
 
@@ -52,7 +52,7 @@ Callouts: **TIP** — a good technique, **WARNING** — a trap, **IMPORTANT** �
 
 ## 0. What This Problem Teaches
 
-In [09-messaging](../../09-messaging/README.md) we **used** a message broker. Here you have to **build one**: a system that accepts millions of messages per second, retains them for days without loss and serves them to many independent consumers.
+In [09-messaging](../../01_Fundamentals/09_Messaging/README.md) we **used** a message broker. Here you have to **build one**: a system that accepts millions of messages per second, retains them for days without loss and serves them to many independent consumers.
 
 | What's tested | Where it shows up |
 |:--------------|:------------------|
@@ -390,7 +390,7 @@ sequenceDiagram
 | **Unclean leader election** (off by default) | If the ISR is empty, a lagging replica can be made leader — the partition becomes available again, but some acknowledged messages are lost. The availability vs durability trade-off |
 
 > [!IMPORTANT]
-> **Senior+ signal:** explain the combination `acks=all` + `min.insync.replicas=2` + `replication.factor=3` + cross-zone replication: that's what delivers "no loss if one broker or zone fails", and rejecting writes after losing two replicas is a deliberate choice of durability (see CAP in [07-consistency-models](../../07-consistency-models/README.md)).
+> **Senior+ signal:** explain the combination `acks=all` + `min.insync.replicas=2` + `replication.factor=3` + cross-zone replication: that's what delivers "no loss if one broker or zone fails", and rejecting writes after losing two replicas is a deliberate choice of durability (see CAP in [07-consistency-models](../../01_Fundamentals/07_Consistency%20models/README.md)).
 
 ---
 
@@ -412,7 +412,7 @@ sequenceDiagram
 
 | | ZooKeeper (historically) | KRaft |
 |:-|:-------------------------|:------|
-| Where metadata lives | An external ZooKeeper cluster | An internal quorum of controllers running **Raft** (see [08-consensus](../../08-consensus/README.md)) |
+| Where metadata lives | An external ZooKeeper cluster | An internal quorum of controllers running **Raft** (see [08-consensus](../../01_Fundamentals/08_Consensus/README.md)) |
 | Operations | Two different systems | One system |
 | Scale | Controller recovery with many partitions was slow | Metadata is a replicated event log; brokers read it like a regular topic |
 | Status | Removed in Kafka 4.0 | The default |
@@ -490,11 +490,11 @@ flowchart LR
 | Processing and the offset in one transaction | **Exactly-once** | Deep dive 6 |
 
 > [!TIP]
-> The standard choice is **at-least-once + idempotent processing** on the consumer side (see [10-idempotency](../../10-idempotency/README.md)). It's simpler and more robust than exactly-once, and it works with any external system.
+> The standard choice is **at-least-once + idempotent processing** on the consumer side (see [10-idempotency](../../01_Fundamentals/10_Idempotency/README.md)). It's simpler and more robust than exactly-once, and it works with any external system.
 
 ### Lag
 
-`lag = the partition's latest offset − the group's offset`. The key health metric for consumers: growing lag means the group is falling behind (see [09-messaging](../../09-messaging/README.md#10-backpressure-and-flow-control)).
+`lag = the partition's latest offset − the group's offset`. The key health metric for consumers: growing lag means the group is falling behind (see [09-messaging](../../01_Fundamentals/09_Messaging/README.md#10-backpressure-and-flow-control)).
 
 ---
 
@@ -667,12 +667,12 @@ Deleting a key: a (u2, null) record — a "tombstone"; after a while the key dis
 
 | Concept | Where it's covered | How it applies here |
 |:--------|:-------------------|:--------------------|
-| Using a broker, delivery semantics, the outbox | [09-messaging](../../09-messaging/README.md) | The client's point of view |
-| Leaders and followers, quorums | [05-replication](../../05-replication/README.md) | Partition replication |
-| Raft | [08-consensus](../../08-consensus/README.md) | The KRaft controller |
-| Partitioning by key | [06-partitioning](../../06-partitioning/README.md) | Key → partition |
-| Idempotency | [10-idempotency](../../10-idempotency/README.md) | At-least-once processing |
-| CAP: durability vs availability | [07-consistency-models](../../07-consistency-models/README.md) | `min.insync.replicas`, unclean election |
+| Using a broker, delivery semantics, the outbox | [09-messaging](../../01_Fundamentals/09_Messaging/README.md) | The client's point of view |
+| Leaders and followers, quorums | [05-replication](../../01_Fundamentals/05_Replication/README.md) | Partition replication |
+| Raft | [08-consensus](../../01_Fundamentals/08_Consensus/README.md) | The KRaft controller |
+| Partitioning by key | [06-partitioning](../../01_Fundamentals/06_Partitioning/README.md) | Key → partition |
+| Idempotency | [10-idempotency](../../01_Fundamentals/10_Idempotency/README.md) | At-least-once processing |
+| CAP: durability vs availability | [07-consistency-models](../../01_Fundamentals/07_Consistency%20models/README.md) | `min.insync.replicas`, unclean election |
 
 ### New terms in this problem
 

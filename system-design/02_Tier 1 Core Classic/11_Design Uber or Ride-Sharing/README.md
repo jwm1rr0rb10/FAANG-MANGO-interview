@@ -1,10 +1,10 @@
-**English** | [Русский](README_RU.md)
+**English** | [Русский](README.ru.md)
 
 # Tier 1 · 11. Uber / Ride-Hailing
 
 > **Level:** Hard · **Interview time:** 45–60 min · **Study time:** ~5–6 h
 > **Key aspects:** the driver location stream, geospatial indexes (geohash, quadtree, S2, H3), finding nearby drivers, matching and ride offers, protection against double assignment, the trip state machine, ETA and routing, dynamic pricing, geo-sharding
-> **Builds on:** [12-communication: interview walkthrough](../../12-communication/INTERVIEW.md) (WebSocket and the location stream), [06-partitioning](../../06-partitioning/README.md), [07-consistency-models](../../07-consistency-models/README.md), [08-consensus](../../08-consensus/README.md#10-split-brain-and-fencing-tokens), [10-idempotency](../../10-idempotency/README.md)
+> **Builds on:** [12-communication: interview walkthrough](../../01_Fundamentals/12_Communication/INTERVIEW.md) (WebSocket and the location stream), [06-partitioning](../../01_Fundamentals/06_Partitioning/README.md), [07-consistency-models](../../01_Fundamentals/07_Consistency%20models/README.md), [08-consensus](../../01_Fundamentals/08_Consensus/README.md#10-split-brain-and-fencing-tokens), [10-idempotency](../../01_Fundamentals/10_Idempotency/README.md)
 
 ---
 
@@ -65,7 +65,7 @@ Ride-hailing is the main problem about **geospatial data** and **fast-changing s
 | Real-time communication | The car's position on the rider's map |
 
 > [!TIP]
-> Interviewers most often go deep on **the geo index** (explain how to find drivers within 2 km without a full scan) and **matching without double assignment**. The transport layer (WebSocket, the location stream) is covered in [12-communication](../../12-communication/INTERVIEW.md) — refer to it and don't spend much time there.
+> Interviewers most often go deep on **the geo index** (explain how to find drivers within 2 km without a full scan) and **matching without double assignment**. The transport layer (WebSocket, the location stream) is covered in [12-communication](../../01_Fundamentals/12_Communication/INTERVIEW.md) — refer to it and don't spend much time there.
 
 ---
 
@@ -252,7 +252,7 @@ Pricing computes the price with the demand multiplier from the surge service; pa
 
 > 🎤 "250,000 location updates per second. Where do they go?"
 
-The transport layer is covered in detail in [12-communication](../../12-communication/INTERVIEW.md#8-deep-dive-2-the-driver-location-stream). In short:
+The transport layer is covered in detail in [12-communication](../../01_Fundamentals/12_Communication/INTERVIEW.md#8-deep-dive-2-the-driver-location-stream). In short:
 
 | Principle | Implementation |
 |:----------|:---------------|
@@ -486,7 +486,7 @@ return 1
 ```
 
 > [!WARNING]
-> Checking "is the driver available" and reserving them must be **one atomic operation**. "Read the status, then write" produces the same race as in the [rate limiter](../02-rate-limiter/README.md#8-deep-dive-2-distributed-limits-and-atomicity).
+> Checking "is the driver available" and reserving them must be **one atomic operation**. "Read the status, then write" produces the same race as in the [rate limiter](../02_Design%20a%20Rate%20Limiter%20or%20Abuse%20Protection/README.md#8-deep-dive-2-distributed-limits-and-atomicity).
 
 ### Batch matching
 
@@ -539,7 +539,7 @@ stateDiagram-v2
 | **Only certain transitions are allowed** | A table of allowed transitions; `COMPLETED → DRIVER_ASSIGNED` is impossible |
 | **Optimistic locking** | `UPDATE trips SET status = :new, version = version + 1 WHERE trip_id = :id AND status = :expected AND version = :v` — the race between "the driver completed" and "the rider cancelled" is decided by whoever got there first |
 | **Idempotency** | A repeated "complete" from the driver (after a network drop) doesn't create a second charge |
-| **An event per transition** | Written to the trip event log and to Kafka via an outbox (notifications, analytics, payment) — see [09-messaging](../../09-messaging/README.md#7-the-producer-side-the-dual-write-problem-and-the-outbox) |
+| **An event per transition** | Written to the trip event log and to Kafka via an outbox (notifications, analytics, payment) — see [09-messaging](../../01_Fundamentals/09_Messaging/README.md#7-the-producer-side-the-dual-write-problem-and-the-outbox) |
 | **Linked to driver state** | Completing or cancelling a trip returns the driver to `AVAILABLE` |
 
 📘 **Why a state machine rather than a set of flags.** Flags like `is_started`, `is_cancelled`, `is_paid` allow impossible combinations (cancelled and paid). An explicit state machine with a single `status` field and a transition table makes invalid states **unrepresentable**.
@@ -617,7 +617,7 @@ Uber described the Ringpop library (consistent hashing + gossip) for distributin
 |:--------|:------------|:---------|
 | A location service node dies | The shard's geo index is lost | The index **rebuilds itself** within seconds from the next location updates (every 4 s); replicas for fast failover |
 | A dispatch node dies mid-offer | A driver is "stuck" in `OFFERED` | The offer timeout returns the driver to `AVAILABLE`; driver state in Redis survives the process crash |
-| Two nodes believe they own a shard | Double assignment | An atomic CAS in the shared driver state store + fencing (see [08-consensus](../../08-consensus/README.md#10-split-brain-and-fencing-tokens)) |
+| Two nodes believe they own a shard | Double assignment | An atomic CAS in the shared driver state store + fencing (see [08-consensus](../../01_Fundamentals/08_Consensus/README.md#10-split-brain-and-fencing-tokens)) |
 | The driver app loses connectivity during a trip | No updates | The app continues the trip locally, records the track and syncs on reconnect |
 | The trip database is down | Trips can't be created | Replicas, failover; trips in progress continue on the clients |
 | A region is down | A city isn't served | Failover to a backup region; Uber described keeping part of the trip state on the driver's phone to recover after failover |
@@ -664,12 +664,12 @@ Uber described the Ringpop library (consistent hashing + gossip) for distributin
 
 | Concept | Where it's covered | How it applies here |
 |:--------|:-------------------|:--------------------|
-| WebSocket, the location stream | [12-communication: interview](../../12-communication/INTERVIEW.md) | Transporting locations and updates |
-| Sharding, consistent hashing | [06-partitioning](../../06-partitioning/README.md) | Geo-sharding |
-| Fencing, split brain | [08-consensus](../../08-consensus/README.md#10-split-brain-and-fencing-tokens) | Protecting against two shard owners |
-| Outbox and events | [09-messaging](../../09-messaging/README.md) | Trip events |
-| Idempotency | [10-idempotency](../../10-idempotency/README.md) | Requests, transitions, payments |
-| Atomic CAS | [Tier 1 · 02](../02-rate-limiter/README.md#8-deep-dive-2-distributed-limits-and-atomicity) | Reserving a driver |
+| WebSocket, the location stream | [12-communication: interview](../../01_Fundamentals/12_Communication/INTERVIEW.md) | Transporting locations and updates |
+| Sharding, consistent hashing | [06-partitioning](../../01_Fundamentals/06_Partitioning/README.md) | Geo-sharding |
+| Fencing, split brain | [08-consensus](../../01_Fundamentals/08_Consensus/README.md#10-split-brain-and-fencing-tokens) | Protecting against two shard owners |
+| Outbox and events | [09-messaging](../../01_Fundamentals/09_Messaging/README.md) | Trip events |
+| Idempotency | [10-idempotency](../../01_Fundamentals/10_Idempotency/README.md) | Requests, transitions, payments |
+| Atomic CAS | [Tier 1 · 02](../02_Design%20a%20Rate%20Limiter%20or%20Abuse%20Protection/README.md#8-deep-dive-2-distributed-limits-and-atomicity) | Reserving a driver |
 
 ### New terms in this problem
 
@@ -699,7 +699,7 @@ Redis GEO (built on geohash in a sorted set) is a great option for small and mid
 <details>
 <summary><b>How do you show the rider the car driving toward them?</b></summary>
 
-After assignment, the driver's locations are forwarded only to that trip's rider over WebSocket (fan-out keeps a "driver → rider of the active trip" mapping). Locations are at-most-once; only the latest matters. Details in [12-communication](../../12-communication/INTERVIEW.md).
+After assignment, the driver's locations are forwarded only to that trip's rider over WebSocket (fan-out keeps a "driver → rider of the active trip" mapping). Locations are at-most-once; only the latest matters. Details in [12-communication](../../01_Fundamentals/12_Communication/INTERVIEW.md).
 </details>
 
 <details>

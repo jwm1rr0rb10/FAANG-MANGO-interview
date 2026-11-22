@@ -1,10 +1,10 @@
-**English** | [Русский](README_RU.md)
+**English** | [Русский](README.ru.md)
 
 # Tier 1 · 02. Rate Limiter / Abuse Protection
 
 > **Level:** Medium · **Interview time:** 45 min · **Study time:** ~4–5 h
 > **Key aspects:** algorithms (fixed window, sliding log, sliding window counter, token bucket, leaky bucket, GCRA), distributed counters in Redis, atomicity via Lua, per-user, per-key and per-IP limits, fail open / fail closed, multi-region
-> **Builds on:** [02-caching](../../02-caching/README.md), [06-partitioning](../../06-partitioning/README.md), [07-consistency-models](../../07-consistency-models/README.md), [12-communication](../../12-communication/README.md), [13-reliability-patterns](../../13-reliability-patterns/README.md#6-rate-limiting)
+> **Builds on:** [02-caching](../../01_Fundamentals/02_Caching/README.md), [06-partitioning](../../01_Fundamentals/06_Partitioning/README.md), [07-consistency-models](../../01_Fundamentals/07_Consistency%20models/README.md), [12-communication](../../01_Fundamentals/12_Communication/README.md), [13-reliability-patterns](../../01_Fundamentals/13_Reliability%20patterns/README.md#6-rate-limiting)
 
 ---
 
@@ -194,7 +194,7 @@ Content-Type: application/json
 | Code | When | Why not another |
 |:-----|:-----|:----------------|
 | `429 Too Many Requests` | The client exceeded **its own** quota | A client error: it needs to slow down |
-| `503 Service Unavailable` | The **service** is overloaded (load shedding), regardless of the client's quota | A server problem, not the client's (see [13-reliability-patterns](../../13-reliability-patterns/README.md#7-load-shedding-and-prioritization)) |
+| `503 Service Unavailable` | The **service** is overloaded (load shedding), regardless of the client's quota | A server problem, not the client's (see [13-reliability-patterns](../../01_Fundamentals/13_Reliability%20patterns/README.md#7-load-shedding-and-prioritization)) |
 
 ---
 
@@ -561,7 +561,7 @@ For accuracy under contention, these steps are also conveniently wrapped in one 
 
 ### Sharding
 
-Redis Cluster spreads keys across 16,384 slots by key hash (see [02-caching](../../02-caching/README.md)). Different clients' keys spread evenly across shards, and load scales by adding shards. ~30–50 shards (with replicas) handle 3M operations per second.
+Redis Cluster spreads keys across 16,384 slots by key hash (see [02-caching](../../01_Fundamentals/02_Caching/README.md)). Different clients' keys spread evenly across shards, and load scales by adding shards. ~30–50 shards (with replicas) handle 3M operations per second.
 
 ### A hot key
 
@@ -623,7 +623,7 @@ sequenceDiagram
 | **A short timeout** on Redis calls (e.g. 5 ms) | A slow Redis doesn't add latency to every request |
 | **A circuit breaker** | After a series of errors, stop calling Redis for N seconds so we don't waste time on timeouts |
 | **A local fallback limit** | In fail-open mode the gateway applies a coarse **local** token bucket (limit / number of gateways, with headroom) — protection remains, if imprecise |
-| **Load shedding in services** | Independent overload protection (see [13-reliability-patterns](../../13-reliability-patterns/README.md#7-load-shedding-and-prioritization)) |
+| **Load shedding in services** | Independent overload protection (see [13-reliability-patterns](../../01_Fundamentals/13_Reliability%20patterns/README.md#7-load-shedding-and-prioritization)) |
 | **An alert** | A limiter in fail-open mode is worth a page |
 
 For protective limits (login, SMS) — **fail closed** with a clear error: better a user waits a minute than we let a password-guessing attack through or rack up a bill for thousands of SMS."
@@ -803,13 +803,13 @@ flowchart LR
 
 | Concept | Where it's covered | How it applies here |
 |:--------|:-------------------|:--------------------|
-| Redis, clustering, hot keys | [02-caching](../../02-caching/README.md) | The counter store |
-| Partitioning by key | [06-partitioning](../../06-partitioning/README.md) | Sharding counters by client |
-| Approximate consistency | [07-consistency-models](../../07-consistency-models/README.md) | An acceptable overshoot for the sake of speed |
-| Atomicity, races | [04-databases](../../04-databases/README.md#9-concurrency-anomalies) | Lost updates with "read — write" |
-| HTTP codes and headers | [12-communication](../../12-communication/README.md) | `429`, `Retry-After`, `RateLimit-*` |
-| Circuit breakers, load shedding | [13-reliability-patterns](../../13-reliability-patterns/README.md) | A limiter failure, protecting services |
-| Retries with backoff and jitter | [10-idempotency](../../10-idempotency/README.md#8-exponential-backoff-and-jitter) | How clients should react to 429 |
+| Redis, clustering, hot keys | [02-caching](../../01_Fundamentals/02_Caching/README.md) | The counter store |
+| Partitioning by key | [06-partitioning](../../01_Fundamentals/06_Partitioning/README.md) | Sharding counters by client |
+| Approximate consistency | [07-consistency-models](../../01_Fundamentals/07_Consistency%20models/README.md) | An acceptable overshoot for the sake of speed |
+| Atomicity, races | [04-databases](../../01_Fundamentals/04_Databases/README.md#9-concurrency-anomalies) | Lost updates with "read — write" |
+| HTTP codes and headers | [12-communication](../../01_Fundamentals/12_Communication/README.md) | `429`, `Retry-After`, `RateLimit-*` |
+| Circuit breakers, load shedding | [13-reliability-patterns](../../01_Fundamentals/13_Reliability%20patterns/README.md) | A limiter failure, protecting services |
+| Retries with backoff and jitter | [10-idempotency](../../01_Fundamentals/10_Idempotency/README.md#8-exponential-backoff-and-jitter) | How clients should react to 429 |
 
 ### New terms in this problem
 

@@ -1,10 +1,10 @@
-**English** | [Русский](README_RU.md)
+**English** | [Русский](README.ru.md)
 
 # Tier 1 · 09. YouTube / Netflix
 
 > **Level:** Hard · **Interview time:** 45–60 min · **Study time:** ~5–6 h
 > **Key aspects:** uploading large files, the transcoding pipeline (a DAG, parallel chunk encoding), the bitrate ladder and codecs, adaptive streaming (HLS/DASH), CDN and ISP-embedded caches, view counting, metadata and recommendations, YouTube vs Netflix differences, playback quality
-> **Builds on:** [03-cdn](../../03-cdn/README.md#10-media-and-video), [14-storage-types](../../14-storage-types/README.md#9-uploading-large-files), [09-messaging](../../09-messaging/README.md), [11-distributed-transactions](../../11-distributed-transactions/README.md#13-workflow-engines), [Tier 1 · 08 Instagram](../08-instagram/README.md)
+> **Builds on:** [03-cdn](../../01_Fundamentals/03_CDN/README.md#10-media-and-video), [14-storage-types](../../01_Fundamentals/14_Storage%20types/README.md#9-uploading-large-files), [09-messaging](../../01_Fundamentals/09_Messaging/README.md), [11-distributed-transactions](../../01_Fundamentals/11_Distributed%20transactions/README.md#13-workflow-engines), [Tier 1 · 08 Instagram](../08_Design%20Instagram/README.md)
 
 ---
 
@@ -252,7 +252,7 @@ flowchart TB
 
 > 🎤 "A creator uploads a 20 GB video over flaky Wi-Fi. How do you avoid starting over on every drop?"
 
-🗣️ "A **resumable chunked upload** directly into object storage (see [14-storage-types](../../14-storage-types/README.md#9-uploading-large-files)):
+🗣️ "A **resumable chunked upload** directly into object storage (see [14-storage-types](../../01_Fundamentals/14_Storage%20types/README.md#9-uploading-large-files)):
 
 | Step | What happens |
 |:-----|:-------------|
@@ -351,7 +351,7 @@ flowchart TB
 
 | Principle | Why |
 |:----------|:----|
-| **A workflow engine** (as in [11-distributed-transactions](../../11-distributed-transactions/README.md#13-workflow-engines)) | Retries, timeouts, visibility into each stage's status |
+| **A workflow engine** (as in [11-distributed-transactions](../../01_Fundamentals/11_Distributed%20transactions/README.md#13-workflow-engines)) | Retries, timeouts, visibility into each stage's status |
 | **Idempotent tasks** | The result key is deterministic (`renditions/{id}/{codec}/{quality}/chunk_N`) — a retry overwrites the same object |
 | **Priorities** | Popular creators and short videos go faster; re-encoding old videos runs in the background |
 | **Workers on cheap preemptible machines** | Tasks are short and retryable — losing a machine = retrying one chunk |
@@ -458,7 +458,7 @@ flowchart LR
 | Mid-popular | A noticeable part | Regional caches |
 | The long tail (most of YouTube's catalog) | A small share | Misses → origin shield → storage |
 
-🗣️ "YouTube's catalog is huge, and not every video fits in caches. That's fine: popular videos make up most of the traffic and are almost always cached, while rare ones come from deeper tiers. What matters is that an **origin shield** aggregates the misses and that concurrent misses for the same segment are merged (request collapsing, see [03-cdn](../../03-cdn/README.md))."
+🗣️ "YouTube's catalog is huge, and not every video fits in caches. That's fine: popular videos make up most of the traffic and are almost always cached, while rare ones come from deeper tiers. What matters is that an **origin shield** aggregates the misses and that concurrent misses for the same segment are merged (request collapsing, see [03-cdn](../../01_Fundamentals/03_CDN/README.md))."
 
 ### Other decisions
 
@@ -519,7 +519,7 @@ flowchart LR
 
 ### Search
 
-- An index over titles, descriptions, captions (from speech recognition) and tags in a search engine (see [15-search-basics](../../15-search-basics/README.md)).
+- An index over titles, descriptions, captions (from speech recognition) and tags in a search engine (see [15-search-basics](../../01_Fundamentals/15_Search%20basics/README.md)).
 - Ranking considers text relevance, popularity, freshness and channel quality.
 
 ### Recommendations
@@ -576,7 +576,7 @@ Metrics are collected from player heartbeat events and sliced by CDN, ISP, regio
 | A slow node | The node steering service accounts for measured quality; the player lowers the bitrate |
 | A metadata outage | A metadata cache; a video already open for a viewer keeps playing from the CDN |
 | A pipeline outage | Tasks are retried; already published videos are unaffected |
-| A region is down | Netflix described regular drills shifting traffic between regions, and chaos engineering (see [13-reliability-patterns](../../13-reliability-patterns/README.md#11-verifying-reliability-chaos-engineering-and-game-days)) |
+| A region is down | Netflix described regular drills shifting traffic between regions, and chaos engineering (see [13-reliability-patterns](../../01_Fundamentals/13_Reliability%20patterns/README.md#11-verifying-reliability-chaos-engineering-and-game-days)) |
 
 ---
 
@@ -617,12 +617,12 @@ Metrics are collected from player heartbeat events and sliced by CDN, ISP, regio
 
 | Concept | Where it's covered | How it applies here |
 |:--------|:-------------------|:--------------------|
-| CDNs, origin shields, video at the edge | [03-cdn](../../03-cdn/README.md#10-media-and-video) | Delivering segments |
-| Uploading large files, storage classes | [14-storage-types](../../14-storage-types/README.md) | Originals and variants |
-| Queues and stream processing | [09-messaging](../../09-messaging/README.md) | Playback events, views |
-| Workflow engines | [11-distributed-transactions](../../11-distributed-transactions/README.md#13-workflow-engines) | Orchestrating the pipeline |
-| Search, multi-stage ranking | [15-search-basics](../../15-search-basics/README.md) | Search and recommendations |
-| Chaos engineering | [13-reliability-patterns](../../13-reliability-patterns/README.md) | Netflix's resilience |
+| CDNs, origin shields, video at the edge | [03-cdn](../../01_Fundamentals/03_CDN/README.md#10-media-and-video) | Delivering segments |
+| Uploading large files, storage classes | [14-storage-types](../../01_Fundamentals/14_Storage%20types/README.md) | Originals and variants |
+| Queues and stream processing | [09-messaging](../../01_Fundamentals/09_Messaging/README.md) | Playback events, views |
+| Workflow engines | [11-distributed-transactions](../../01_Fundamentals/11_Distributed%20transactions/README.md#13-workflow-engines) | Orchestrating the pipeline |
+| Search, multi-stage ranking | [15-search-basics](../../01_Fundamentals/15_Search%20basics/README.md) | Search and recommendations |
+| Chaos engineering | [13-reliability-patterns](../../01_Fundamentals/13_Reliability%20patterns/README.md) | Netflix's resilience |
 
 ### New terms in this problem
 

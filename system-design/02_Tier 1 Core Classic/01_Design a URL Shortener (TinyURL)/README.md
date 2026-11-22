@@ -1,10 +1,10 @@
-**English** | [Русский](README_RU.md)
+**English** | [Русский](README.ru.md)
 
 # Tier 1 · 01. URL Shortener (TinyURL, bit.ly)
 
 > **Level:** Easy (but depth is expected at Senior+) · **Interview time:** 45 min · **Study time:** ~4 h
 > **Key aspects:** short code generation (base62, counters, ranges, hashes), redirect latency, caching, click analytics, abuse protection
-> **Builds on:** [01-scaling-basics](../../01-scaling-basics/README.md), [02-caching](../../02-caching/README.md), [03-cdn](../../03-cdn/README.md), [04-databases](../../04-databases/README.md), [06-partitioning](../../06-partitioning/README.md), [09-messaging](../../09-messaging/README.md)
+> **Builds on:** [01-scaling-basics](../../01_Fundamentals/01_Scaling%20basics/README.md), [02-caching](../../01_Fundamentals/02_Caching/README.md), [03-cdn](../../01_Fundamentals/03_CDN/README.md), [04-databases](../../01_Fundamentals/04_Databases/README.md), [06-partitioning](../../01_Fundamentals/06_Partitioning/README.md), [09-messaging](../../01_Fundamentals/09_Messaging/README.md)
 
 ---
 
@@ -226,7 +226,7 @@ Content-Type: application/json
 | `409 Conflict` | The alias is already taken |
 | `429 Too Many Requests` | The creation limit was exceeded |
 
-📘 **Why `Idempotency-Key`.** A client sent a request and the response got lost (a timeout). It retries. Without a key, the server would create a **second** link to the same URL — the user would end up with two different short links, and the statistics would be split. With a key, the server recognizes the retry and returns the link it already created. More in [10-idempotency](../../10-idempotency/README.md).
+📘 **Why `Idempotency-Key`.** A client sent a request and the response got lost (a timeout). It retries. Without a key, the server would create a **second** link to the same URL — the user would end up with two different short links, and the statistics would be split. With a key, the server recognizes the retry and returns the link it already created. More in [10-idempotency](../../01_Fundamentals/10_Idempotency/README.md).
 
 ### The redirect
 
@@ -295,7 +295,7 @@ Choosing storage starts with "which queries, and how often":
 
 🗣️ "I'll pick a **key-value store** (DynamoDB or Cassandra) with `code` as the partition key. For the dashboard — a separate `links_by_owner (owner_id, created_at, code)` table, filled when a link is created. PostgreSQL is also a workable option — what matters is that the shard key is `code`, so every redirect hits exactly one shard."
 
-📘 **Why the partition key is `code`.** A redirect knows only the code. If data is spread by hash of the code, the service knows immediately which shard to query — one network request. If sharding were by `owner_id`, a redirect would have to ask every shard. More in [06-partitioning](../../06-partitioning/README.md).
+📘 **Why the partition key is `code`.** A redirect knows only the code. If data is spread by hash of the code, the service knows immediately which shard to query — one network request. If sharding were by `owner_id`, a redirect would have to ask every shard. More in [06-partitioning](../../01_Fundamentals/06_Partitioning/README.md).
 
 ---
 
@@ -865,14 +865,14 @@ flowchart TB
 
 | Question | Decision | Why |
 |:---------|:---------|:----|
-| How to route a user to the nearest region | GeoDNS or Anycast | See [01-scaling-basics](../../01-scaling-basics/README.md) |
+| How to route a user to the nearest region | GeoDNS or Anycast | See [01-scaling-basics](../../01_Fundamentals/01_Scaling%20basics/README.md) |
 | Where links are created | In any region | Each region gets **its own set of number blocks** — no collisions without cross-region coordination |
 | How data reaches other regions | Async replication (DynamoDB Global Tables, Cassandra multi-DC) | Synchronous replication across continents would add 100+ ms to creation |
 | A link created in EU and opened immediately in US before the replica caught up | Fallback: on a local replica miss, query the owning region | The owning region is derived from the block number "baked into" the number |
 | Custom aliases | Written to one "home" region or through a consensus store | Uniqueness of a human-chosen string needs global coordination; the operation is rare, so latency is acceptable |
 
 > [!NOTE]
-> This illustrates an idea from [07-consistency-models](../../07-consistency-models/README.md): **uniqueness** needs strict coordination (ranges, consensus for aliases), while **reads** are fine with eventual consistency plus a fallback.
+> This illustrates an idea from [07-consistency-models](../../01_Fundamentals/07_Consistency%20models/README.md): **uniqueness** needs strict coordination (ranges, consensus for aliases), while **reads** are fine with eventual consistency plus a fallback.
 
 ---
 
@@ -911,15 +911,15 @@ flowchart TB
 
 | Concept | Where it's covered | How it applies here |
 |:--------|:-------------------|:--------------------|
-| Stateless services and load balancing | [01-scaling-basics](../../01-scaling-basics/README.md) | Redirect and write services scale horizontally |
-| Cache-aside, negative caching, hot keys | [02-caching](../../02-caching/README.md) | Redis, the in-process cache, caching "code not found" |
-| CDN and edge | [03-cdn](../../03-cdn/README.md) | Popular redirects at the edge |
-| The key-value model, conditional inserts | [04-databases](../../04-databases/README.md) | The `links` table, alias uniqueness |
-| Partitioning by key | [06-partitioning](../../06-partitioning/README.md) | Key = `code`; a redirect hits one shard |
-| Consistency models | [07-consistency-models](../../07-consistency-models/README.md) | Strict for uniqueness; eventual for reads |
-| Async events | [09-messaging](../../09-messaging/README.md) | Clicks via Kafka |
-| Idempotency | [10-idempotency](../../10-idempotency/README.md) | `Idempotency-Key` on creation |
-| Rate limiting | [13-reliability-patterns](../../13-reliability-patterns/README.md#6-rate-limiting) | Protection against spam and enumeration |
+| Stateless services and load balancing | [01-scaling-basics](../../01_Fundamentals/01_Scaling%20basics/README.md) | Redirect and write services scale horizontally |
+| Cache-aside, negative caching, hot keys | [02-caching](../../01_Fundamentals/02_Caching/README.md) | Redis, the in-process cache, caching "code not found" |
+| CDN and edge | [03-cdn](../../01_Fundamentals/03_CDN/README.md) | Popular redirects at the edge |
+| The key-value model, conditional inserts | [04-databases](../../01_Fundamentals/04_Databases/README.md) | The `links` table, alias uniqueness |
+| Partitioning by key | [06-partitioning](../../01_Fundamentals/06_Partitioning/README.md) | Key = `code`; a redirect hits one shard |
+| Consistency models | [07-consistency-models](../../01_Fundamentals/07_Consistency%20models/README.md) | Strict for uniqueness; eventual for reads |
+| Async events | [09-messaging](../../01_Fundamentals/09_Messaging/README.md) | Clicks via Kafka |
+| Idempotency | [10-idempotency](../../01_Fundamentals/10_Idempotency/README.md) | `Idempotency-Key` on creation |
+| Rate limiting | [13-reliability-patterns](../../01_Fundamentals/13_Reliability%20patterns/README.md#6-rate-limiting) | Protection against spam and enumeration |
 
 ### New terms in this problem
 
@@ -1022,4 +1022,4 @@ For code uniqueness — yes: number ranges and conditional inserts for aliases. 
 - DynamoDB documentation: conditional writes, TTL, Global Tables
 - Burton H. Bloom, *Space/Time Trade-offs in Hash Coding with Allowable Errors* (1970) — the original Bloom filter paper
 - Flajolet et al., *HyperLogLog: the analysis of a near-optimal cardinality estimation algorithm* (2007)
-- Fundamentals topics: [02-caching](../../02-caching/README.md), [06-partitioning](../../06-partitioning/README.md), [09-messaging](../../09-messaging/README.md)
+- Fundamentals topics: [02-caching](../../01_Fundamentals/02_Caching/README.md), [06-partitioning](../../01_Fundamentals/06_Partitioning/README.md), [09-messaging](../../01_Fundamentals/09_Messaging/README.md)

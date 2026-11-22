@@ -4,7 +4,7 @@
 
 > **Уровень:** Medium–Hard · **Время на интервью:** 45 мин · **Время на разбор:** ~4–5 ч
 > **Ключевые аспекты:** URL frontier (приоритеты и вежливость), robots.txt, DNS и загрузка страниц, нормализация и дедупликация URL (Bloom filter), дедупликация содержимого (контрольные суммы, SimHash), ловушки для краулеров, повторный обход и свежесть, хранение страниц, распределение по узлам и отказоустойчивость
-> **Опирается на:** [Tier 1 · 01 URL Shortener](../01-url-shortener/README_RU.md#8-deep-dive-2-быстрый-редирект-и-кэширование) (Bloom filter), [09-messaging](../../09-messaging/README_RU.md), [06-partitioning](../../06-partitioning/README_RU.md), [14-storage-types](../../14-storage-types/README_RU.md), [15-search-basics](../../15-search-basics/README_RU.md)
+> **Опирается на:** [Tier 1 · 01 URL Shortener](../01_Design%20a%20URL%20Shortener%20%28TinyURL%29/README.ru.md#8-deep-dive-2-быстрый-редирект-и-кэширование) (Bloom filter), [09-messaging](../../01_Fundamentals/09_Messaging/README.ru.md), [06-partitioning](../../01_Fundamentals/06_Partitioning/README.ru.md), [14-storage-types](../../01_Fundamentals/14_Storage%20types/README.ru.md), [15-search-basics](../../01_Fundamentals/15_Search%20basics/README.ru.md)
 
 ---
 
@@ -379,7 +379,7 @@ http://example.com/a/c?id=5&utm_campaign=x
 | **Bloom filter** | 12 ГБ при 1% ложных срабатываний, микросекунды | Ложные срабатывания: новый URL считается «уже видели» и пропускается |
 | **Bloom + точное хранилище** ⭐ | Быстро и точно | Сложнее |
 
-📘 **Как работает связка.** Bloom filter отвечает «точно нет» или «возможно, да» (подробно — в [URL shortener](../01-url-shortener/README_RU.md#8-deep-dive-2-быстрый-редирект-и-кэширование)):
+📘 **Как работает связка.** Bloom filter отвечает «точно нет» или «возможно, да» (подробно — в [URL shortener](../01_Design%20a%20URL%20Shortener%20%28TinyURL%29/README.ru.md#8-deep-dive-2-быстрый-редирект-и-кэширование)):
 - «точно нет» (большинство новых URL) → URL новый, добавить в frontier и в фильтр — без похода на диск;
 - «возможно, да» → проверить точное хранилище на диске; там ответ окончательный.
 
@@ -507,7 +507,7 @@ SimHash = 11010000
 
 | Решение | Почему |
 |:--------|:-------|
-| **WARC-файлы** в объектном хранилище | Стандартный формат веб-архивов: много записей (запрос, ответ, заголовки) в одном большом сжатом файле — не миллиарды мелких объектов (см. [14-storage-types](../../14-storage-types/README_RU.md#10-проблема-мелких-файлов)) |
+| **WARC-файлы** в объектном хранилище | Стандартный формат веб-архивов: много записей (запрос, ответ, заголовки) в одном большом сжатом файле — не миллиарды мелких объектов (см. [14-storage-types](../../01_Fundamentals/14_Storage%20types/README.ru.md#10-проблема-мелких-файлов)) |
 | Сжатие | HTML сжимается в несколько раз |
 | Метаданные URL — в шардированной БД (по хэшу URL) | Последний обход, статус, хэш содержимого, ETag, следующий обход |
 | Индексатору — событие в Kafka со ссылкой на запись в WARC | Индексатор читает асинхронно, независимо от краулера |
@@ -579,12 +579,12 @@ flowchart LR
 
 | Концепция | Где разобрана | Как применяется здесь |
 |:----------|:--------------|:----------------------|
-| Bloom filter | [Tier 1 · 01](../01-url-shortener/README_RU.md#8-deep-dive-2-быстрый-редирект-и-кэширование) | URL seen |
-| Очереди, Kafka, at-least-once | [09-messaging](../../09-messaging/README_RU.md) | Обмен ссылками, передача индексатору |
-| Шардирование, consistent hashing | [06-partitioning](../../06-partitioning/README_RU.md) | Распределение хостов по узлам |
-| Проблема мелких файлов | [14-storage-types](../../14-storage-types/README_RU.md#10-проблема-мелких-файлов) | WARC-архивы |
-| Индексация, поиск | [15-search-basics](../../15-search-basics/README_RU.md) | Потребитель скачанных страниц |
-| Rate limiting | [Tier 1 · 02](../02-rate-limiter/README_RU.md) | Вежливость к хостам |
+| Bloom filter | [Tier 1 · 01](../01_Design%20a%20URL%20Shortener%20%28TinyURL%29/README.ru.md#8-deep-dive-2-быстрый-редирект-и-кэширование) | URL seen |
+| Очереди, Kafka, at-least-once | [09-messaging](../../01_Fundamentals/09_Messaging/README.ru.md) | Обмен ссылками, передача индексатору |
+| Шардирование, consistent hashing | [06-partitioning](../../01_Fundamentals/06_Partitioning/README.ru.md) | Распределение хостов по узлам |
+| Проблема мелких файлов | [14-storage-types](../../01_Fundamentals/14_Storage%20types/README.ru.md#10-проблема-мелких-файлов) | WARC-архивы |
+| Индексация, поиск | [15-search-basics](../../01_Fundamentals/15_Search%20basics/README.ru.md) | Потребитель скачанных страниц |
+| Rate limiting | [Tier 1 · 02](../02_Design%20a%20Rate%20Limiter%20or%20Abuse%20Protection/README.ru.md) | Вежливость к хостам |
 
 ### Новые понятия этой задачи
 

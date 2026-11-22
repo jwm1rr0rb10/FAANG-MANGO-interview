@@ -1,4 +1,4 @@
-**English** | [Русский](INTERVIEW_RU.md) · Theory: [README.md](./README.md)
+**English** | [Русский](INTERVIEW.ru.md) · Theory: [README.md](./README.md)
 
 # 07. Consistency Models: Guarantees for a Global Social Network
 
@@ -424,7 +424,7 @@ sequenceDiagram
 | Server clock skew | Wrong order when sorting by time | Order by seq and logical clocks, not physical time |
 | Username registry loses its majority | Sign-up with name choice unavailable | Temporary names; the rest of the product works |
 | A push notification outruns replication | The user can't find the post from the notification | A token in the notification; wait or redirect |
-| A hot post with millions of likes | Load on one counter partition | Sharded counters within the region (see [06-partitioning](../06-partitioning/README.md#8-hot-partitions-and-skew)) |
+| A hot post with millions of likes | Load on one counter partition | Sharded counters within the region (see [06-partitioning](../06_Partitioning/README.md#8-hot-partitions-and-skew)) |
 | A bug in dependency metadata | A privacy violation is possible | An extra read-time access check in the author's region for sensitive cases |
 
 ---

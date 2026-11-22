@@ -1,11 +1,11 @@
-**English** | [Русский](README_RU.md)
+**English** | [Русский](README.ru.md)
 
 # 05. Replication
 
 > **Covers:** leader-follower, multi-leader, leaderless, synchronous and asynchronous replication, failover, replication lag and read guarantees (read-your-writes, monotonic reads), conflicts and their resolution, quorums
 > **Study time:** ~4–5 h · **Needed for:** any problem with availability, durability or multi-region requirements
 > **Practice:** interview-style walkthrough — [INTERVIEW.md](./INTERVIEW.md)
-> **Related topics:** [04-databases](../04-databases/README.md), [02-caching](../02-caching/README.md). Partitioning, consistency models and consensus are covered in upcoming topics.
+> **Related topics:** [04-databases](../04_Databases/README.md), [02-caching](../02_Caching/README.md). Partitioning, consistency models and consensus are covered in upcoming topics.
 
 ---
 
@@ -170,7 +170,7 @@ Hence the typical setup: synchronous within a region (across AZs), asynchronous 
 | **Trigger-based / in the app** | Whatever the code decides | Flexible: filtering, transformation | Slow, error-prone | Special cases |
 
 > [!TIP]
-> Logical replication is the foundation of **CDC** (Change Data Capture): Debezium reads the logical change stream and publishes it to Kafka. That's how search indexes, caches and analytics are fed (see [02-caching](../02-caching/README.md#7-invalidation)).
+> Logical replication is the foundation of **CDC** (Change Data Capture): Debezium reads the logical change stream and publishes it to Kafka. That's how search indexes, caches and analytics are fed (see [02-caching](../02_Caching/README.md#7-invalidation)).
 
 ---
 

@@ -1,11 +1,11 @@
-**English** | [Русский](README_RU.md)
+**English** | [Русский](README.ru.md)
 
 # 15. Search Basics
 
 > **Covers:** why search is a separate system, the inverted index, text analysis (tokenization, stemming, synonyms), query types, ranking (TF-IDF, BM25, multi-stage ranking), how Lucene/Elasticsearch work, the indexing pipeline, scaling, autocomplete, vector search (ANN, HNSW, IVF, PQ), hybrid search
 > **Study time:** ~5 h · **Needed for:** search over products, documents, messages, logs; autocomplete; RAG and recommendations
 > **Practice:** interview-style walkthrough — [INTERVIEW.md](./INTERVIEW.md)
-> **Related topics:** [04-databases](../04-databases/README.md#5-indexes-and-b-trees), [06-partitioning](../06-partitioning/README.md#7-secondary-indexes), [11-distributed-transactions](../11-distributed-transactions/README.md#12-cdc-change-data-capture) (CDC)
+> **Related topics:** [04-databases](../04_Databases/README.md#5-indexes-and-b-trees), [06-partitioning](../06_Partitioning/README.md#7-secondary-indexes), [11-distributed-transactions](../11_Distributed%20transactions/README.md#12-cdc-change-data-capture) (CDC)
 
 ---
 
@@ -290,7 +290,7 @@ flowchart LR
 
 | Practice | Why |
 |:---------|:----|
-| **CDC from the database** instead of dual writes from the app | The index doesn't drift from the database on failures (see [11-distributed-transactions](../11-distributed-transactions/README.md#12-cdc-change-data-capture)) |
+| **CDC from the database** instead of dual writes from the app | The index doesn't drift from the database on failures (see [11-distributed-transactions](../11_Distributed%20transactions/README.md#12-cdc-change-data-capture)) |
 | **Bulk indexing** | Batches of documents instead of single requests |
 | **External versioning** | The index accepts a document only if its version is newer — out-of-order events can't overwrite fresh data |
 | **Denormalization** | Every field needed for search goes into the document (category name, brand, rating): there are no JOINs in search |
@@ -330,7 +330,7 @@ Reindexing is needed when changing the mapping, analyzers, the embedding model o
 | **Protecting against heavy queries** | Timeouts, limits on leading wildcards and huge aggregations, memory circuit breakers |
 
 > [!TIP]
-> Every query without routing goes to **every** shard. A query's latency is the latency of the slowest shard (tail latency amplification, see [06-partitioning](../06-partitioning/README.md#7-secondary-indexes)). Fewer shards per query → a more stable p99.
+> Every query without routing goes to **every** shard. A query's latency is the latency of the slowest shard (tail latency amplification, see [06-partitioning](../06_Partitioning/README.md#7-secondary-indexes)). Fewer shards per query → a more stable p99.
 
 ---
 

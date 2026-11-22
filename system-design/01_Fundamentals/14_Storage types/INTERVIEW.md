@@ -1,4 +1,4 @@
-**English** | [Русский](INTERVIEW_RU.md) · Theory: [README.md](./README.md)
+**English** | [Русский](INTERVIEW.ru.md) · Theory: [README.md](./README.md)
 
 # 14. Storage Types: Photo and Video Storage for a Social Network
 
@@ -303,7 +303,7 @@ flowchart TB
 | Protecting storage | Buckets aren't reachable from the internet directly — only via the CDN (origin access control) |
 | Origin shield | One intermediate cache tier, so misses from hundreds of PoPs don't hammer storage |
 
-More in [03-cdn](../03-cdn/README.md).
+More in [03-cdn](../03_CDN/README.md).
 
 ---
 

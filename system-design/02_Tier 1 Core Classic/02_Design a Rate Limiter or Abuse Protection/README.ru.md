@@ -4,7 +4,7 @@
 
 > **Уровень:** Medium · **Время на интервью:** 45 мин · **Время на разбор:** ~4–5 ч
 > **Ключевые аспекты:** алгоритмы (fixed window, sliding log, sliding window counter, token bucket, leaky bucket, GCRA), распределённые счётчики в Redis, атомарность через Lua, лимиты по пользователю, ключу и IP, fail open / fail closed, многорегиональность
-> **Опирается на:** [02-caching](../../02-caching/README_RU.md), [06-partitioning](../../06-partitioning/README_RU.md), [07-consistency-models](../../07-consistency-models/README_RU.md), [12-communication](../../12-communication/README_RU.md), [13-reliability-patterns](../../13-reliability-patterns/README_RU.md#6-rate-limiting)
+> **Опирается на:** [02-caching](../../01_Fundamentals/02_Caching/README.ru.md), [06-partitioning](../../01_Fundamentals/06_Partitioning/README.ru.md), [07-consistency-models](../../01_Fundamentals/07_Consistency%20models/README.ru.md), [12-communication](../../01_Fundamentals/12_Communication/README.ru.md), [13-reliability-patterns](../../01_Fundamentals/13_Reliability%20patterns/README.ru.md#6-rate-limiting)
 
 ---
 
@@ -194,7 +194,7 @@ Content-Type: application/json
 | Код | Когда | Почему не другой |
 |:----|:------|:-----------------|
 | `429 Too Many Requests` | Клиент превысил **свою** квоту | Ошибка клиента: ему нужно замедлиться |
-| `503 Service Unavailable` | **Сервис** перегружен (load shedding), независимо от квоты клиента | Проблема сервера, а не клиента (см. [13-reliability-patterns](../../13-reliability-patterns/README_RU.md#7-load-shedding-и-приоритизация)) |
+| `503 Service Unavailable` | **Сервис** перегружен (load shedding), независимо от квоты клиента | Проблема сервера, а не клиента (см. [13-reliability-patterns](../../01_Fundamentals/13_Reliability%20patterns/README.ru.md#7-load-shedding-и-приоритизация)) |
 
 ---
 
@@ -561,7 +561,7 @@ return { allowed, math.floor(tokens), retry_ms }
 
 ### Шардирование
 
-Redis Cluster распределяет ключи по 16 384 слотам по хэшу ключа (см. [02-caching](../../02-caching/README_RU.md)). Ключи разных клиентов равномерно расходятся по шардам, и нагрузка масштабируется добавлением шардов. ~30–50 шардов (с репликами) выдерживают 3M операций в секунду.
+Redis Cluster распределяет ключи по 16 384 слотам по хэшу ключа (см. [02-caching](../../01_Fundamentals/02_Caching/README.ru.md)). Ключи разных клиентов равномерно расходятся по шардам, и нагрузка масштабируется добавлением шардов. ~30–50 шардов (с репликами) выдерживают 3M операций в секунду.
 
 ### Горячий ключ
 
@@ -623,7 +623,7 @@ sequenceDiagram
 | **Короткий таймаут** на вызов Redis (например, 5 мс) | Медленный Redis не добавляет задержку ко всем запросам |
 | **Circuit breaker** | При серии ошибок перестаём обращаться к Redis на N секунд, чтобы не тратить время на таймауты |
 | **Локальный запасной лимит** | В режиме fail open шлюз применяет грубый **локальный** token bucket (лимит / число шлюзов с запасом) — защита сохраняется, хоть и неточная |
-| **Load shedding в сервисах** | Независимая защита от перегрузки (см. [13-reliability-patterns](../../13-reliability-patterns/README_RU.md#7-load-shedding-и-приоритизация)) |
+| **Load shedding в сервисах** | Независимая защита от перегрузки (см. [13-reliability-patterns](../../01_Fundamentals/13_Reliability%20patterns/README.ru.md#7-load-shedding-и-приоритизация)) |
 | **Алерт** | Лимитер в режиме fail open — повод для пейджа |
 
 Для защитных лимитов (вход, SMS) — **fail closed** с понятной ошибкой: лучше пользователь подождёт минуту, чем мы пропустим перебор паролей или счёт за тысячи SMS».
@@ -803,13 +803,13 @@ flowchart LR
 
 | Концепция | Где разобрана | Как применяется здесь |
 |:----------|:--------------|:----------------------|
-| Redis, кластер, горячие ключи | [02-caching](../../02-caching/README_RU.md) | Хранилище счётчиков |
-| Партиционирование по ключу | [06-partitioning](../../06-partitioning/README_RU.md) | Шардирование счётчиков по клиенту |
-| Приближённая консистентность | [07-consistency-models](../../07-consistency-models/README_RU.md) | Допустимое превышение ради скорости |
-| Атомарность, гонки | [04-databases](../../04-databases/README_RU.md#9-аномалии-конкурентного-доступа) | Lost update при «прочитать — записать» |
-| HTTP-коды и заголовки | [12-communication](../../12-communication/README_RU.md) | `429`, `Retry-After`, `RateLimit-*` |
-| Circuit breaker, load shedding | [13-reliability-patterns](../../13-reliability-patterns/README_RU.md) | Отказ лимитера, защита сервисов |
-| Ретраи с backoff и jitter | [10-idempotency](../../10-idempotency/README_RU.md#8-exponential-backoff-и-jitter) | Как клиенты должны реагировать на 429 |
+| Redis, кластер, горячие ключи | [02-caching](../../01_Fundamentals/02_Caching/README.ru.md) | Хранилище счётчиков |
+| Партиционирование по ключу | [06-partitioning](../../01_Fundamentals/06_Partitioning/README.ru.md) | Шардирование счётчиков по клиенту |
+| Приближённая консистентность | [07-consistency-models](../../01_Fundamentals/07_Consistency%20models/README.ru.md) | Допустимое превышение ради скорости |
+| Атомарность, гонки | [04-databases](../../01_Fundamentals/04_Databases/README.ru.md#9-аномалии-конкурентного-доступа) | Lost update при «прочитать — записать» |
+| HTTP-коды и заголовки | [12-communication](../../01_Fundamentals/12_Communication/README.ru.md) | `429`, `Retry-After`, `RateLimit-*` |
+| Circuit breaker, load shedding | [13-reliability-patterns](../../01_Fundamentals/13_Reliability%20patterns/README.ru.md) | Отказ лимитера, защита сервисов |
+| Ретраи с backoff и jitter | [10-idempotency](../../01_Fundamentals/10_Idempotency/README.ru.md#8-exponential-backoff-и-jitter) | Как клиенты должны реагировать на 429 |
 
 ### Новые понятия этой задачи
 

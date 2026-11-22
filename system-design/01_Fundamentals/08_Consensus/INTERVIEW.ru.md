@@ -1,4 +1,4 @@
-[English](INTERVIEW.md) | **Русский** · Теория: [README_RU.md](./README_RU.md)
+[English](INTERVIEW.md) | **Русский** · Теория: [README_RU.md](./README.ru.md)
 
 # 08. Consensus: сервис распределённых блокировок и выбора лидера
 
@@ -390,7 +390,7 @@ flowchart LR
 🗣️ «Внутри кластера split brain невозможен: два лидера в одном term требуют двух непересекающихся большинств. У клиентов он **возможен** в окне между истечением сессии на сервере и остановкой клиента — его закрывают клиентский таймер с запасом и fencing-токены».
 
 > [!NOTE]
-> Это сознательный **CP-выбор** (см. [07-consistency-models](../07-consistency-models/README_RU.md#10-теорема-cap)): клиенты в отрезанной AZ теряют блокировки и не могут получить новые. Для блокировок, от которых зависит корректность, это правильно.
+> Это сознательный **CP-выбор** (см. [07-consistency-models](../07_Consistency%20models/README.ru.md#10-теорема-cap)): клиенты в отрезанной AZ теряют блокировки и не могут получить новые. Для блокировок, от которых зависит корректность, это правильно.
 
 ---
 
@@ -530,7 +530,7 @@ Redis реплицирует асинхронно: при failover блокир�
 
 ### Что почитать
 
-- Теория по теме: [README_RU.md](./README_RU.md)
+- Теория по теме: [README_RU.md](./README.ru.md)
 - Mike Burrows, *The Chubby Lock Service for Loosely-Coupled Distributed Systems*
 - Martin Kleppmann, *How to do distributed locking*
 - Документация etcd: leases, concurrency (Mutex, Election), learners

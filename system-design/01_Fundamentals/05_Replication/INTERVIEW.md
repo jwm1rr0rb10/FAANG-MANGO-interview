@@ -1,4 +1,4 @@
-**English** | [Русский](INTERVIEW_RU.md) · Theory: [README.md](./README.md)
+**English** | [Русский](INTERVIEW.ru.md) · Theory: [README.md](./README.md)
 
 # 05. Replication: Data for a Global Online Store Across Three Regions
 
@@ -230,7 +230,7 @@ flowchart TB
 Fixes:
 1. **Replica pinning:** a user's requests go to the same replica (hash of `user_id` or session). Successive reads never go back in time.
 2. **Exclude lagging replicas:** replicas with lag above a threshold (e.g. 5 s) are removed from the read pool.
-3. **A cache on top of replicas** with CDC-based invalidation (see [02-caching](../02-caching/README.md)) — so users see differing replicas much less often."
+3. **A cache on top of replicas** with CDC-based invalidation (see [02-caching](../02_Caching/README.md)) — so users see differing replicas much less often."
 
 > [!WARNING]
 > **The price in the cart and at checkout** must not come from a catalog replica. The order service checks the current price in the source of truth, and if it changed, shows the user the new total before payment. Replicas are for display only.

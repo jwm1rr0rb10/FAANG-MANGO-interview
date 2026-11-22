@@ -1,4 +1,4 @@
-[English](INTERVIEW.md) | **Русский** · Теория: [README_RU.md](./README_RU.md)
+[English](INTERVIEW.md) | **Русский** · Теория: [README_RU.md](./README.ru.md)
 
 # 04. Databases: хранилище для системы бронирования отелей
 
@@ -588,7 +588,7 @@ UPDATE берёт блокировку строки, поэтому паралл
 
 ### Что почитать
 
-- Теория по теме: [README_RU.md](./README_RU.md)
+- Теория по теме: [README_RU.md](./README.ru.md)
 - *Designing Data-Intensive Applications*, глава 7 — пример с дежурными врачами и write skew
 - Документация PostgreSQL: Transaction Isolation, Exclusion Constraints, Table Partitioning
 - *System Design Interview*, Vol. 2, Alex Xu — глава «Hotel Reservation System»

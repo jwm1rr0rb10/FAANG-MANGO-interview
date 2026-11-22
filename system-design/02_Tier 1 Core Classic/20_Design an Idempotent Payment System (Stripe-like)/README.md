@@ -1,10 +1,10 @@
-**English** | [Русский](README_RU.md)
+**English** | [Русский](README.ru.md)
 
 # Tier 1 · 20. Idempotent Payment System (like Stripe)
 
 > **Level:** Hard · **Interview time:** 45–60 min · **Study time:** ~5–6 h
 > **Key aspects:** idempotency keys, the payment state machine, authorization and capture, working with payment providers and unknown outcomes, webhooks, double-entry bookkeeping, keeping state, ledger and events consistent, reconciliation against provider and bank reports, seller payouts, currencies, PCI DSS and tokenization, anti-fraud
-> **Builds on:** [10-idempotency](../../10-idempotency/README.md), [11-distributed-transactions](../../11-distributed-transactions/README.md), [12-communication](../../12-communication/README.md#9-webhooks), [04-databases](../../04-databases/README.md), [13-reliability-patterns](../../13-reliability-patterns/README.md), [Tier 1 · 17 Ad Click Aggregator](../17-ad-click-aggregator/README.md#12-deep-dive-6-reconciliation-and-billing)
+> **Builds on:** [10-idempotency](../../01_Fundamentals/10_Idempotency/README.md), [11-distributed-transactions](../../01_Fundamentals/11_Distributed%20transactions/README.md), [12-communication](../../01_Fundamentals/12_Communication/README.md#9-webhooks), [04-databases](../../01_Fundamentals/04_Databases/README.md), [13-reliability-patterns](../../01_Fundamentals/13_Reliability%20patterns/README.md), [Tier 1 · 17 Ad Click Aggregator](../17_Design%20an%20Ad%20Click%20Aggregator/README.md#12-deep-dive-6-reconciliation-and-billing)
 
 ---
 
@@ -264,7 +264,7 @@ flowchart TB
 | The key exists, **different** parameters | A `422` error: the key was used for a different request |
 | The key exists, the operation is **still running** | `409 Conflict`: retry later |
 
-Stripe keeps keys for 24 hours — enough time for a client to retry (see [10-idempotency](../../10-idempotency/README.md)).
+Stripe keeps keys for 24 hours — enough time for a client to retry (see [10-idempotency](../../01_Fundamentals/10_Idempotency/README.md)).
 
 ### Implementation
 
@@ -396,7 +396,7 @@ sequenceDiagram
 
 | Rule | Why |
 |:-----|:----|
-| **Verify the signature** | Protection against forged "payment succeeded" notifications (see [12-communication](../../12-communication/README.md#9-webhooks)) |
+| **Verify the signature** | Protection against forged "payment succeeded" notifications (see [12-communication](../../01_Fundamentals/12_Communication/README.md#9-webhooks)) |
 | **Dedup by event id** (a unique index) | Providers resend webhooks on errors |
 | **Order isn't guaranteed** | Apply only forward transitions; when in doubt — fetch the current status from the provider |
 | Respond `200` quickly | Store the event and process it asynchronously, otherwise the provider retries |
@@ -474,7 +474,7 @@ Consequence: the sum of all balances (with sign) is always zero — any error sh
 
 ### The dual-write problem
 
-If you update the status in the database first and then send an event to Kafka, a crash between the steps loses the event. If you do it the other way around — the event goes out but the status isn't updated (see [11-distributed-transactions](../../11-distributed-transactions/README.md)).
+If you update the status in the database first and then send an event to Kafka, a crash between the steps loses the event. If you do it the other way around — the event goes out but the status isn't updated (see [11-distributed-transactions](../../01_Fundamentals/11_Distributed%20transactions/README.md)).
 
 ### The fix: one transaction + an outbox
 
@@ -639,12 +639,12 @@ flowchart LR
 
 | Concept | Where it's covered | How it applies here |
 |:--------|:-------------------|:--------------------|
-| Idempotency keys | [10-idempotency](../../10-idempotency/README.md) | Request retries at every boundary |
-| Outbox, sagas | [11-distributed-transactions](../../11-distributed-transactions/README.md) | State + events, interacting with the provider |
-| Webhooks | [12-communication](../../12-communication/README.md#9-webhooks) | Provider and merchant notifications |
-| Transactions, optimistic locking | [04-databases](../../04-databases/README.md) | The state machine, atomic phases |
-| Circuit breakers | [13-reliability-patterns](../../13-reliability-patterns/README.md) | Provider outages |
-| An adjustment ledger, reconciliation | [Tier 1 · 17](../17-ad-click-aggregator/README.md#12-deep-dive-6-reconciliation-and-billing) | A similar approach to monetary accuracy |
+| Idempotency keys | [10-idempotency](../../01_Fundamentals/10_Idempotency/README.md) | Request retries at every boundary |
+| Outbox, sagas | [11-distributed-transactions](../../01_Fundamentals/11_Distributed%20transactions/README.md) | State + events, interacting with the provider |
+| Webhooks | [12-communication](../../01_Fundamentals/12_Communication/README.md#9-webhooks) | Provider and merchant notifications |
+| Transactions, optimistic locking | [04-databases](../../01_Fundamentals/04_Databases/README.md) | The state machine, atomic phases |
+| Circuit breakers | [13-reliability-patterns](../../01_Fundamentals/13_Reliability%20patterns/README.md) | Provider outages |
+| An adjustment ledger, reconciliation | [Tier 1 · 17](../17_Design%20an%20Ad%20Click%20Aggregator/README.md#12-deep-dive-6-reconciliation-and-billing) | A similar approach to monetary accuracy |
 
 ### New terms in this problem
 

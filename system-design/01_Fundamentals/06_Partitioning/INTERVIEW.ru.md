@@ -1,4 +1,4 @@
-[English](INTERVIEW.md) | **Русский** · Теория: [README_RU.md](./README_RU.md)
+[English](INTERVIEW.md) | **Русский** · Теория: [README_RU.md](./README.ru.md)
 
 # 06. Partitioning: шардирование базы multi-tenant SaaS
 
@@ -514,7 +514,7 @@ sequenceDiagram
 
 ### Что почитать
 
-- Теория по теме: [README_RU.md](./README_RU.md)
+- Теория по теме: [README_RU.md](./README.ru.md)
 - Notion, *Herding elephants: lessons learned from sharding Postgres at Notion*
 - Instagram Engineering, *Sharding & IDs at Instagram*
 - Документация Citus: multi-tenant applications

@@ -1,4 +1,4 @@
-[English](INTERVIEW.md) | **Русский** · Теория: [README_RU.md](./README_RU.md)
+[English](INTERVIEW.md) | **Русский** · Теория: [README_RU.md](./README.ru.md)
 
 # 12. Communication: протоколы для сервиса такси
 
@@ -543,7 +543,7 @@ MQTT создан для устройств на ненадёжных сетях
 
 ### Что почитать
 
-- Теория по теме: [README_RU.md](./README_RU.md)
+- Теория по теме: [README_RU.md](./README.ru.md)
 - RFC 6455 (WebSocket)
 - Документация gRPC: deadlines, load balancing
 - Standard Webhooks (standardwebhooks.com)

@@ -1,4 +1,4 @@
-**English** | [Русский](INTERVIEW_RU.md) · Theory: [README.md](./README.md)
+**English** | [Русский](INTERVIEW.ru.md) · Theory: [README.md](./README.md)
 
 # 08. Consensus: A Distributed Lock and Leader Election Service
 
@@ -390,7 +390,7 @@ flowchart LR
 🗣️ "Inside the cluster, split brain is impossible: two leaders in the same term need two disjoint majorities. Among clients it's **possible** in the window between the session expiring on the server and the client stopping — closed by the client timer with a margin and by fencing tokens."
 
 > [!NOTE]
-> This is a deliberate **CP choice** (see [07-consistency-models](../07-consistency-models/README.md#10-the-cap-theorem)): clients in the cut-off AZ lose their locks and can't acquire new ones. For locks that correctness depends on, that's the right call.
+> This is a deliberate **CP choice** (see [07-consistency-models](../07_Consistency%20models/README.md#10-the-cap-theorem)): clients in the cut-off AZ lose their locks and can't acquire new ones. For locks that correctness depends on, that's the right call.
 
 ---
 

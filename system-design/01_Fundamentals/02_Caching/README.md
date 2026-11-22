@@ -1,4 +1,4 @@
-**English** | [Русский](README_RU.md)
+**English** | [Русский](README.ru.md)
 
 # 02. Caching
 
@@ -497,7 +497,7 @@ A multi-megabyte value (a huge JSON, a list with a million elements) blocks sing
 A single node is limited by memory and throughput. Data is split across nodes:
 
 - **Redis Cluster:** the keyspace is split into 16,384 slots, `slot = CRC16(key) mod 16384`, and each master owns a range of slots. Hash tags (`{user:42}:profile`, `{user:42}:settings`) force related keys into the same slot.
-- **Client-side sharding:** the client picks a node via consistent hashing (see [01-scaling-basics](../01-scaling-basics/README.md#8-load-balancing-algorithms)).
+- **Client-side sharding:** the client picks a node via consistent hashing (see [01-scaling-basics](../01_Scaling%20basics/README.md#8-load-balancing-algorithms)).
 
 ### Fault tolerance
 

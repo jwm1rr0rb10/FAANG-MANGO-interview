@@ -1,10 +1,10 @@
-**English** | [Русский](README_RU.md)
+**English** | [Русский](README.ru.md)
 
 # Tier 1 · 04. Unique ID Generator (Snowflake, UUID v7)
 
 > **Level:** Easy–Medium · **Interview time:** 30–45 min · **Study time:** ~3–4 h
 > **Key aspects:** uniqueness without per-ID coordination, the Snowflake layout (time + node + counter), assigning node IDs, clocks moving backward, time ordering, UUID v4 vs v7, how IDs affect database indexes, ID security
-> **Builds on:** [04-databases](../../04-databases/README.md#5-indexes-and-b-trees), [06-partitioning](../../06-partitioning/README.md), [07-consistency-models](../../07-consistency-models/README.md#9-clocks-and-event-ordering), [08-consensus](../../08-consensus/README.md#9-leases-and-leader-election-for-applications)
+> **Builds on:** [04-databases](../../01_Fundamentals/04_Databases/README.md#5-indexes-and-b-trees), [06-partitioning](../../01_Fundamentals/06_Partitioning/README.md), [07-consistency-models](../../01_Fundamentals/07_Consistency%20models/README.md#9-clocks-and-event-ordering), [08-consensus](../../01_Fundamentals/08_Consensus/README.md#9-leases-and-leader-election-for-applications)
 
 ---
 
@@ -215,7 +215,7 @@ Standardized in RFC 9562 (2024). Time-ordered, no coordination, but 128 bits. UL
 
 ### 5.5 Number ranges
 
-Nodes take blocks of numbers from a coordinator (as in the [URL shortener](../01-url-shortener/README.md#7-deep-dive-1-generating-short-codes)). Compact and collision-free, but **not time-ordered** across nodes (a node with the block "1,000,000…" may issue an ID later than a node with "5,000,000…").
+Nodes take blocks of numbers from a coordinator (as in the [URL shortener](../01_Design%20a%20URL%20Shortener%20%28TinyURL%29/README.md#7-deep-dive-1-generating-short-codes)). Compact and collision-free, but **not time-ordered** across nodes (a node with the block "1,000,000…" may issue an ID later than a node with "5,000,000…").
 
 ### 5.6 Snowflake ⭐
 
@@ -406,7 +406,7 @@ sequenceDiagram
 
 ### The danger: a "stuck" old process
 
-📘 The process with worker 37 hangs for 60 seconds (a long GC pause, a frozen VM). Its lease expires, and a **new** process takes number 37. The old one "wakes up" and keeps generating IDs with number 37 — duplicates. It's the same problem as with locks in [08-consensus](../../08-consensus/README.md#10-split-brain-and-fencing-tokens).
+📘 The process with worker 37 hangs for 60 seconds (a long GC pause, a frozen VM). Its lease expires, and a **new** process takes number 37. The old one "wakes up" and keeps generating IDs with number 37 — duplicates. It's the same problem as with locks in [08-consensus](../../01_Fundamentals/08_Consensus/README.md#10-split-brain-and-fencing-tokens).
 
 | Protection | How |
 |:-----------|:----|
@@ -491,7 +491,7 @@ def next_id(self):
 |:-----|:---------------------|
 | Sorting a feed, paginating by ID | ✅ A millisecond error is invisible |
 | Time-based sharding and partitioning | ✅ |
-| Message order within one chat | ⚠️ Better a separate sequence number from the chat's leader (see [07-consistency-models](../../07-consistency-models/README.md)) |
+| Message order within one chat | ⚠️ Better a separate sequence number from the chat's leader (see [07-consistency-models](../../01_Fundamentals/07_Consistency%20models/README.md)) |
 | A strict global order (a financial ledger) | ❌ Needs a single sequencer or consensus |
 
 > [!TIP]
@@ -505,7 +505,7 @@ def next_id(self):
 
 ### 📘 Explanation: random keys and B-trees
 
-Most databases store the primary key index as a **B-tree**, and InnoDB (MySQL) also stores the rows themselves by primary key (a clustered index, see [04-databases](../../04-databases/README.md#5-indexes-and-b-trees)).
+Most databases store the primary key index as a **B-tree**, and InnoDB (MySQL) also stores the rows themselves by primary key (a clustered index, see [04-databases](../../01_Fundamentals/04_Databases/README.md#5-indexes-and-b-trees)).
 
 ```
 Increasing keys (Snowflake, UUID v7):
@@ -633,10 +633,10 @@ That's why **time-ordered** IDs are preferable as primary keys: Snowflake (64 bi
 
 | Concept | Where it's covered | How it applies here |
 |:--------|:-------------------|:--------------------|
-| B-trees, clustered indexes | [04-databases](../../04-databases/README.md#5-indexes-and-b-trees) | Why random keys cost more |
-| Partitioning, hot spots | [06-partitioning](../../06-partitioning/README.md#8-hot-partitions-and-skew) | Increasing keys under range partitioning |
-| Clocks and event ordering | [07-consistency-models](../../07-consistency-models/README.md#9-clocks-and-event-ordering) | Clock skew, k-sorted order |
-| Leases and a "woken-up" owner | [08-consensus](../../08-consensus/README.md#9-leases-and-leader-election-for-applications) | Assigning worker IDs |
+| B-trees, clustered indexes | [04-databases](../../01_Fundamentals/04_Databases/README.md#5-indexes-and-b-trees) | Why random keys cost more |
+| Partitioning, hot spots | [06-partitioning](../../01_Fundamentals/06_Partitioning/README.md#8-hot-partitions-and-skew) | Increasing keys under range partitioning |
+| Clocks and event ordering | [07-consistency-models](../../01_Fundamentals/07_Consistency%20models/README.md#9-clocks-and-event-ordering) | Clock skew, k-sorted order |
+| Leases and a "woken-up" owner | [08-consensus](../../01_Fundamentals/08_Consensus/README.md#9-leases-and-leader-election-for-applications) | Assigning worker IDs |
 
 ### New terms in this problem
 
@@ -677,7 +677,7 @@ Yes: sequences (`SEQUENCE`, `IDENTITY`) or a database function (as at Instagram)
 <details>
 <summary><b>How do you guarantee message order in a chat?</b></summary>
 
-Snowflake gives only an approximate order across nodes. For strict order within a chat — a sequence number assigned by the chat's single owner (the leader of the chat's partition), as in [12-communication](../../12-communication/README.md). Snowflake can still serve as the message's unique identifier.
+Snowflake gives only an approximate order across nodes. For strict order within a chat — a sequence number assigned by the chat's single owner (the leader of the chat's partition), as in [12-communication](../../01_Fundamentals/12_Communication/README.md). Snowflake can still serve as the message's unique identifier.
 </details>
 
 <details>

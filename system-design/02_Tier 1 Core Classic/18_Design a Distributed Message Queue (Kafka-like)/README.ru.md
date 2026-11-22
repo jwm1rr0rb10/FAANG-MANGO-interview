@@ -4,7 +4,7 @@
 
 > **Уровень:** Hard · **Время на интервью:** 45–60 мин · **Время на разбор:** ~5–6 ч
 > **Ключевые аспекты:** партиционированный журнал только на добавление, сегменты и индексы, почему это быстро (последовательный ввод-вывод, page cache, zero-copy, пакеты), репликация (ISR, high watermark, acks), контроллер и метаданные (KRaft), consumer groups и ребалансировка, offsets и семантика доставки, exactly-once (идемпотентный продюсер, транзакции), retention, compaction, tiered storage
-> **Опирается на:** [09-messaging](../../09-messaging/README_RU.md) (как **пользоваться** брокером), [05-replication](../../05-replication/README_RU.md), [08-consensus](../../08-consensus/README_RU.md), [06-partitioning](../../06-partitioning/README_RU.md), [10-idempotency](../../10-idempotency/README_RU.md)
+> **Опирается на:** [09-messaging](../../01_Fundamentals/09_Messaging/README.ru.md) (как **пользоваться** брокером), [05-replication](../../01_Fundamentals/05_Replication/README.ru.md), [08-consensus](../../01_Fundamentals/08_Consensus/README.ru.md), [06-partitioning](../../01_Fundamentals/06_Partitioning/README.ru.md), [10-idempotency](../../01_Fundamentals/10_Idempotency/README.ru.md)
 
 ---
 
@@ -52,7 +52,7 @@
 
 ## 0. Чему учит эта задача
 
-В теме [09-messaging](../../09-messaging/README_RU.md) мы **пользовались** брокером сообщений. Здесь нужно **построить его**: систему, которая принимает миллионы сообщений в секунду, хранит их днями без потерь и раздаёт многим независимым потребителям.
+В теме [09-messaging](../../01_Fundamentals/09_Messaging/README.ru.md) мы **пользовались** брокером сообщений. Здесь нужно **построить его**: систему, которая принимает миллионы сообщений в секунду, хранит их днями без потерь и раздаёт многим независимым потребителям.
 
 | Что проверяют | Где это в задаче |
 |:--------------|:-----------------|
@@ -390,7 +390,7 @@ sequenceDiagram
 | **Unclean leader election** (выключено по умолчанию) | Если ISR пуст, можно сделать лидером отстающую реплику — партиция снова доступна, но часть подтверждённых сообщений теряется. Компромисс доступность против долговечности |
 
 > [!IMPORTANT]
-> **Сигнал Senior+:** объяснить связку `acks=all` + `min.insync.replicas=2` + `replication.factor=3` + репликация между зонами: это и даёт «без потерь при отказе одного брокера или зоны», а отказ в записи при потере двух реплик — сознательный выбор долговечности (см. CAP в [07-consistency-models](../../07-consistency-models/README_RU.md)).
+> **Сигнал Senior+:** объяснить связку `acks=all` + `min.insync.replicas=2` + `replication.factor=3` + репликация между зонами: это и даёт «без потерь при отказе одного брокера или зоны», а отказ в записи при потере двух реплик — сознательный выбор долговечности (см. CAP в [07-consistency-models](../../01_Fundamentals/07_Consistency%20models/README.ru.md)).
 
 ---
 
@@ -412,7 +412,7 @@ sequenceDiagram
 
 | | ZooKeeper (исторически) | KRaft |
 |:-|:------------------------|:------|
-| Где метаданные | Внешний кластер ZooKeeper | Внутренний кворум контроллеров на **Raft** (см. [08-consensus](../../08-consensus/README_RU.md)) |
+| Где метаданные | Внешний кластер ZooKeeper | Внутренний кворум контроллеров на **Raft** (см. [08-consensus](../../01_Fundamentals/08_Consensus/README.ru.md)) |
 | Эксплуатация | Две разные системы | Одна система |
 | Масштаб | Восстановление контроллера при большом числе партиций — медленное | Метаданные — реплицируемый журнал событий; брокеры читают его как обычный топик |
 | Статус | Удалён в Kafka 4.0 | Используется по умолчанию |
@@ -490,11 +490,11 @@ flowchart LR
 | Обработка и offset в одной транзакции | **Exactly-once** | Deep dive 6 |
 
 > [!TIP]
-> Стандартный выбор — **at-least-once + идемпотентная обработка** на стороне потребителя (см. [10-idempotency](../../10-idempotency/README_RU.md)). Это проще и надёжнее, чем exactly-once, и работает с любыми внешними системами.
+> Стандартный выбор — **at-least-once + идемпотентная обработка** на стороне потребителя (см. [10-idempotency](../../01_Fundamentals/10_Idempotency/README.ru.md)). Это проще и надёжнее, чем exactly-once, и работает с любыми внешними системами.
 
 ### Отставание (lag)
 
-`lag = последний offset партиции − offset группы`. Главная метрика здоровья потребителей: растущий lag означает, что группа не успевает (см. [09-messaging](../../09-messaging/README_RU.md#10-backpressure-и-управление-потоком)).
+`lag = последний offset партиции − offset группы`. Главная метрика здоровья потребителей: растущий lag означает, что группа не успевает (см. [09-messaging](../../01_Fundamentals/09_Messaging/README.ru.md#10-backpressure-и-управление-потоком)).
 
 ---
 
@@ -667,12 +667,12 @@ sequenceDiagram
 
 | Концепция | Где разобрана | Как применяется здесь |
 |:----------|:--------------|:----------------------|
-| Использование брокера, семантика доставки, outbox | [09-messaging](../../09-messaging/README_RU.md) | Взгляд со стороны клиента |
-| Лидер и последователи, кворумы | [05-replication](../../05-replication/README_RU.md) | Репликация партиций |
-| Raft | [08-consensus](../../08-consensus/README_RU.md) | Контроллер KRaft |
-| Партиционирование по ключу | [06-partitioning](../../06-partitioning/README_RU.md) | Ключ → партиция |
-| Идемпотентность | [10-idempotency](../../10-idempotency/README_RU.md) | Обработка at-least-once |
-| CAP: долговечность против доступности | [07-consistency-models](../../07-consistency-models/README_RU.md) | `min.insync.replicas`, unclean election |
+| Использование брокера, семантика доставки, outbox | [09-messaging](../../01_Fundamentals/09_Messaging/README.ru.md) | Взгляд со стороны клиента |
+| Лидер и последователи, кворумы | [05-replication](../../01_Fundamentals/05_Replication/README.ru.md) | Репликация партиций |
+| Raft | [08-consensus](../../01_Fundamentals/08_Consensus/README.ru.md) | Контроллер KRaft |
+| Партиционирование по ключу | [06-partitioning](../../01_Fundamentals/06_Partitioning/README.ru.md) | Ключ → партиция |
+| Идемпотентность | [10-idempotency](../../01_Fundamentals/10_Idempotency/README.ru.md) | Обработка at-least-once |
+| CAP: долговечность против доступности | [07-consistency-models](../../01_Fundamentals/07_Consistency%20models/README.ru.md) | `min.insync.replicas`, unclean election |
 
 ### Новые понятия этой задачи
 

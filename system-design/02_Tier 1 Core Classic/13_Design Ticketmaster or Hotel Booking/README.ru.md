@@ -1,187 +1,187 @@
-**English** | [Русский](README_RU.md)
+[English](README.md) | **Русский**
 
-# Tier 1 · 13. Ticketmaster / Hotel Booking
+# Tier 1 · 13. Ticketmaster / бронирование отелей
 
-> **Level:** Hard · **Interview time:** 45–60 min · **Study time:** ~5 h
-> **Key aspects:** preventing double booking (conditional updates, locks, unique constraints), temporary seat holds with a TTL, the purchase as a saga with payment, a virtual waiting room at on-sale time, reading the seat map at scale, hot spots on a single event, bot protection, the hotel variant
-> **Builds on:** [04-databases](../../04-databases/README.md#11-concurrency-control-locks-mvcc-optimistic-approach), [10-idempotency](../../10-idempotency/README.md), [11-distributed-transactions](../../11-distributed-transactions/README.md), [13-reliability-patterns](../../13-reliability-patterns/README.md#7-load-shedding-and-prioritization), [Tier 1 · 02 Rate Limiter](../02-rate-limiter/README.md)
-
----
-
-## 🗺️ How to Read This Walkthrough
-
-The walkthrough follows an interview, but every step includes explanations: **why** a decision is made, **how** a mechanism works and **what happens** if you do it differently. The "📘 Explanation" blocks are theory right where you need it.
-
-| Icon | Meaning |
-|:----:|:--------|
-| 🎤 | Interviewer |
-| 🗣️ | What I (the candidate) say out loud |
-| ✏️ | What I draw on the whiteboard |
-| ⏱️ | Time budget for the step |
-| 📘 | A detailed explanation of a concept |
-
-Callouts: **TIP** — a good technique, **WARNING** — a trap, **IMPORTANT** — a Senior+ signal.
+> **Уровень:** Hard · **Время на интервью:** 45–60 мин · **Время на разбор:** ~5 ч
+> **Ключевые аспекты:** защита от двойного бронирования (условные обновления, блокировки, уникальные ограничения), временное удержание мест с TTL, процесс покупки как сага с оплатой, виртуальная очередь при старте продаж, чтение карты мест на масштабе, горячие точки на одном событии, защита от ботов, вариант для отелей
+> **Опирается на:** [04-databases](../../01_Fundamentals/04_Databases/README.ru.md#11-управление-конкурентным-доступом-блокировки-mvcc-оптимистичный-подход), [10-idempotency](../../01_Fundamentals/10_Idempotency/README.ru.md), [11-distributed-transactions](../../01_Fundamentals/11_Distributed%20transactions/README.ru.md), [13-reliability-patterns](../../01_Fundamentals/13_Reliability%20patterns/README.ru.md#7-load-shedding-и-приоритизация), [Tier 1 · 02 Rate Limiter](../02_Design%20a%20Rate%20Limiter%20or%20Abuse%20Protection/README.ru.md)
 
 ---
 
-## 📑 Contents
+## 🗺️ Как читать этот разбор
 
-0. [What This Problem Teaches](#0-what-this-problem-teaches)
-1. [Problem Statement](#1-problem-statement)
-2. [Clarifying Questions and Requirements](#2-clarifying-questions-and-requirements)
-3. [Capacity Estimates](#3-capacity-estimates)
+Разбор построен как интервью, но в каждом шаге есть объяснения: **почему** принимается решение, **как работает** механизм и **что будет**, если сделать иначе. Блоки «📘 Объяснение» — теория прямо по ходу задачи.
+
+| Значок | Что значит |
+|:------:|:-----------|
+| 🎤 | Реплика интервьюера |
+| 🗣️ | Что говорю вслух я (кандидат) |
+| ✏️ | Что рисую на доске |
+| ⏱️ | Сколько времени тратить на шаг |
+| 📘 | Подробное объяснение концепции |
+
+Блоки **TIP** — хороший приём, **WARNING** — ловушка, **IMPORTANT** — сигнал для уровня Senior+.
+
+---
+
+## 📑 Содержание
+
+0. [Чему учит эта задача](#0-чему-учит-эта-задача)
+1. [Условие задачи](#1-условие-задачи)
+2. [Уточняющие вопросы и требования](#2-уточняющие-вопросы-и-требования)
+3. [Оценки нагрузки](#3-оценки-нагрузки)
 4. [API](#4-api)
-5. [Data Model](#5-data-model)
-6. [High-Level Design](#6-high-level-design)
-7. [Deep Dive 1: Preventing Double Booking](#7-deep-dive-1-preventing-double-booking)
-8. [Deep Dive 2: Temporary Seat Holds](#8-deep-dive-2-temporary-seat-holds)
-9. [Deep Dive 3: The Purchase as a Saga](#9-deep-dive-3-the-purchase-as-a-saga)
-10. [Deep Dive 4: On-Sale Time and the Virtual Waiting Room](#10-deep-dive-4-on-sale-time-and-the-virtual-waiting-room)
-11. [Deep Dive 5: The Seat Map at Scale](#11-deep-dive-5-the-seat-map-at-scale)
-12. [Deep Dive 6: Contention on a Single Event](#12-deep-dive-6-contention-on-a-single-event)
-13. [Deep Dive 7: Bots and Fairness](#13-deep-dive-7-bots-and-fairness)
-14. [Deep Dive 8: A Variant — Hotel Booking](#14-deep-dive-8-a-variant--hotel-booking)
-15. [Bottlenecks and Failure Scenarios](#15-bottlenecks-and-failure-scenarios)
-16. [What Changes at 10x Scale](#16-what-changes-at-10x-scale)
-17. [Key Concepts and New Terms](#17-key-concepts-and-new-terms)
-18. [Variations and Follow-Up Questions](#18-variations-and-follow-up-questions)
-19. [Common Mistakes](#19-common-mistakes)
-20. [Cheat Sheet and Self-Check](#20-cheat-sheet-and-self-check)
+5. [Модель данных](#5-модель-данных)
+6. [High-level дизайн](#6-high-level-дизайн)
+7. [Deep dive 1: защита от двойного бронирования](#7-deep-dive-1-защита-от-двойного-бронирования)
+8. [Deep dive 2: временное удержание мест](#8-deep-dive-2-временное-удержание-мест)
+9. [Deep dive 3: покупка как сага](#9-deep-dive-3-покупка-как-сага)
+10. [Deep dive 4: старт продаж и виртуальная очередь](#10-deep-dive-4-старт-продаж-и-виртуальная-очередь)
+11. [Deep dive 5: карта мест на масштабе](#11-deep-dive-5-карта-мест-на-масштабе)
+12. [Deep dive 6: конкуренция за одно событие](#12-deep-dive-6-конкуренция-за-одно-событие)
+13. [Deep dive 7: боты и справедливость](#13-deep-dive-7-боты-и-справедливость)
+14. [Deep dive 8: вариант — бронирование отелей](#14-deep-dive-8-вариант--бронирование-отелей)
+15. [Узкие места и сценарии сбоев](#15-узкие-места-и-сценарии-сбоев)
+16. [Что изменится при росте в 10 раз](#16-что-изменится-при-росте-в-10-раз)
+17. [Ключевые концепции и новые понятия](#17-ключевые-концепции-и-новые-понятия)
+18. [Варианты задачи и follow-up вопросы](#18-варианты-задачи-и-follow-up-вопросы)
+19. [Типичные ошибки](#19-типичные-ошибки)
+20. [Шпаргалка и самопроверка](#20-шпаргалка-и-самопроверка)
 
 ---
 
-## 0. What This Problem Teaches
+## 0. Чему учит эта задача
 
-Ticket sales are a problem about **contention for a scarce resource**. Unlike a feed or search, where eventual consistency is fine, here a single error — two people holding a ticket for the same seat — is unacceptable. And at on-sale time for a popular concert, millions of people try to buy tens of thousands of seats at once.
+Продажа билетов — задача про **конкуренцию за ограниченный ресурс**. В отличие от ленты или поиска, где допустима eventual consistency, здесь одна ошибка — два человека с билетом на одно место — недопустима. При этом в момент старта продаж популярного концерта миллионы людей одновременно пытаются купить десятки тысяч мест.
 
-| What's tested | Where it shows up |
-|:--------------|:------------------|
-| Strong consistency under contention | One seat — one buyer |
-| Concurrency control mechanisms | Locks, optimistic conditional updates, unique constraints |
-| Temporary states with expiry | Holding a seat for 10 minutes during payment |
-| Distributed processes | Hold → payment → confirmation as a saga with compensations |
-| Instant load spikes | A virtual waiting room, controlled admission rate |
-| Hot spots | Every request targets one event |
-| Fairness and abuse | Bots, scalpers |
+| Что проверяют | Где это в задаче |
+|:--------------|:-----------------|
+| Строгая консистентность при конкуренции | Одно место — один покупатель |
+| Механизмы конкурентного доступа | Блокировки, оптимистичные условные обновления, уникальные ограничения |
+| Временные состояния с истечением | Удержание места на 10 минут на время оплаты |
+| Распределённые процессы | Удержание → оплата → подтверждение как сага с компенсациями |
+| Мгновенные пики нагрузки | Виртуальная очередь, контроль скорости допуска |
+| Горячие точки | Все запросы — к одному событию |
+| Справедливость и злоупотребления | Боты, перекупщики |
 
 > [!TIP]
-> The key idea to state early: **the traffic splits into two parts with different requirements**. Browsing (events, the seat map) is huge, tolerates slight staleness and is cached. Booking is smaller in volume but needs strong consistency, and a waiting room protects it from overload.
+> Главная мысль, которую нужно сказать рано: **поток делится на две части с разными требованиями**. Просмотр (события, карта мест) — огромный, допускает небольшое устаревание и кэшируется. Бронирование — меньше по объёму, но требует строгой консистентности и защищается очередью от перегрузки.
 
 ---
 
-## 1. Problem Statement
+## 1. Условие задачи
 
-> 🎤 "Design Ticketmaster: a user picks a concert, sees the venue map, selects seats, the seats are held for them while they pay, and after payment they get tickets. Account for a popular artist's on-sale, when millions of people arrive at once."
+> 🎤 «Спроектируй Ticketmaster: пользователь выбирает концерт, видит схему зала, выбирает места, они удерживаются за ним на время оплаты, после оплаты он получает билеты. Учти старт продаж популярного артиста, когда миллионы людей приходят одновременно».
 
-**What the user sees:**
+**Что видит пользователь:**
 
 ```
-1. Opens the concert → a stadium map with available seats highlighted
-2. Picks two seats in section B → "Your seats are held: 09:59"
-3. Enters card details, pays → tickets in the app
-4. On on-sale day: "You're in the queue. 48,213 people ahead of you, estimated wait 25 minutes"
+1. Открывает концерт → схема стадиона, свободные места подсвечены
+2. Выбирает два места в секторе B → «Места удерживаются за вами: 09:59»
+3. Вводит данные карты, оплачивает → билеты в приложении
+4. В день старта продаж: «Вы в очереди. Перед вами 48 213 человек, примерное ожидание 25 минут»
 ```
 
-**Time plan:**
+**План по времени:**
 
-| Step | ⏱️ |
-|:-----|:--:|
-| Requirements | 5 min |
-| Estimates | 3 min |
-| API and data | 5 min |
-| High-level design | 6 min |
-| Deep dives | 22–30 min |
-| Failures and wrap-up | 4 min |
+| Шаг | ⏱️ |
+|:----|:--:|
+| Требования | 5 мин |
+| Оценки | 3 мин |
+| API и данные | 5 мин |
+| High-level дизайн | 6 мин |
+| Deep dives | 22–30 мин |
+| Сбои и итоги | 4 мин |
 
 ---
 
-## 2. Clarifying Questions and Requirements
+## 2. Уточняющие вопросы и требования
 
-⏱️ 5 min
+⏱️ 5 мин
 
-| My question | Interviewer's answer | What it changes and why |
-|:------------|:---------------------|:------------------------|
-| Reserved seats or general admission? | Both: stadiums with seats and a standing floor | Two kinds of inventory: seats and counters |
-| How long are seats held for a buyer? | 10 minutes to pay | A hold with a TTL |
-| Can a seat be sold twice? | Absolutely not | Strongly consistent booking |
-| Peak load? | On-sale: 2M people within minutes for a 50,000-seat stadium | A virtual waiting room and admission control |
-| Normal load? | Thousands of events, hundreds of purchases per second | An ordinary transactional system |
-| Fairness? | Important: bots and scalpers are a big problem | Bot protection, limits |
-| Payment? | Through a payment provider | A saga: hold → payment → confirmation |
-| How current must the seat map be? | Seconds of delay are fine; the final check happens at hold time | An availability cache |
+| Мой вопрос | Ответ интервьюера | Что это меняет и почему |
+|:-----------|:------------------|:------------------------|
+| Места с номерами или входные билеты без мест? | Оба: стадионы с местами и танцпол без мест | Два типа инвентаря: места и счётчики |
+| Сколько держать места за покупателем? | 10 минут на оплату | Удержание с TTL |
+| Можно ли продать одно место дважды? | Ни в коем случае | Строгая консистентность бронирования |
+| Пиковая нагрузка? | Старт продаж: 2M человек за минуты на стадион на 50 000 мест | Виртуальная очередь и контроль допуска |
+| Обычная нагрузка? | Тысячи событий, сотни покупок в секунду | Обычная транзакционная система |
+| Справедливость? | Важно: боты и перекупщики — большая проблема | Защита от ботов, лимиты |
+| Оплата? | Через платёжного провайдера | Сага: удержание → оплата → подтверждение |
+| Насколько актуальной должна быть карта мест? | Секунды задержки допустимы; окончательная проверка — при удержании | Кэш доступности |
 
-### Functional requirements
+### Функциональные требования
 
-1. Browse events and the seat map with availability.
-2. Select seats (or a quantity for general admission) and hold them for 10 minutes.
-3. Pay and receive tickets.
-4. Automatically release seats if payment fails or time runs out.
-5. A virtual waiting room for popular events.
+1. Просмотр событий и схемы мест с доступностью.
+2. Выбор мест (или количества для входных билетов) и их удержание на 10 минут.
+3. Оплата и получение билетов.
+4. Автоматическое освобождение мест, если оплата не прошла или время истекло.
+5. Виртуальная очередь на популярные события.
 
-### Non-functional requirements
+### Нефункциональные требования
 
-| Requirement | Target | Why |
-|:------------|:-------|:----|
-| Correctness | **Zero** double sales | Two people in one seat is a serious incident |
-| Holds | Seats are really reserved for the buyer for 10 minutes | Otherwise they're "stolen" while the card is being typed |
-| Availability | The site doesn't go down at on-sale | Going down during a sale is the business's biggest risk |
-| Fairness | People who arrived on time have equal chances | Reputation and artists' requirements |
-| Latency | Holding a seat — under a second | The user is waiting for the result |
-| Scale | Peaks hundreds of times above normal load | You can't keep peak capacity running all the time |
+| Требование | Цель | Почему |
+|:-----------|:-----|:-------|
+| Корректность | **Ноль** двойных продаж | Два человека на одном месте — серьёзный инцидент |
+| Удержание | Места реально закреплены за покупателем на 10 минут | Иначе их «уведут» во время ввода карты |
+| Доступность | Сайт не падает при старте продаж | Падение в момент продаж — главный риск бизнеса |
+| Справедливость | Люди, пришедшие вовремя, имеют равные шансы | Репутация и требования артистов |
+| Задержка | Удержание места — до секунды | Пользователь ждёт результата |
+| Масштаб | Пики в сотни раз выше обычной нагрузки | Нельзя держать мощности под пик постоянно |
 
 ---
 
-## 3. Capacity Estimates
+## 3. Оценки нагрузки
 
-⏱️ 3 min
+⏱️ 3 мин
 
 ```
-A normal day
-  Thousands of events on sale, hundreds of purchases per second — ordinary transactional load
+Обычный день
+  Тысячи событий в продаже, сотни покупок в секунду — обычная транзакционная нагрузка
 
-A popular concert's on-sale
-  Seats:                  50,000
-  Buyers who show up:     2,000,000 in the first minutes
-  Without a queue:        millions of requests per second for browsing and holds
-  Purchases:              ~3 tickets per order → ~17,000 orders for the whole stadium
+Старт продаж популярного концерта
+  Мест:                   50 000
+  Пришедших покупателей:  2 000 000 за первые минуты
+  Без очереди:            миллионы запросов в секунду на просмотр и удержание
+  Покупок:                ~3 билета на заказ → ~17 000 заказов на весь стадион
 
-Admission from the queue
-  If the system serves ~5,000 concurrent buyers,
-  and a purchase takes 3–5 minutes → admitting ~1,500 people per minute
-  ~17,000 orders / 1,500 per minute → the seats sell out in roughly 10–15 minutes
-  The other ~1.98M — an honest "sold out" message
+Допуск из очереди
+  Если система обслуживает ~5 000 одновременных покупателей,
+  а покупка занимает 3–5 минут → допуск ~1 500 человек в минуту
+  ~17 000 заказов / 1 500 в минуту → места раскупаются примерно за 10–15 минут
+  Остальным ~1,98M — честное сообщение «билеты закончились»
 ```
 
-### Conclusions
+### Выводы
 
-| Conclusion | Design consequence |
-|:-----------|:-------------------|
-| Demand is 40× supply | Most buyers will leave without tickets — it matters to tell them quickly and honestly |
-| Millions of people within minutes | You can't let everyone into the booking system — **a virtual waiting room** with controlled admission |
-| Every request targets one event | A hot spot: sharding "by event" doesn't spread the load |
-| Orders number in the tens of thousands | The writes themselves are small; the difficulty is contention and overload protection |
+| Вывод | Следствие для дизайна |
+|:------|:----------------------|
+| Спрос в 40 раз больше предложения | Большинство покупателей уйдут без билетов — важно быстро и честно сообщить им это |
+| Миллионы человек за минуты | Нельзя пускать всех в систему бронирования — **виртуальная очередь** с контролируемым допуском |
+| Все запросы — к одному событию | Горячая точка: шардирование «по событию» не распределяет нагрузку |
+| Заказов — десятки тысяч | Сама запись невелика; сложность — конкуренция и защита от перегрузки |
 
 ---
 
 ## 4. API
 
-⏱️ 3 min
+⏱️ 3 мин
 
 ```http
-# Browsing
-GET  /v1/events/{id}                        → description, venue, prices
-GET  /v1/events/{id}/seatmap                → the layout (static, from the CDN)
-GET  /v1/events/{id}/availability           → availability by section (updated often)
+# Просмотр
+GET  /v1/events/{id}                        → описание, площадка, цены
+GET  /v1/events/{id}/seatmap                → схема (статика, из CDN)
+GET  /v1/events/{id}/availability           → доступность по секторам (часто обновляется)
 
-# The queue (for popular events)
+# Очередь (для популярных событий)
 POST /v1/events/{id}/queue                  → { queue_token, position }
 GET  /v1/queue/{token}                      → { position, eta } | { admitted: true, access_token }
 
-# Holds and purchases (with an access_token, if there's a queue)
+# Удержание и покупка (с access_token, если есть очередь)
 POST /v1/holds          { event_id, seat_ids: ["B-12-5","B-12-6"] }   | { event_id, ga_quantity: 2 }
                         → 201 { hold_id, expires_at }
                         → 409 { unavailable: ["B-12-6"] }
-DELETE /v1/holds/{id}                       ← the user changed their mind
+DELETE /v1/holds/{id}                       ← пользователь передумал
 POST /v1/orders         Idempotency-Key
                         { hold_id, payment_method }       → 202 { order_id, status: "PROCESSING" }
 GET  /v1/orders/{id}                        → { status: "CONFIRMED", tickets: [...] }
@@ -189,17 +189,17 @@ GET  /v1/orders/{id}                        → { status: "CONFIRMED", tickets: 
 
 ---
 
-## 5. Data Model
+## 5. Модель данных
 
-⏱️ 3 min
+⏱️ 3 мин
 
 ```sql
 events  (event_id PK, venue_id, starts_at, on_sale_at, status, queue_enabled)
 
--- A seat at a specific event: one row per seat
+-- Место на конкретном событии: строка на каждое место
 event_seats (
   event_id        BIGINT,
-  seat_id         TEXT,          -- "B-12-5": section, row, seat
+  seat_id         TEXT,          -- "B-12-5": сектор, ряд, место
   section_id      TEXT,
   price_tier      TEXT,
   status          TEXT,          -- AVAILABLE | HELD | SOLD
@@ -210,7 +210,7 @@ event_seats (
   PRIMARY KEY (event_id, seat_id)
 );
 
--- General admission without seats: a counter
+-- Входные билеты без мест: счётчик
 ga_inventory (event_id, zone_id, total, sold, held, PRIMARY KEY (event_id, zone_id))
 
 holds   (hold_id PK, event_id, user_id, seat_ids, quantity, expires_at, status)
@@ -218,84 +218,84 @@ orders  (order_id PK, user_id, hold_id, amount, status, payment_ref, created_at)
 tickets (ticket_id PK, order_id, event_id, seat_id, barcode)
 ```
 
-| Decision | Why |
-|:---------|:----|
-| A relational DB with transactions | Strongly consistent booking is its strength |
-| Sharding by `event_id` | All of an event's seats live in one shard: holding several seats is a local transaction |
-| One row per seat | Contention for specific seats is resolved at the row level |
-| A counter for general admission | No specific seats — "N left" is enough |
+| Решение | Почему |
+|:--------|:-------|
+| Реляционная БД с транзакциями | Строгая консистентность бронирования — её сильная сторона |
+| Шардирование по `event_id` | Все места события — в одном шарде: удержание нескольких мест — локальная транзакция |
+| Строка на каждое место | Конкуренция за конкретные места решается на уровне строк |
+| Счётчик для входных билетов | Нет конкретных мест — достаточно «осталось N» |
 
 ---
 
-## 6. High-Level Design
+## 6. High-level дизайн
 
-⏱️ 6 min
+⏱️ 6 мин
 
 ```mermaid
 flowchart TB
-    U["👤 Buyer"] --> CDN["🌐 CDN<br/>event pages,<br/>venue maps, the queue page"]
-    U --> WR["🚦 Virtual waiting room<br/>(edge + Redis)"]
-    WR -->|"access_token"| GW["⚖️ API Gateway<br/>token check,<br/>rate limit, bot protection"]
+    U["👤 Покупатель"] --> CDN["🌐 CDN<br/>страницы событий,<br/>схемы залов, страница очереди"]
+    U --> WR["🚦 Виртуальная очередь<br/>(edge + Redis)"]
+    WR -->|"access_token"| GW["⚖️ API Gateway<br/>проверка токена,<br/>rate limit, бот-защита"]
 
-    GW --> AV["👀 Availability service<br/>availability from the cache"]
-    AV --> AC[("⚡ Availability cache<br/>by section (Redis)")]
+    GW --> AV["👀 Availability service<br/>доступность из кэша"]
+    AV --> AC[("⚡ Кэш доступности<br/>по секторам (Redis)")]
 
-    GW --> BK["🎫 Booking service<br/>holds"]
-    BK --> DB[("🗄️ Inventory<br/>event_seats, holds<br/>sharded by event_id")]
+    GW --> BK["🎫 Booking service<br/>удержания"]
+    BK --> DB[("🗄️ Инвентарь<br/>event_seats, holds<br/>шард по event_id")]
     BK --> AC
 
-    GW --> OS["🧾 Order service<br/>the purchase saga"]
+    GW --> OS["🧾 Order service<br/>сага покупки"]
     OS --> DB
-    OS --> PSP["💳 Payment provider"]
-    OS --> TK["🎟️ Ticket issuance"]
+    OS --> PSP["💳 Платёжный провайдер"]
+    OS --> TK["🎟️ Выпуск билетов"]
     OS --> K[["📨 Kafka"]]
-    K --> NS["🔔 Notifications"]
+    K --> NS["🔔 Уведомления"]
 
-    SW["⏰ Sweeper<br/>releasing expired holds"] --> DB
+    SW["⏰ Sweeper<br/>освобождение истёкших удержаний"] --> DB
     SW --> AC
 ```
 
-🗣️ "Key decisions:
-- **static content** (event pages, venue maps, the queue page) comes from the CDN, which withstands any flood;
-- **the virtual waiting room** lets as many people into the booking system as it can serve;
-- **availability** for the seat map comes from a cache, tolerating seconds of delay;
-- **a hold** is a strongly consistent transaction in a DB sharded by event;
-- **the purchase** is a saga: payment and seat confirmation with compensations;
-- **a sweeper** releases expired holds."
+🗣️ «Ключевые решения:
+- **статика** (страницы событий, схемы залов, страница очереди) — из CDN, она выдерживает любой поток;
+- **виртуальная очередь** пускает в систему бронирования столько людей, сколько она может обслужить;
+- **доступность** для карты мест — из кэша, допускает задержку в секунды;
+- **удержание** — строго консистентная транзакция в БД, шардированной по событию;
+- **покупка** — сага: оплата и подтверждение мест с компенсациями;
+- **sweeper** освобождает истёкшие удержания».
 
 ---
 
-## 7. Deep Dive 1: Preventing Double Booking
+## 7. Deep dive 1: защита от двойного бронирования
 
-> 🎤 "Two people clicked the same seat at the same moment. How do you guarantee only one gets it?"
+> 🎤 «Два человека одновременно нажали на одно и то же место. Как гарантировать, что получит только один?»
 
-### The problem
+### Проблема
 
 ```mermaid
 sequenceDiagram
-    participant A as Anna
-    participant DB as Database
-    participant B as Boris
+    participant A as Анна
+    participant DB as База
+    participant B as Борис
 
     A->>DB: SELECT status FROM seat B-12-5 → AVAILABLE
     B->>DB: SELECT status FROM seat B-12-5 → AVAILABLE
-    A->>DB: UPDATE seat B-12-5 SET status = HELD (Anna)
-    B->>DB: UPDATE seat B-12-5 SET status = HELD (Boris)
-    Note over DB: The seat is "held" twice —<br/>the last write wins,<br/>and Anna thinks the seat is hers
+    A->>DB: UPDATE seat B-12-5 SET status = HELD (Анна)
+    B->>DB: UPDATE seat B-12-5 SET status = HELD (Борис)
+    Note over DB: Место «удержано» дважды —<br/>последняя запись побеждает,<br/>Анна думает, что место её
 ```
 
-This is the classic "read — check — write" race (a lost update, see [04-databases](../../04-databases/README.md#9-concurrency-anomalies)).
+Это классическая гонка «прочитать — проверить — записать» (lost update, см. [04-databases](../../01_Fundamentals/04_Databases/README.ru.md#9-аномалии-конкурентного-доступа)).
 
-### Solutions
+### Решения
 
-| Approach | How | Pros | Cons |
-|:---------|:----|:-----|:-----|
-| **Pessimistic locking** | `SELECT … FOR UPDATE` locks the seat rows until the transaction ends | Easy to understand | Lock waits under high contention, a deadlock risk with multiple seats |
-| **An optimistic conditional update** ⭐ | `UPDATE … WHERE status = 'AVAILABLE'` and check how many rows changed | No long-held locks; the database itself resolves the race atomically | On a conflict — a retry or an error to the user |
-| **A unique constraint** | A `seat_holds (event_id, seat_id) UNIQUE` table; a second hold insert fails | A guarantee at the schema level | Expired rows must be deleted |
-| **An atomic operation in Redis** | `SET seat:{id} hold NX EX 600` | Very fast | Redis isn't the source of truth; consistency with the DB is needed |
+| Подход | Как | Плюсы | Минусы |
+|:-------|:----|:------|:-------|
+| **Пессимистичная блокировка** | `SELECT … FOR UPDATE` блокирует строки мест до конца транзакции | Просто понять | Блокировки при высокой конкуренции, риск взаимоблокировок при нескольких местах |
+| **Оптимистичное условное обновление** ⭐ | `UPDATE … WHERE status = 'AVAILABLE'` и проверка числа изменённых строк | Нет долгих блокировок; гонку решает сама база атомарно | При конфликте — повтор или ошибка пользователю |
+| **Уникальное ограничение** | Таблица `seat_holds (event_id, seat_id) UNIQUE`; вставка второго удержания падает | Гарантия на уровне схемы | Нужно удалять истёкшие записи |
+| **Атомарная операция в Redis** | `SET seat:{id} hold NX EX 600` | Очень быстро | Redis — не источник правды; нужна согласованность с БД |
 
-### A conditional update of several seats
+### Условное обновление нескольких мест
 
 ```sql
 BEGIN;
@@ -306,393 +306,393 @@ SET status = 'HELD', hold_id = :hold_id, hold_expires_at = now() + interval '10 
 WHERE event_id = :event_id
   AND seat_id IN ('B-12-5', 'B-12-6')
   AND (status = 'AVAILABLE'
-       OR (status = 'HELD' AND hold_expires_at < now()));   -- an expired hold = available
+       OR (status = 'HELD' AND hold_expires_at < now()));   -- истёкшее удержание = свободно
 
--- If fewer rows changed than seats requested → some seats are taken
--- → ROLLBACK, tell the user which seats are unavailable
--- If all changed → insert into holds and COMMIT
+-- Если изменено строк меньше, чем мест в запросе → часть мест занята
+-- → ROLLBACK, вернуть пользователю, какие места недоступны
+-- Если изменены все → вставить запись в holds и COMMIT
 COMMIT;
 ```
 
-| Detail | Why it matters |
-|:-------|:---------------|
-| **All or nothing** | The user wants two adjacent seats; one without the other is useless — the whole transaction rolls back |
-| The condition in `WHERE` | The database checks and changes the row atomically: of two concurrent `UPDATE`s, the second sees the already-changed status and changes nothing |
-| An expired hold counts as available | A seat frees up the moment its hold expires, without waiting for the sweeper |
-| All of an event's seats in one shard | The transaction is local, with no distributed transactions |
+| Деталь | Почему важна |
+|:-------|:-------------|
+| **Всё или ничего** | Пользователь хочет два места рядом; одно без другого ему не нужно — транзакция откатывается целиком |
+| Условие в `WHERE` | База атомарно проверяет и меняет строку: из двух одновременных `UPDATE` второй увидит уже изменённый статус и не изменит ничего |
+| Истёкшее удержание считается свободным | Место освобождается сразу по истечении, не дожидаясь sweeper |
+| Все места события в одном шарде | Транзакция локальная, без распределённых транзакций |
 
-📘 **Why a conditional update is atomic.** When executing `UPDATE … WHERE`, the database locks the row for the duration of the change and evaluates the condition **after** acquiring the lock. The second concurrent `UPDATE` waits, then sees `status = 'HELD'` and finds no matching row. That makes the check and the write a single operation.
+📘 **Почему условное обновление атомарно.** База данных при выполнении `UPDATE … WHERE` блокирует строку на время изменения и проверяет условие уже **после** получения блокировки. Второй конкурентный `UPDATE` ждёт, затем видит `status = 'HELD'` и не находит подходящей строки. Так проверка и запись становятся одной операцией.
 
 > [!IMPORTANT]
-> **Senior+ signal:** show the race on a diagram, name it (a lost update), and propose a solution **the database performs atomically** (a conditional update or a unique constraint), not "we'll check in code and then write". Plus "all or nothing" handling for multiple seats.
+> **Сигнал Senior+:** показать гонку на диаграмме, назвать её (lost update) и предложить решение, которое **база делает атомарно** (условное обновление или уникальное ограничение), а не «проверим в коде и потом запишем». Плюс обработка нескольких мест «всё или ничего».
 
-### Ordering with pessimistic locks
+### Порядок при пессимистичных блокировках
 
-If pessimistic locks are chosen, seats must be locked **in a consistent order** (e.g. by `seat_id`). Otherwise Anna locks seat 5 and waits for 6 while Boris does the opposite: a deadlock.
+Если выбраны пессимистичные блокировки, места нужно блокировать **в одном порядке** (например, по `seat_id`). Иначе Анна заблокирует место 5 и будет ждать 6, а Борис — наоборот: взаимоблокировка.
 
 ---
 
-## 8. Deep Dive 2: Temporary Seat Holds
+## 8. Deep dive 2: временное удержание мест
 
-> 🎤 "Why hold seats, and how do you release them?"
+> 🎤 «Зачем удерживать места и как их освобождать?»
 
-### Why
+### Зачем
 
-Without holds, a user picks seats, types card details, and at payment discovers someone faster already bought them. A hold guarantees: **while you're paying, the seats are yours**.
+Без удержания пользователь выбрал места, ввёл данные карты, а при оплате оказалось, что места уже купил кто-то быстрее. Удержание гарантирует: **пока ты платишь, места твои**.
 
-### A seat's lifecycle
+### Жизненный цикл места
 
 ```mermaid
 stateDiagram-v2
     [*] --> AVAILABLE
-    AVAILABLE --> HELD: a hold (10 min)
-    HELD --> AVAILABLE: expired / cancelled / payment declined
-    HELD --> SOLD: payment confirmed
-    SOLD --> AVAILABLE: a ticket refund (per the event's rules)
+    AVAILABLE --> HELD: удержание (10 мин)
+    HELD --> AVAILABLE: истекло / отменено / оплата отклонена
+    HELD --> SOLD: оплата подтверждена
+    SOLD --> AVAILABLE: возврат билета (по правилам события)
 ```
 
-### How to release
+### Как освобождать
 
-| Mechanism | How | Why |
-|:----------|:----|:----|
-| **Lazy release** | The hold condition treats an expired `HELD` as available | A seat is available **immediately** on expiry — even if the background job is behind |
-| **A sweeper** | Every few seconds it finds expired holds, sets seats back to `AVAILABLE` and updates the availability cache | The seat map tells the truth; hold records get closed |
-| **Explicit cancellation** | The user closed the page or tapped "Cancel" | Seats come back sooner |
+| Механизм | Как | Зачем |
+|:---------|:----|:------|
+| **Ленивое освобождение** | В условии удержания истёкший `HELD` считается свободным | Место доступно **сразу** по истечении — даже если фоновая задача отстаёт |
+| **Sweeper** | Раз в несколько секунд находит истёкшие удержания, переводит места в `AVAILABLE`, обновляет кэш доступности | Карта мест показывает правду; записи удержаний закрываются |
+| **Явная отмена** | Пользователь закрыл страницу или нажал «Отменить» | Места возвращаются раньше |
 
-### Subtleties
+### Тонкости
 
-| Situation | Solution |
-|:----------|:---------|
-| The user paid at the last second, after the hold expired | Seat confirmation is conditional: `WHERE hold_id = :mine AND status = 'HELD'`. If someone else has since held the seat, the order isn't confirmed and the payment is reversed |
-| Hold length | A trade-off: short — more failed payments; long — seats sit idle while others wait |
-| Extending | Once (e.g. +5 minutes), if the user is active on the payment page |
-| Clocks | Expiry is computed by **the database** (`now()`), not by application servers |
+| Ситуация | Решение |
+|:---------|:--------|
+| Пользователь оплатил в последнюю секунду, а удержание истекло | Подтверждение мест — условное: `WHERE hold_id = :mine AND status = 'HELD'`. Если место уже удержал другой — заказ не подтверждается, оплата возвращается |
+| Длина удержания | Компромисс: короткое — больше неудачных оплат; длинное — места «простаивают», пока другие ждут |
+| Продление | Один раз (например, +5 минут), если пользователь активен на странице оплаты |
+| Часы | Время истечения считает **база** (`now()`), а не серверы приложения |
 
 > [!WARNING]
-> A hold in Redis with a TTL that isn't reflected in the DB is dangerous: Redis may lose data on a failure, and the seat would look "available" while the buyer is already paying. If Redis is used for speed, the DB still must be the source of truth, with the final check at order confirmation.
+> Удержание в Redis с TTL без отражения в БД опасно: Redis может потерять данные при сбое, и место окажется «свободным», хотя покупатель уже платит. Если Redis используется для скорости, источником правды всё равно должна быть БД, а финальная проверка — при подтверждении заказа.
 
 ---
 
-## 9. Deep Dive 3: The Purchase as a Saga
+## 9. Deep dive 3: покупка как сага
 
-> 🎤 "What happens after 'Pay' is clicked?"
+> 🎤 «Что происходит после нажатия “Оплатить”?»
 
-📘 A purchase spans two systems — our inventory and an external payment provider. A distributed transaction between them is impossible, so the process is structured as a **saga** with compensations (see [11-distributed-transactions](../../11-distributed-transactions/README.md)).
+📘 Покупка затрагивает две системы — наш инвентарь и внешнего платёжного провайдера. Распределённую транзакцию между ними сделать нельзя, поэтому процесс оформляется как **сага** с компенсациями (см. [11-distributed-transactions](../../01_Fundamentals/11_Distributed%20transactions/README.ru.md)).
 
 ```mermaid
 sequenceDiagram
-    participant U as Buyer
+    participant U as Покупатель
     participant O as Order service
-    participant DB as Inventory
-    participant P as Payment provider
+    participant DB as Инвентарь
+    participant P as Платёжный провайдер
 
     U->>O: POST /orders (hold_id, Idempotency-Key)
-    O->>DB: Order PENDING (check that the hold is still valid)
-    O->>P: Authorize the amount (idempotency key = order_id)
-    P-->>O: Authorized
-    O->>DB: TX: seats HELD(hold_id) → SOLD, order CONFIRMED
-    alt Seats confirmed
-        O->>P: Capture
-        O->>O: Issue tickets, send an email
-        O-->>U: CONFIRMED + tickets
-    else The hold expired and the seats are taken
-        O->>P: Void the authorization
-        O-->>U: "Your hold expired and the seats were sold"
+    O->>DB: Заказ PENDING (проверить, что удержание действует)
+    O->>P: Авторизация суммы (idempotency key = order_id)
+    P-->>O: Авторизовано
+    O->>DB: TX: места HELD(hold_id) → SOLD, заказ CONFIRMED
+    alt Места подтверждены
+        O->>P: Списание (capture)
+        O->>O: Выпустить билеты, отправить письмо
+        O-->>U: CONFIRMED + билеты
+    else Удержание истекло и места заняты
+        O->>P: Отмена авторизации (void)
+        O-->>U: «Время удержания истекло, места уже проданы»
     end
 ```
 
-| Step | Why this way |
-|:-----|:-------------|
-| **Authorize first, capture later** | The money is blocked but not taken until the seats are confirmed — easy to cancel without a refund |
-| **Idempotency key = order_id** | A retried request to the provider (a timeout) won't create a second payment (see [10-idempotency](../../10-idempotency/README.md)) |
-| **Seat confirmation is conditional** | Only if the hold is still ours |
-| **Compensation** | Seats lost → void the authorization; payment declined → release the seats |
-| **An unknown payment result** (a timeout) | Don't release the seats right away: query the provider for status; if it stays unknown — reconciliation |
+| Шаг | Почему так |
+|:----|:-----------|
+| **Сначала авторизация, потом списание** | Деньги блокируются, но не списываются, пока места не подтверждены — легко отменить без возврата |
+| **Idempotency key = order_id** | Повтор запроса к провайдеру (таймаут) не создаст второй платёж (см. [10-idempotency](../../01_Fundamentals/10_Idempotency/README.ru.md)) |
+| **Подтверждение мест — условное** | Только если удержание всё ещё наше |
+| **Компенсация** | Места потеряны → отмена авторизации; оплата отклонена → освобождение мест |
+| **Неизвестный результат оплаты** (таймаут) | Не освобождать места сразу: запросить статус у провайдера; если неизвестно долго — сверка |
 
 > [!TIP]
-> The response to the user is asynchronous (`202 PROCESSING`), and the client polls for status or receives it over WebSocket. That lets you survive a slow provider without holding an HTTP request open.
+> Ответ пользователю асинхронный (`202 PROCESSING`), а клиент опрашивает статус или получает его по WebSocket. Это позволяет пережить медленного провайдера, не держа HTTP-запрос открытым.
 
 ---
 
-## 10. Deep Dive 4: On-Sale Time and the Virtual Waiting Room
+## 10. Deep dive 4: старт продаж и виртуальная очередь
 
-> 🎤 "Sales start at 10:00. At 09:59 there are 2 million people on the site. What do you do?"
+> 🎤 «В 10:00 стартуют продажи. В 09:59 на сайте 2 миллиона человек. Что делать?»
 
-### Why everything breaks without a queue
+### Почему без очереди всё ломается
 
 ```
-2M people hit "Refresh" at 10:00:00
-→ millions of requests per second to the booking service and the events database
-→ the event's shard is overloaded, latency climbs, timeouts
-→ users refresh again (a retry storm)
-→ the site goes down, nobody buys anything, headlines say "Ticketmaster crashes again"
+2M человек нажимают «Обновить» в 10:00:00
+→ миллионы запросов в секунду к сервису бронирования и базе событий
+→ база шарда события перегружена, задержки растут, таймауты
+→ пользователи обновляют страницу ещё раз (retry storm)
+→ сайт падает, никто ничего не купил, новости «Ticketmaster снова упал»
 ```
 
-You can't keep capacity for such a peak running all the time (it lasts minutes), and autoscaling won't keep up. You need to **control the rate** at which people enter the booking system.
+Мощности под такой пик держать постоянно нельзя (он длится минуты), а автоскейлинг не успеет. Нужно **контролировать скорость**, с которой люди попадают в систему бронирования.
 
-### The virtual waiting room
+### Виртуальная очередь
 
 ```mermaid
 flowchart LR
-    U["2M people"] --> E["🌐 Edge / CDN<br/>a static queue page"]
-    E --> Q["🚦 Queue service<br/>positions in Redis"]
-    Q -->|"~1,500 per minute"| T["🎟️ access_token<br/>(signed, 15 min,<br/>bound to the user)"]
-    T --> BK["The booking system<br/>~5,000 active buyers"]
+    U["2M человек"] --> E["🌐 Edge / CDN<br/>статическая страница очереди"]
+    E --> Q["🚦 Сервис очереди<br/>позиции в Redis"]
+    Q -->|"~1 500 в минуту"| T["🎟️ access_token<br/>(подписан, 15 мин,<br/>привязан к пользователю)"]
+    T --> BK["Система бронирования<br/>~5 000 активных покупателей"]
 ```
 
-| Element | How it works |
+| Элемент | Как работает |
 |:--------|:-------------|
-| **A queue page from the CDN** | A static page withstands millions of users; the client periodically requests its position |
-| **A fair order** | Everyone who arrived **before** on-sale gets a **random** position (there's no point sitting there since 6 AM refreshing every millisecond); later arrivals join the back in order |
-| **Admission rate** | Tuned to actual capacity: the number of active buyers, hold and payment latency |
-| **The access_token** | A signed token (e.g. a JWT) with the user ID and an expiry; the booking service verifies the signature **without calling the queue** |
-| **Polling with jitter** | Clients poll their position every 10–30 seconds with a random offset — no synchronized waves |
-| **Position and wait time** | Honest information reduces how many people keep refreshing |
-| **Sold out** | Once inventory runs out, the whole queue immediately gets "sold out" instead of waiting in vain |
+| **Страница очереди со CDN** | Статическая страница выдерживает миллионы пользователей; клиент периодически запрашивает свою позицию |
+| **Справедливый порядок** | Все, кто пришёл **до** старта продаж, получают **случайные** позиции (нет смысла сидеть с 6 утра и обновлять страницу каждую миллисекунду); пришедшие после — в конец по порядку |
+| **Скорость допуска** | Регулируется по фактической ёмкости: число активных покупателей, задержка удержаний и оплат |
+| **access_token** | Подписанный токен (например, JWT) с идентификатором пользователя и сроком действия; сервис бронирования проверяет подпись **без обращения к очереди** |
+| **Опрос с разбросом** | Клиенты опрашивают позицию раз в 10–30 секунд со случайным смещением — без синхронных волн |
+| **Позиция и время ожидания** | Честная информация снижает число людей, обновляющих страницу |
+| **Распродано** | Как только инвентарь закончился, вся очередь сразу получает «билеты закончились», а не ждёт впустую |
 
-📘 **Why a token rather than a queue check.** The booking service handles thousands of requests per second; asking the queue service "is this user admitted" for each would make the queue a bottleneck. A signed token is verified locally by its cryptographic signature — that's static stability (see [13-reliability-patterns](../../13-reliability-patterns/README.md#9-redundancy-and-static-stability)).
+📘 **Почему токен, а не проверка в очереди.** Сервис бронирования получает тысячи запросов в секунду; если для каждого спрашивать сервис очереди «допущен ли пользователь», очередь станет узким местом. Подписанный токен проверяется локально по криптографической подписи — это статическая стабильность (см. [13-reliability-patterns](../../01_Fundamentals/13_Reliability%20patterns/README.ru.md#9-избыточность-и-статическая-стабильность)).
 
 > [!IMPORTANT]
-> **Senior+ signal:** a waiting room is **load shedding with a human face**: instead of a `503`, the user gets a clear position, and the system runs at a safe load. And mention fairness: a random order for those who arrived before on-sale.
+> **Сигнал Senior+:** очередь — это **load shedding с человеческим лицом**: вместо отказа `503` пользователь получает понятную позицию, а система работает на безопасной нагрузке. И сказать о справедливости: случайный порядок для пришедших до старта.
 
 ---
 
-## 11. Deep Dive 5: The Seat Map at Scale
+## 11. Deep dive 5: карта мест на масштабе
 
-> 🎤 "Thousands of people are looking at the venue map at once. How do you show current availability?"
+> 🎤 «Тысячи людей одновременно смотрят схему зала. Как показывать актуальную доступность?»
 
-| Data | How it's served | Why |
-|:-----|:----------------|:----|
-| **The venue layout** (sections, rows, seat coordinates) | A static file via the CDN | Doesn't change during sales |
-| **Availability** | A separate lightweight request: a per-section bitmap from Redis | Changes constantly |
-| **Updates** | Polling every few seconds or a stream (SSE/WebSocket) of per-section changes | The map doesn't "lie" for long |
+| Данные | Как отдаются | Почему |
+|:-------|:-------------|:-------|
+| **Схема зала** (сектора, ряды, координаты мест) | Статический файл через CDN | Не меняется во время продаж |
+| **Доступность** | Отдельный лёгкий запрос: битовая карта по секторам из Redis | Меняется постоянно |
+| **Обновления** | Опрос раз в несколько секунд или поток (SSE/WebSocket) с изменениями по секторам | Карта не «врёт» долго |
 
-📘 **An availability bitmap.** A 500-seat section is 500 bits ≈ 63 bytes: 1 — available, 0 — taken. Availability for a whole 50,000-seat stadium is about 6 KB. Such a structure is easy to keep in Redis, update with one operation (`SETBIT`) on a hold or sale, and send to the client whole.
+📘 **Битовая карта доступности.** Сектор на 500 мест — 500 бит ≈ 63 байта: 1 — свободно, 0 — занято. Доступность всего стадиона на 50 000 мест — около 6 КБ. Такую структуру легко держать в Redis, обновлять одной операцией (`SETBIT`) при удержании или продаже и отдавать клиенту целиком.
 
-| Principle | Why |
-|:----------|:----|
-| The map may lag by seconds | The final check happens at hold time; if a seat is taken, the user gets a `409` and picks another |
-| The cache updates after the transaction | The booking service updates the bitmap after COMMIT; the sweeper does so on release |
-| **"Best available seats"** | Instead of picking a specific seat on the map, the system picks seats → fewer conflicts over the same popular seats |
+| Принцип | Почему |
+|:--------|:-------|
+| Карта может отставать на секунды | Окончательная проверка — при удержании; если место уже занято, пользователь получает `409` и выбирает другое |
+| Кэш обновляется после транзакции | Booking service после COMMIT обновляет битовую карту; sweeper — при освобождении |
+| **«Лучшие доступные места»** | Вместо выбора конкретного места на схеме система сама подбирает места → меньше конфликтов за одни и те же популярные места |
 
 > [!TIP]
-> During peak sales many systems **disable** manual seat selection on the map and keep only "best available": thousands of people stop clicking on the same front-row seats, and conflicts drop several-fold.
+> Во время пиковых продаж многие системы **отключают** ручной выбор мест на схеме и оставляют только «лучшие доступные»: тысячи людей больше не кликают по одним и тем же лучшим местам в первом ряду, и конфликтов становится в разы меньше.
 
 ---
 
-## 12. Deep Dive 6: Contention on a Single Event
+## 12. Deep dive 6: конкуренция за одно событие
 
-> 🎤 "Every request goes to one shard — one event. How do you deal with the hot spot?"
+> 🎤 «Все запросы идут в один шард — к одному событию. Как быть с горячей точкой?»
 
-📘 Sharding by `event_id` spreads **different** events well, but a popular concert means every request lands in one shard (see [06-partitioning](../../06-partitioning/README.md#8-hot-partitions-and-skew)).
+📘 Шардирование по `event_id` хорошо распределяет **разные** события, но популярный концерт — это все запросы в один шард (см. [06-partitioning](../../01_Fundamentals/06_Partitioning/README.ru.md#8-горячие-партиции-и-перекос)).
 
-| Solution | How | Effect |
-|:---------|:----|:-------|
-| **The virtual waiting room** | Caps the number of concurrent buyers | Load on the shard stays under control |
-| **Splitting by section** | A hold touches seats in one section; sections are independent locking units (or even shards) | Contention is divided across dozens of sections |
-| **A single-threaded allocator per event** | One process handles all of an event's requests in turn (the actor model), keeping availability in memory and writing results to the DB | No row contention, very high throughput; needs reliable restarts and state recovery |
-| **Batching** | The allocator collects requests over 50–100 ms and satisfies them in one transaction | Fewer transactions |
-| **General admission — a counter** | `UPDATE ga_inventory SET held = held + 2 WHERE … AND total - sold - held >= 2` | One hot row; for huge zones — split the counter into N parts, each with its own quota |
+| Решение | Как | Эффект |
+|:--------|:----|:-------|
+| **Виртуальная очередь** | Ограничивает число одновременных покупателей | Нагрузка на шард — под контролем |
+| **Разделение по секторам** | Удержание затрагивает места одного сектора; сектора — независимые единицы блокировки (или даже шарды) | Конкуренция делится на десятки секторов |
+| **Однопоточный распределитель на событие** | Все запросы события обрабатывает один процесс по очереди (модель актора), держит доступность в памяти и записывает результат в БД | Нет конкуренции за строки, очень высокая пропускная способность; нужен надёжный перезапуск и восстановление состояния |
+| **Пакетная обработка** | Распределитель собирает запросы за 50–100 мс и удовлетворяет их одной транзакцией | Меньше транзакций |
+| **Входные билеты — счётчик** | `UPDATE ga_inventory SET held = held + 2 WHERE … AND total - sold - held >= 2` | Одна строка — горячая; для огромных зон — разбить счётчик на N частей, каждая со своей квотой |
 
-### General admission: a sharded counter
+### Входные билеты: шардированный счётчик
 
 ```
-A 20,000-person floor → 10 sub-counters of 2,000 each
-A request for 2 tickets → a random sub-counter → a conditional decrement
-If the sub-counter is empty → try another
-Result: contention on one row is divided by 10
+Танцпол на 20 000 мест → 10 под-счётчиков по 2 000
+Запрос на 2 билета → случайный под-счётчик → условный декремент
+Если под-счётчик пуст → попробовать другой
+Итог: конкуренция за одну строку делится на 10
 ```
 
 ---
 
-## 13. Deep Dive 7: Bots and Fairness
+## 13. Deep dive 7: боты и справедливость
 
-> 🎤 "Scalpers use bots to buy half the tickets in seconds. What do you do?"
+> 🎤 «Перекупщики ботами скупают половину билетов за секунды. Что делать?»
 
-| Measure | How | Against what |
-|:--------|:----|:-------------|
-| **Pre-registration** | Buyers register in advance and get verified; access to the sale is by code (Ticketmaster runs a Verified Fan program) | Mass bot accounts |
-| **CAPTCHA and behavioral analysis** | On entering the queue and on holds | Automated clients |
-| **Purchase limits** | At most N tickets per account, card, address, device | Buying in bulk |
-| **The queue token is bound to the user and device** | A position can't be transferred or resold | Bypassing the queue |
-| **Rate limiting** | By account, IP, device fingerprint (see [Tier 1 · 02](../02-rate-limiter/README.md)) | Mass requests |
-| **Named or dynamic tickets** | The barcode rotates and is bound to the app; resale only through the official platform with a price cap | The secondary market |
+| Мера | Как | Против чего |
+|:-----|:----|:------------|
+| **Предварительная регистрация** | Покупатели регистрируются заранее, проходят проверку; доступ к продаже — по коду (Ticketmaster использует программу Verified Fan) | Массовые аккаунты ботов |
+| **CAPTCHA и поведенческий анализ** | При входе в очередь и при удержании | Автоматизированные клиенты |
+| **Лимиты на покупку** | Не больше N билетов на аккаунт, карту, адрес, устройство | Скупка партиями |
+| **Токен очереди привязан к пользователю и устройству** | Нельзя передать или перепродать позицию | Обход очереди |
+| **Rate limiting** | По аккаунту, IP, отпечатку устройства (см. [Tier 1 · 02](../02_Design%20a%20Rate%20Limiter%20or%20Abuse%20Protection/README.ru.md)) | Массовые запросы |
+| **Именные или динамические билеты** | Штрихкод меняется, привязан к приложению; перепродажа — только через официальную платформу с ограничением цены | Вторичный рынок |
 
 ---
 
-## 14. Deep Dive 8: A Variant — Hotel Booking
+## 14. Deep dive 8: вариант — бронирование отелей
 
-> 🎤 "What if this were hotel room booking?"
+> 🎤 «А если это бронирование номеров в отелях?»
 
-### How it differs
+### Чем отличается
 
-| | Tickets | Hotels |
-|:-|:--------|:-------|
-| Inventory | Specific seats | **A count** of rooms of a type for each night |
-| A booking | Seats for one event | **A range of nights**: every night must be available |
-| Peaks | On-sale | Seasonality, but no "instant" peak |
-| External channels | Rare | The same room sells via Booking.com, Expedia and the hotel's site |
-| Overselling | Unacceptable | Sometimes allowed on purpose (overbooking) |
+| | Билеты | Отели |
+|:-|:-------|:------|
+| Инвентарь | Конкретные места | **Количество** номеров типа на каждую ночь |
+| Бронь | Места на одно событие | **Диапазон ночей**: нужно, чтобы все ночи были доступны |
+| Пики | Старт продаж | Сезонность, но без «мгновенного» пика |
+| Внешние каналы | Редко | Тот же номер продаётся через Booking.com, Expedia и сайт отеля |
+| Переполнение | Недопустимо | Иногда допускается намеренно (overbooking) |
 
-### The model and booking
+### Модель и бронирование
 
 ```sql
 room_inventory (hotel_id, room_type, night_date, total, booked,
                 PRIMARY KEY (hotel_id, room_type, night_date))
 
--- A 3-night booking: all or nothing
+-- Бронь на 3 ночи: все или ничего
 BEGIN;
 UPDATE room_inventory
 SET booked = booked + 1
 WHERE hotel_id = :h AND room_type = :t
   AND night_date IN ('2027-03-10','2027-03-11','2027-03-12')
   AND booked < total;
--- fewer than 3 rows changed → at least one night is full → ROLLBACK
+-- изменено строк < 3 → хотя бы одна ночь занята → ROLLBACK
 COMMIT;
 ```
 
-| Topic | Solution |
-|:------|:---------|
-| Several nights | A conditional increment for each night in one transaction, all or nothing |
-| A hold during payment | The same TTL mechanism; hotels often take bookings without immediate payment |
-| **Syncing with external channels** | A channel manager pushes availability to OTAs; sync is asynchronous — the last room may sell twice → a small buffer or allowed overbooking with a relocation procedure |
-| Cancellations | Decrementing the counter; cancellation rules and fees |
-| Per-night prices | A separate price table by date and room type |
+| Тема | Решение |
+|:-----|:--------|
+| Несколько ночей | Условное увеличение счётчика на каждую ночь в одной транзакции, всё или ничего |
+| Удержание на время оплаты | Тот же механизм с TTL; для отелей часто бронь без немедленной оплаты |
+| **Синхронизация с внешними каналами** | Channel manager рассылает остатки в OTA; синхронизация асинхронная — возможна продажа последнего номера дважды → небольшой запас или разрешённый overbooking с процедурой переселения |
+| Отмены | Уменьшение счётчика; правила отмены и штрафы |
+| Цены по ночам | Отдельная таблица цен по датам и типам номеров |
 
 ---
 
-## 15. Bottlenecks and Failure Scenarios
+## 15. Узкие места и сценарии сбоев
 
-| Scenario | What happens | How we protect |
-|:---------|:-------------|:---------------|
-| Two people pick the same seat at once | Double booking | A conditional update / a unique constraint |
-| Several seats, some taken | A partial booking | An "all or nothing" transaction |
-| On-sale, millions of people | The site goes down | A virtual waiting room, static content from the CDN, admission tokens |
-| A buyer doesn't pay | Seats get "stuck" | A hold TTL, lazy release, a sweeper |
-| Payment at the last second after expiry | A seat sold twice | Conditional confirmation by hold_id, voiding the authorization |
-| A payment provider timeout | The result is unknown | An idempotency key, a status query, reconciliation |
-| The availability cache lags | The user picks a taken seat | A `409` at hold time, "best available" |
-| The event's hot shard | Overload | The queue, splitting by section, a single-threaded allocator |
-| Bots | Buying up tickets | Registration, CAPTCHA, limits, token binding |
-| The queue service dies | New people can't join the queue | Redis replicas; already-admitted buyers keep working with their tokens |
-
----
-
-## 16. What Changes at 10x Scale
-
-> 🎤 "20 million people for a single sale?"
-
-| Change | Why |
-|:-------|:----|
-| **The queue entirely at the edge** (edge compute + KV) | Millions of clients never reach our servers |
-| **Single-threaded allocators per section** | Maximum hold throughput |
-| **A lottery instead of a queue** | When demand is hundreds of times supply, it's fairer to draw the right to buy in advance |
-| **Separate infrastructure for peak events** | Peaks don't affect sales of other events |
+| Сценарий | Что произойдёт | Как защищаемся |
+|:---------|:---------------|:---------------|
+| Одновременный выбор одного места | Двойное бронирование | Условное обновление / уникальное ограничение |
+| Несколько мест, часть занята | Частичная бронь | Транзакция «всё или ничего» |
+| Старт продаж, миллионы человек | Падение сайта | Виртуальная очередь, статика из CDN, токены допуска |
+| Покупатель не оплатил | Места «застряли» | TTL удержания, ленивое освобождение, sweeper |
+| Оплата в последнюю секунду после истечения | Место продано дважды | Условное подтверждение по hold_id, отмена авторизации |
+| Таймаут платёжного провайдера | Неизвестен результат | Idempotency key, запрос статуса, сверка |
+| Кэш доступности отстаёт | Пользователь выбирает занятое место | `409` при удержании, «лучшие доступные» |
+| Горячий шард события | Перегрузка | Очередь, разделение по секторам, однопоточный распределитель |
+| Боты | Скупка билетов | Регистрация, CAPTCHA, лимиты, привязка токенов |
+| Сервис очереди упал | Новые люди не попадают в очередь | Реплики Redis; уже допущенные работают по токенам |
 
 ---
 
-## 17. Key Concepts and New Terms
+## 16. Что изменится при росте в 10 раз
 
-### What's applied from Fundamentals
+> 🎤 «20 миллионов человек на одни продажи?»
 
-| Concept | Where it's covered | How it applies here |
-|:--------|:-------------------|:--------------------|
-| Lost updates, locks, the optimistic approach | [04-databases](../../04-databases/README.md#11-concurrency-control-locks-mvcc-optimistic-approach) | Preventing double booking |
-| Hot partitions | [06-partitioning](../../06-partitioning/README.md#8-hot-partitions-and-skew) | One popular event |
-| Idempotency | [10-idempotency](../../10-idempotency/README.md) | Orders, payment |
-| Sagas and compensations | [11-distributed-transactions](../../11-distributed-transactions/README.md) | Hold → payment → confirmation |
-| Load shedding, static stability | [13-reliability-patterns](../../13-reliability-patterns/README.md) | The virtual waiting room, tokens |
-| Rate limiting | [Tier 1 · 02](../02-rate-limiter/README.md) | Bot protection |
-
-### New terms in this problem
-
-| Term | In short |
-|:-----|:---------|
-| **A hold** | Temporarily reserving seats for a buyer with a TTL |
-| **A conditional update** | `UPDATE … WHERE status = 'AVAILABLE'` — an atomic check and write |
-| **All or nothing** | Booking several seats or nights in one transaction |
-| **Lazy release** | An expired hold counts as available in the condition itself |
-| **A virtual waiting room** | Controlled admission into the booking system during peaks |
-| **An admission token** | A signed token verified without calling the queue |
-| **An availability bitmap** | One bit per seat — compact section availability |
-| **A single-threaded allocator** | One process per event or section, handling requests in turn |
-| **Overbooking** | Deliberately selling beyond inventory with a compensation procedure |
+| Изменение | Почему |
+|:----------|:-------|
+| **Очередь полностью на edge** (edge compute + KV) | Миллионы клиентов не доходят до наших серверов |
+| **Однопоточные распределители по секторам** | Максимальная пропускная способность удержаний |
+| **Лотерея вместо очереди** | При спросе в сотни раз выше предложения честнее заранее разыграть право покупки |
+| **Отдельная инфраструктура для пиковых событий** | Пики не влияют на продажу остальных событий |
 
 ---
 
-## 18. Variations and Follow-Up Questions
+## 17. Ключевые концепции и новые понятия
+
+### Что из Fundamentals применяется
+
+| Концепция | Где разобрана | Как применяется здесь |
+|:----------|:--------------|:----------------------|
+| Lost update, блокировки, оптимистичный подход | [04-databases](../../01_Fundamentals/04_Databases/README.ru.md#11-управление-конкурентным-доступом-блокировки-mvcc-оптимистичный-подход) | Защита от двойного бронирования |
+| Горячие партиции | [06-partitioning](../../01_Fundamentals/06_Partitioning/README.ru.md#8-горячие-партиции-и-перекос) | Одно популярное событие |
+| Идемпотентность | [10-idempotency](../../01_Fundamentals/10_Idempotency/README.ru.md) | Заказ, оплата |
+| Саги и компенсации | [11-distributed-transactions](../../01_Fundamentals/11_Distributed%20transactions/README.ru.md) | Удержание → оплата → подтверждение |
+| Load shedding, статическая стабильность | [13-reliability-patterns](../../01_Fundamentals/13_Reliability%20patterns/README.ru.md) | Виртуальная очередь, токены |
+| Rate limiting | [Tier 1 · 02](../02_Design%20a%20Rate%20Limiter%20or%20Abuse%20Protection/README.ru.md) | Защита от ботов |
+
+### Новые понятия этой задачи
+
+| Понятие | Кратко |
+|:--------|:-------|
+| **Удержание (hold)** | Временное закрепление мест за покупателем с TTL |
+| **Условное обновление** | `UPDATE … WHERE status = 'AVAILABLE'` — атомарная проверка и запись |
+| **Всё или ничего** | Бронь нескольких мест или ночей одной транзакцией |
+| **Ленивое освобождение** | Истёкшее удержание считается свободным в самом условии |
+| **Виртуальная очередь** | Контролируемый допуск в систему бронирования при пиках |
+| **Токен допуска** | Подписанный токен, проверяемый без обращения к очереди |
+| **Битовая карта доступности** | Бит на место — компактная доступность сектора |
+| **Однопоточный распределитель** | Один процесс на событие или сектор, обрабатывающий запросы по очереди |
+| **Overbooking** | Намеренная продажа сверх инвентаря с процедурой компенсации |
+
+---
+
+## 18. Варианты задачи и follow-up вопросы
 
 <details>
-<summary><b>Why not keep holds only in Redis?</b></summary>
+<summary><b>Почему не держать удержания только в Redis?</b></summary>
 
-Redis is faster but may lose data on a failure or failover, and then a seat would look "available" while the buyer is already paying. If Redis is used (e.g. for a fast initial hold or the bitmap), the DB remains the source of truth, and order confirmation checks the state in the DB.
+Redis быстрее, но может потерять данные при сбое или failover, и тогда место окажется «свободным», хотя покупатель уже платит. Если Redis используется (например, для быстрого первичного удержания или битовой карты), источником правды остаётся БД, а подтверждение заказа проверяет состояние в БД.
 </details>
 
 <details>
-<summary><b>Why is pessimistic locking worse than optimistic here?</b></summary>
+<summary><b>Чем пессимистичная блокировка хуже оптимистичной здесь?</b></summary>
 
-Under high contention, `SELECT FOR UPDATE` holds locks for the entire transaction, so requests queue up on the same popular seats; with several seats, the deadlock risk grows. A conditional update holds the row lock only for the operation itself, and a conflict immediately yields a clear "seat taken" result.
+При высокой конкуренции `SELECT FOR UPDATE` держит блокировки на время всей транзакции, и запросы выстраиваются в очередь на одних и тех же популярных местах; при нескольких местах растёт риск взаимоблокировок. Условное обновление держит блокировку строки только на время самой операции, а конфликт сразу даёт понятный результат «место занято».
 </details>
 
 <details>
-<summary><b>How do you implement "best available seats"?</b></summary>
+<summary><b>Как сделать «лучшие доступные места»?</b></summary>
 
-A section's allocator keeps availability and seat-quality rules (closer to the stage, centered) in memory, and for a request like "2 seats in category A" finds the best free adjacent pair and holds it right away. That turns "everyone clicks the same seat" into orderly processing by one process.
+Распределитель сектора держит в памяти доступность и правила качества мест (ближе к сцене, по центру) и для запроса «2 места в категории A» находит лучшую свободную пару рядом, сразу удерживая её. Так конкуренция переносится из «все кликают на одно место» в упорядоченную обработку одним процессом.
 </details>
 
 <details>
-<summary><b>What about users who closed the tab during payment?</b></summary>
+<summary><b>Что делать с пользователями, которые закрыли вкладку во время оплаты?</b></summary>
 
-The hold expires after 10 minutes and is released lazily and by the sweeper. If the payment went through, the saga completes without the client: the tickets appear in the account and an email arrives.
+Удержание истечёт через 10 минут и освободится лениво и sweeper'ом. Если оплата успела пройти, сага завершится и без клиента: билеты появятся в аккаунте, придёт письмо.
 </details>
 
 <details>
-<summary><b>How do you handle refunds and resale?</b></summary>
+<summary><b>Как обрабатывать возвраты и перепродажу?</b></summary>
 
-A refund follows the event's rules: the ticket is voided, the seat returns to `AVAILABLE` (or to a separate resale pool), and the money is refunded via the provider. Official resale transfers the ticket to a new owner with a new barcode and a price cap.
+Возврат — по правилам события: билет аннулируется, место возвращается в `AVAILABLE` (или в отдельный пул перепродажи), деньги возвращаются через провайдера. Официальная перепродажа — передача билета новому владельцу с выпуском нового штрихкода и ограничением цены.
 </details>
 
 ---
 
-## 19. Common Mistakes
+## 19. Типичные ошибки
 
-| ❌ Mistake | Why it's bad | ✅ Do this instead |
-|:----------|:-------------|:------------------|
-| "Check it's free, then write" | Double booking | A conditional update or a unique constraint |
-| A partial booking of several seats | The user gets seats that aren't together | An "all or nothing" transaction |
-| No hold during payment | Seats get taken while the card is typed | A hold with a TTL |
-| Releasing seats only with a background job | Seats get "stuck" when it falls behind | Lazy release in the condition |
-| Confirming seats without checking hold_id | Selling a seat someone else holds | Conditional confirmation |
-| Capturing money before confirming seats | Refunds on failure | Authorize → confirm → capture |
-| Letting everyone into the booking system at on-sale | The site goes down | A virtual waiting room |
-| Checking admission by calling the queue | The queue becomes a bottleneck | A signed token |
-| The seat map straight from the DB | An overloaded shard | Bitmaps in a cache |
-| FIFO for those who arrived before on-sale | Bots and refreshers win | A random order for pre-on-sale arrivals |
+| ❌ Ошибка | Почему плохо | ✅ Как правильно |
+|:---------|:-------------|:----------------|
+| «Проверить свободно, потом записать» | Двойное бронирование | Условное обновление или уникальное ограничение |
+| Частичная бронь нескольких мест | Пользователь получает места не рядом | Транзакция «всё или ничего» |
+| Без удержания на время оплаты | Места уводят во время ввода карты | Удержание с TTL |
+| Освобождать места только фоновой задачей | Места «застревают» при её отставании | Ленивое освобождение в условии |
+| Подтверждать места без проверки hold_id | Продажа места, удержанного другим | Условное подтверждение |
+| Списывать деньги до подтверждения мест | Возвраты при неудаче | Авторизация → подтверждение → списание |
+| Пускать всех в систему бронирования при старте продаж | Падение сайта | Виртуальная очередь |
+| Проверять допуск запросом к очереди | Очередь — узкое место | Подписанный токен |
+| Карта мест напрямую из БД | Перегрузка шарда | Битовые карты в кэше |
+| FIFO для пришедших до старта | Выигрывают боты и те, кто обновляет страницу | Случайный порядок для пришедших до старта |
 
 ---
 
-## 20. Cheat Sheet and Self-Check
+## 20. Шпаргалка и самопроверка
 
-### 30-second answer
+### Ответ за 30 секунд
 
-> Two flows: huge browsing (static content from the CDN, availability from Redis bitmaps with seconds of delay) and strongly consistent booking. A hold is a transaction in a DB sharded by event_id: `UPDATE … SET status = 'HELD' WHERE status = 'AVAILABLE' OR the hold has expired`, checking the row count, all or nothing; a 10-minute TTL, lazy release and a sweeper. The purchase is a saga: order PENDING → authorization with idempotency key = order_id → conditional seat confirmation by hold_id → capture → tickets; if the seats are lost — void the authorization. On-sale — a virtual waiting room at the edge: a random order for pre-on-sale arrivals, admission by actual capacity, a signed access_token verified locally, an instant "sold out". The hot spot — sections as locking units, a single-threaded allocator, sharded counters for the floor, "best available". Bots — registration, CAPTCHA, limits, token binding. Hotels — counters per night, a conditional increment of every night in one transaction.
+> Два потока: огромный просмотр (статика из CDN, доступность из битовых карт в Redis с задержкой в секунды) и строго консистентное бронирование. Удержание — транзакция в БД, шардированной по event_id: `UPDATE … SET status = 'HELD' WHERE status = 'AVAILABLE' OR истёкшее удержание`, проверка числа строк, всё или ничего; TTL 10 минут, ленивое освобождение и sweeper. Покупка — сага: заказ PENDING → авторизация с idempotency key = order_id → условное подтверждение мест по hold_id → списание → билеты; при потере мест — отмена авторизации. Старт продаж — виртуальная очередь на edge: случайный порядок для пришедших до старта, допуск по фактической ёмкости, подписанный access_token, проверяемый локально, мгновенное «распродано». Горячая точка — сектора как единицы блокировки, однопоточный распределитель, шардированные счётчики для танцпола, «лучшие доступные». Боты — регистрация, CAPTCHA, лимиты, привязка токенов. Отели — счётчики на каждую ночь, условное увеличение всех ночей в одной транзакции.
 
-### Self-check
+### Самопроверка
 
-- [ ] I can show the double booking race and name it
-- [ ] I can compare 4 ways to prevent it and choose one with justification
-- [ ] I can write an "all or nothing" conditional update for several seats
-- [ ] I can explain holds with a TTL, lazy release and the sweeper
-- [ ] I can describe the purchase saga with authorization, confirmation and compensations
-- [ ] I can design a virtual waiting room and explain the fair ordering
-- [ ] I can explain why a signed admission token is needed
-- [ ] I can design the seat map with bitmaps
-- [ ] I can propose solutions for a hot event
-- [ ] I can adapt the design for hotel booking
+- [ ] Могу показать гонку двойного бронирования и назвать её
+- [ ] Могу сравнить 4 способа защиты и выбрать с обоснованием
+- [ ] Могу написать условное обновление нескольких мест «всё или ничего»
+- [ ] Могу объяснить удержание с TTL, ленивое освобождение и sweeper
+- [ ] Могу описать сагу покупки с авторизацией, подтверждением и компенсациями
+- [ ] Могу спроектировать виртуальную очередь и объяснить справедливый порядок
+- [ ] Могу объяснить, зачем подписанный токен допуска
+- [ ] Могу спроектировать карту мест с битовыми картами
+- [ ] Могу предложить решения для горячего события
+- [ ] Могу адаптировать дизайн для бронирования отелей
 
-### Further reading
+### Что почитать
 
-- Alex Xu, Sahn Lam, *System Design Interview*, Vol. 2 — chapter "Hotel Reservation System"
-- PostgreSQL documentation: isolation levels, `SELECT … FOR UPDATE`, `SKIP LOCKED`
-- Cloudflare, Queue-it — documentation on virtual waiting rooms
-- Fundamentals topics: [04-databases](../../04-databases/README.md), [11-distributed-transactions](../../11-distributed-transactions/README.md)
+- Alex Xu, Sahn Lam, *System Design Interview*, Vol. 2 — глава «Hotel Reservation System»
+- Документация PostgreSQL: уровни изоляции, `SELECT … FOR UPDATE`, `SKIP LOCKED`
+- Cloudflare, Queue-it — документация о виртуальных комнатах ожидания
+- Темы Fundamentals: [04-databases](../../01_Fundamentals/04_Databases/README.ru.md), [11-distributed-transactions](../../01_Fundamentals/11_Distributed%20transactions/README.ru.md)

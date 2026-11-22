@@ -1,11 +1,11 @@
-**English** | [Русский](README_RU.md)
+**English** | [Русский](README.ru.md)
 
 # 08. Consensus
 
 > **Covers:** what consensus is and why it's needed, FLP, quorums, Raft in detail (leader election, log replication, linearizable reads, membership changes), Paxos, leases, split brain, fencing tokens, coordination services (ZooKeeper, etcd), Multi-Raft
 > **Study time:** ~5–6 h · **Needed for:** leader election, distributed locks, metadata stores, any system with RPO = 0 and no split brain
 > **Practice:** interview-style walkthrough — [INTERVIEW.md](./INTERVIEW.md)
-> **Related topics:** [05-replication](../05-replication/README.md#10-consensus-based-replication), [07-consistency-models](../07-consistency-models/README.md#3-linearizability)
+> **Related topics:** [05-replication](../05_Replication/README.md#10-consensus-based-replication), [07-consistency-models](../07_Consistency%20models/README.md#3-linearizability)
 
 ---
 

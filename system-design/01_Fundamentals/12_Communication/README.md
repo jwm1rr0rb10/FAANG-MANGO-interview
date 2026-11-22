@@ -1,11 +1,11 @@
-**English** | [Русский](README_RU.md)
+**English** | [Русский](README.ru.md)
 
 # 12. Communication Protocols
 
 > **Covers:** HTTP/1.1, HTTP/2, HTTP/3, REST, gRPC, GraphQL, polling, long polling, SSE, WebSocket, webhooks, serialization formats, API gateways and BFFs, scaling WebSockets, how to choose a protocol for the job
 > **Study time:** ~4–5 h · **Needed for:** every problem — each has an API; especially chat, real-time, mobile clients, microservices, public APIs
 > **Practice:** interview-style walkthrough — [INTERVIEW.md](./INTERVIEW.md)
-> **Related topics:** [01-scaling-basics](../01-scaling-basics/README.md#7-l4-vs-l7) (L4/L7), [09-messaging](../09-messaging/README.md), [10-idempotency](../10-idempotency/README.md)
+> **Related topics:** [01-scaling-basics](../01_Scaling%20basics/README.md#7-l4-vs-l7) (L4/L7), [09-messaging](../09_Messaging/README.md), [10-idempotency](../10_Idempotency/README.md)
 
 ---
 
@@ -89,7 +89,7 @@ flowchart LR
 ```
 
 **What matters for system design:**
-- HTTP/2 underpins gRPC; one long-lived connection carries many requests, so **L4 load balancing distributes poorly** (see [01-scaling-basics](../01-scaling-basics/README.md#7-l4-vs-l7)).
+- HTTP/2 underpins gRPC; one long-lived connection carries many requests, so **L4 load balancing distributes poorly** (see [01-scaling-basics](../01_Scaling%20basics/README.md#7-l4-vs-l7)).
 - HTTP/3 especially helps **mobile clients**: packet loss and network switches hurt latency less.
 - Keep-alive and connection pools are a must: a TLS handshake per request is expensive.
 
@@ -113,7 +113,7 @@ DELETE /v1/orders/9001                                        ← delete
 | Topic | Practice |
 |:------|:---------|
 | **Resources** | Plural nouns: `/orders`, `/users/42/orders` |
-| **Methods** | Follow HTTP semantics; remember which are idempotent (see [10-idempotency](../10-idempotency/README.md#2-what-idempotency-is)) |
+| **Methods** | Follow HTTP semantics; remember which are idempotent (see [10-idempotency](../10_Idempotency/README.md#2-what-idempotency-is)) |
 | **Status codes** | `200`, `201 Created`, `202 Accepted`, `204`, `400`, `401`, `403`, `404`, `409`, `422`, `429`, `5xx` |
 | **Errors** | A uniform format, e.g. RFC 9457 "Problem Details": `type`, `title`, `status`, `detail` |
 | **Stateless** | Each request is self-contained (a token in a header) — easy to scale horizontally |
@@ -405,7 +405,7 @@ There's an open specification, **Standard Webhooks**, that defines headers and s
 
 - Verify the signature and timestamp.
 - Respond `2xx` quickly, process asynchronously.
-- Deduplicate by `event_id` (see [10-idempotency](../10-idempotency/README.md#10-idempotency-in-workflows-and-webhooks)).
+- Deduplicate by `event_id` (see [10-idempotency](../10_Idempotency/README.md#10-idempotency-in-workflows-and-webhooks)).
 - Don't rely on ordering.
 
 ---
@@ -445,7 +445,7 @@ flowchart LR
 | **Service mesh** (Istio, Linkerd) | A sidecar proxy next to each service: mTLS, load balancing, retries, timeouts, metrics — with no code in the service |
 
 > [!WARNING]
-> Retries in the mesh, the gateway and the service code **multiply** (see [10-idempotency](../10-idempotency/README.md#7-when-and-where-to-retry)). Configure them deliberately, at one layer.
+> Retries in the mesh, the gateway and the service code **multiply** (see [10-idempotency](../10_Idempotency/README.md#7-when-and-where-to-retry)). Configure them deliberately, at one layer.
 
 ---
 
@@ -476,7 +476,7 @@ flowchart LR
 | Chat, collaborative editing, games, live maps | WebSocket | Frequent two-way exchange |
 | A mobile app in the background | Push notifications (APNs, FCM) | The OS closes background connections |
 | Telling a partner about an event | Webhooks | Push between servers |
-| Async events between services | A broker (Kafka, SQS) | Decoupling, buffering (see [09-messaging](../09-messaging/README.md)) |
+| Async events between services | A broker (Kafka, SQS) | Decoupling, buffering (see [09-messaging](../09_Messaging/README.md)) |
 | IoT device telemetry | MQTT | A lightweight protocol for unreliable networks and weak devices |
 
 ---

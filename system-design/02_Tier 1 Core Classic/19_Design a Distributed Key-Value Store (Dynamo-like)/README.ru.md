@@ -4,7 +4,7 @@
 
 > **Уровень:** Hard · **Время на интервью:** 45–60 мин · **Время на разбор:** ~5–6 ч
 > **Ключевые аспекты:** consistent hashing и виртуальные узлы, репликация и кворумы (N, W, R), версии и конфликты (last-write-wins, векторные часы, CRDT), sloppy quorum и hinted handoff, read repair, anti-entropy на деревьях Меркла, gossip и обнаружение отказов, LSM-движок хранения, настраиваемая консистентность, несколько дата-центров
-> **Опирается на:** [05-replication](../../05-replication/README_RU.md#9-leaderless-и-кворумы), [06-partitioning](../../06-partitioning/README_RU.md), [07-consistency-models](../../07-consistency-models/README_RU.md), [04-databases](../../04-databases/README_RU.md#7-b-tree-vs-lsm-tree), [Tier 1 · 03 Distributed Cache](../03-distributed-cache/README_RU.md#7-deep-dive-2-распределение-ключей-по-узлам)
+> **Опирается на:** [05-replication](../../01_Fundamentals/05_Replication/README.ru.md#9-leaderless-и-кворумы), [06-partitioning](../../01_Fundamentals/06_Partitioning/README.ru.md), [07-consistency-models](../../01_Fundamentals/07_Consistency%20models/README.ru.md), [04-databases](../../01_Fundamentals/04_Databases/README.ru.md#7-b-tree-vs-lsm-tree), [Tier 1 · 03 Distributed Cache](../03_Design%20a%20Distributed%20Cache/README.ru.md#7-deep-dive-2-распределение-ключей-по-узлам)
 
 ---
 
@@ -206,7 +206,7 @@ flowchart TB
 
 > 🎤 «Как ключи распределяются по узлам и что происходит при добавлении узла?»
 
-Подробно consistent hashing разобран в [Distributed Cache](../03-distributed-cache/README_RU.md#7-deep-dive-2-распределение-ключей-по-узлам) и [06-partitioning](../../06-partitioning/README_RU.md). Кратко и что важно для хранилища:
+Подробно consistent hashing разобран в [Distributed Cache](../03_Design%20a%20Distributed%20Cache/README.ru.md#7-deep-dive-2-распределение-ключей-по-узлам) и [06-partitioning](../../01_Fundamentals/06_Partitioning/README.ru.md). Кратко и что важно для хранилища:
 
 | Решение | Почему |
 |:--------|:-------|
@@ -285,7 +285,7 @@ N = 3, W = 1, R = 1:  1 + 1 = 2 ≤ 3
 📘 Координатор ждёт **самые быстрые** W (или R) ответов из N. Медленная реплика не тормозит запрос, если остальных достаточно. Это важно для p99: с W = 2 из 3 одна «тормозящая» машина не влияет на задержку.
 
 > [!WARNING]
-> **R + W > N не даёт линеаризуемости.** Возможны аномалии: запись не набрала W подтверждений, но успела попасть на одну реплику (клиент получил ошибку, а значение частично записано); sloppy quorum (deep dive 4) пишет на «чужие» узлы; одновременные записи создают конфликтующие версии. Кворумы дают «обычно свежее чтение», но не строгую консистентность (см. [07-consistency-models](../../07-consistency-models/README_RU.md)).
+> **R + W > N не даёт линеаризуемости.** Возможны аномалии: запись не набрала W подтверждений, но успела попасть на одну реплику (клиент получил ошибку, а значение частично записано); sloppy quorum (deep dive 4) пишет на «чужие» узлы; одновременные записи создают конфликтующие версии. Кворумы дают «обычно свежее чтение», но не строгую консистентность (см. [07-consistency-models](../../01_Fundamentals/07_Consistency%20models/README.ru.md)).
 
 ---
 
@@ -508,7 +508,7 @@ sequenceDiagram
 
 > 🎤 «Как каждый узел хранит данные, чтобы выдерживать 10 000 записей в секунду?»
 
-📘 **LSM-дерево** (log-structured merge tree) оптимизирует запись (см. [04-databases](../../04-databases/README_RU.md#7-b-tree-vs-lsm-tree)):
+📘 **LSM-дерево** (log-structured merge tree) оптимизирует запись (см. [04-databases](../../01_Fundamentals/04_Databases/README.ru.md#7-b-tree-vs-lsm-tree)):
 
 ```mermaid
 flowchart LR
@@ -627,11 +627,11 @@ flowchart LR
 
 | Концепция | Где разобрана | Как применяется здесь |
 |:----------|:--------------|:----------------------|
-| Leaderless-репликация, кворумы | [05-replication](../../05-replication/README_RU.md#9-leaderless-и-кворумы) | N, W, R |
-| Consistent hashing | [06-partitioning](../../06-partitioning/README_RU.md), [Tier 1 · 03](../03-distributed-cache/README_RU.md) | Кольцо и виртуальные узлы |
-| CAP, eventual consistency | [07-consistency-models](../../07-consistency-models/README_RU.md) | AP-выбор, аномалии кворумов |
-| LSM-деревья | [04-databases](../../04-databases/README_RU.md#7-b-tree-vs-lsm-tree) | Движок хранения узла |
-| Paxos, консенсус | [08-consensus](../../08-consensus/README_RU.md) | Lightweight transactions |
+| Leaderless-репликация, кворумы | [05-replication](../../01_Fundamentals/05_Replication/README.ru.md#9-leaderless-и-кворумы) | N, W, R |
+| Consistent hashing | [06-partitioning](../../01_Fundamentals/06_Partitioning/README.ru.md), [Tier 1 · 03](../03_Design%20a%20Distributed%20Cache/README.ru.md) | Кольцо и виртуальные узлы |
+| CAP, eventual consistency | [07-consistency-models](../../01_Fundamentals/07_Consistency%20models/README.ru.md) | AP-выбор, аномалии кворумов |
+| LSM-деревья | [04-databases](../../01_Fundamentals/04_Databases/README.ru.md#7-b-tree-vs-lsm-tree) | Движок хранения узла |
+| Paxos, консенсус | [08-consensus](../../01_Fundamentals/08_Consensus/README.ru.md) | Lightweight transactions |
 
 ### Новые понятия этой задачи
 
@@ -669,7 +669,7 @@ flowchart LR
 <details>
 <summary><b>Как обеспечить read-your-writes для пользователя?</b></summary>
 
-Варианты: читать и писать с `QUORUM` (R + W > N); привязывать сессию пользователя к одному координатору и читать с теми же репликами; или хранить в клиенте версию последней записи и требовать чтение не старее её (см. сессионные гарантии в [07-consistency-models](../../07-consistency-models/README_RU.md#7-сессионные-гарантии)).
+Варианты: читать и писать с `QUORUM` (R + W > N); привязывать сессию пользователя к одному координатору и читать с теми же репликами; или хранить в клиенте версию последней записи и требовать чтение не старее её (см. сессионные гарантии в [07-consistency-models](../../01_Fundamentals/07_Consistency%20models/README.ru.md#7-сессионные-гарантии)).
 </details>
 
 <details>

@@ -1,4 +1,4 @@
-[English](INTERVIEW.md) | **Русский** · Теория: [README_RU.md](./README_RU.md)
+[English](INTERVIEW.md) | **Русский** · Теория: [README_RU.md](./README.ru.md)
 
 # 10. Idempotency: API переводов, которое безопасно ретраить
 
@@ -545,7 +545,7 @@ stateDiagram-v2
 
 ### Что почитать
 
-- Теория по теме: [README_RU.md](./README_RU.md)
+- Теория по теме: [README_RU.md](./README.ru.md)
 - Brandur Leach, *Implementing Stripe-like Idempotency Keys in Postgres*
 - Amazon Builders' Library: *Making retries safe with idempotent APIs*
 - Marc Brooker, *Exponential Backoff And Jitter*

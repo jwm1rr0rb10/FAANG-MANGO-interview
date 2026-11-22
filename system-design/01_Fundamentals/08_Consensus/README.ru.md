@@ -4,8 +4,8 @@
 
 > **Что внутри:** что такое консенсус и зачем он нужен, FLP, кворумы, Raft подробно (выбор лидера, репликация журнала, линеаризуемые чтения, смена состава), Paxos, лизы, split brain, fencing-токены, сервисы координации (ZooKeeper, etcd), Multi-Raft
 > **Время на изучение:** ~5–6 ч · **Нужно для:** выбора лидера, распределённых блокировок, хранилищ метаданных, любой системы с RPO = 0 без split brain
-> **Практика:** разбор в формате интервью — [INTERVIEW_RU.md](./INTERVIEW_RU.md)
-> **Связанные темы:** [05-replication](../05-replication/README_RU.md#10-репликация-на-основе-консенсуса), [07-consistency-models](../07-consistency-models/README_RU.md#3-линеаризуемость)
+> **Практика:** разбор в формате интервью — [INTERVIEW_RU.md](./INTERVIEW.ru.md)
+> **Связанные темы:** [05-replication](../05_Replication/README.ru.md#10-репликация-на-основе-консенсуса), [07-consistency-models](../07_Consistency%20models/README.ru.md#3-линеаризуемость)
 
 ---
 

@@ -1,11 +1,11 @@
-**English** | [Русский](README_RU.md)
+**English** | [Русский](README.ru.md)
 
 # 10. Idempotency and Retries
 
 > **Covers:** why retries are inevitable, HTTP method idempotency, naturally idempotent API design, idempotency keys (Stripe-style), atomic phases and recovery points, deduplication at different layers, when and where to retry, exponential backoff and jitter, retry budgets, circuit breakers, webhooks
 > **Study time:** ~4 h · **Needed for:** payments, any API with mutating operations, mobile clients, integrations with external services
 > **Practice:** interview-style walkthrough — [INTERVIEW.md](./INTERVIEW.md)
-> **Related topics:** [09-messaging](../09-messaging/README.md#6-idempotent-consumers) (idempotent consumers), [04-databases](../04-databases/README.md#11-concurrency-control-locks-mvcc-optimistic-approach), [08-consensus](../08-consensus/README.md#10-split-brain-and-fencing-tokens)
+> **Related topics:** [09-messaging](../09_Messaging/README.md#6-idempotent-consumers) (idempotent consumers), [04-databases](../04_Databases/README.md#11-concurrency-control-locks-mvcc-optimistic-approach), [08-consensus](../08_Consensus/README.md#10-split-brain-and-fencing-tokens)
 
 ---
 
@@ -252,7 +252,7 @@ sequenceDiagram
 | **Business logic** | Conditional state transitions, versions | `WHERE status = 'pending'` |
 | **Database** | Uniqueness constraints | `UNIQUE (order_id)` for payments |
 | **Broker** | Kafka's idempotent producer, SQS FIFO deduplication | The SQS FIFO deduplication window is 5 minutes |
-| **Consumers** | A processed `event_id` table | See [09-messaging](../09-messaging/README.md#6-idempotent-consumers) |
+| **Consumers** | A processed `event_id` table | See [09-messaging](../09_Messaging/README.md#6-idempotent-consumers) |
 | **External calls** | Passing an idempotency key to the provider | Payment APIs |
 
 > [!TIP]

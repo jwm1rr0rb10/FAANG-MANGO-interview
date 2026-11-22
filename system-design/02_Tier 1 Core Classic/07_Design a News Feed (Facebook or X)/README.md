@@ -1,10 +1,10 @@
-**English** | [Русский](README_RU.md)
+**English** | [Русский](README.ru.md)
 
 # Tier 1 · 07. News Feed (Facebook / X)
 
 > **Level:** Hard · **Interview time:** 45–60 min · **Study time:** ~5–6 h
 > **Key aspects:** fan-out on write vs on read, a hybrid for celebrities, the feed cache, post hydration, ranking, pagination and consistency, deletion and privacy, hot posts and counters
-> **Builds on:** [02-caching](../../02-caching/README.md), [06-partitioning](../../06-partitioning/README.md#8-hot-partitions-and-skew), [09-messaging](../../09-messaging/README.md), [15-search-basics](../../15-search-basics/README.md#6-multi-stage-ranking-and-quality-metrics), [Tier 1 · 04 ID Generator](../04-unique-id-generator/README.md), [Tier 1 · 06 Chat](../06-chat-system/README.md#12-deep-dive-6-group-chats)
+> **Builds on:** [02-caching](../../01_Fundamentals/02_Caching/README.md), [06-partitioning](../../01_Fundamentals/06_Partitioning/README.md#8-hot-partitions-and-skew), [09-messaging](../../01_Fundamentals/09_Messaging/README.md), [15-search-basics](../../01_Fundamentals/15_Search%20basics/README.md#6-multi-stage-ranking-and-quality-metrics), [Tier 1 · 04 ID Generator](../04_Design%20a%20Unique%20ID%20Generator/README.md), [Tier 1 · 06 Chat](../06_Design%20a%20Chat%20System%20%28WhatsApp%20or%20Messenger%29/README.md#12-deep-dive-6-group-chats)
 
 ---
 
@@ -107,7 +107,7 @@ Publishes a post → it's in their own feed immediately, and in followers' feeds
 | How fast must a post reach followers? | Seconds; up to a minute is fine | Async delivery into feeds |
 | Feed load latency? | p99 < 200 ms | The feed must be assembled almost entirely from cache |
 | How often is the feed opened? | ~10 times a day | Far more reads than posts |
-| Media? | Photos and video | Separate storage and a CDN (see [14-storage-types](../../14-storage-types/README.md)) |
+| Media? | Photos and video | Separate storage and a CDN (see [14-storage-types](../../01_Fundamentals/14_Storage%20types/README.md)) |
 | Privacy? | Private accounts, blocks, deleting posts | Filtering at read time |
 
 ### Functional requirements
@@ -419,7 +419,7 @@ sequenceDiagram
 
 > 🎤 "How do you decide which posts to show first?"
 
-A ranked feed is the same **funnel** as in search (see [15-search-basics](../../15-search-basics/README.md#6-multi-stage-ranking-and-quality-metrics)):
+A ranked feed is the same **funnel** as in search (see [15-search-basics](../../01_Fundamentals/15_Search%20basics/README.md#6-multi-stage-ranking-and-quality-metrics)):
 
 ```mermaid
 flowchart LR
@@ -483,7 +483,7 @@ A ranked feed changes every second: new posts appear, counters change, and so do
 - the client **optimistically** shows its own post right after publishing;
 - when reading your own feed, mix in your latest posts from the author's posts table."
 
-📘 This is the **read-your-writes** guarantee from [07-consistency-models](../../07-consistency-models/README.md#7-session-guarantees): the author always sees their own changes, while everyone else sees them with a small delay.
+📘 This is the **read-your-writes** guarantee from [07-consistency-models](../../01_Fundamentals/07_Consistency%20models/README.md#7-session-guarantees): the author always sees their own changes, while everyone else sees them with a small delay.
 
 ---
 
@@ -523,7 +523,7 @@ A ranked feed changes every second: new posts appear, counters change, and so do
 
 ### A hot post in the cache
 
-One post — one key in the post cache — millions of reads per second → one cache node is overloaded (see [Tier 1 · 03](../03-distributed-cache/README.md#11-deep-dive-6-hot-keys-and-stampedes)).
+One post — one key in the post cache — millions of reads per second → one cache node is overloaded (see [Tier 1 · 03](../03_Design%20a%20Distributed%20Cache/README.md#11-deep-dive-6-hot-keys-and-stampedes)).
 
 | Solution | How |
 |:---------|:----|
@@ -602,13 +602,13 @@ One post — one key in the post cache — millions of reads per second → one 
 
 | Concept | Where it's covered | How it applies here |
 |:--------|:-------------------|:--------------------|
-| Caching, hot keys | [02-caching](../../02-caching/README.md), [Tier 1 · 03](../03-distributed-cache/README.md) | The feed cache, the post cache, hot posts |
-| Skew, hot partitions | [06-partitioning](../../06-partitioning/README.md#8-hot-partitions-and-skew) | Celebrities, sharded counters |
-| Read-your-writes | [07-consistency-models](../../07-consistency-models/README.md#7-session-guarantees) | Your own post in your feed immediately |
-| Async events | [09-messaging](../../09-messaging/README.md) | Fan-out via Kafka |
-| Multi-stage ranking | [15-search-basics](../../15-search-basics/README.md#6-multi-stage-ranking-and-quality-metrics) | Feed ranking |
-| Snowflake IDs | [Tier 1 · 04](../04-unique-id-generator/README.md) | Time-ordered post IDs |
-| Fan-out on write vs read | [Tier 1 · 06](../06-chat-system/README.md#12-deep-dive-6-group-chats) | The same idea as for groups and channels |
+| Caching, hot keys | [02-caching](../../01_Fundamentals/02_Caching/README.md), [Tier 1 · 03](../03_Design%20a%20Distributed%20Cache/README.md) | The feed cache, the post cache, hot posts |
+| Skew, hot partitions | [06-partitioning](../../01_Fundamentals/06_Partitioning/README.md#8-hot-partitions-and-skew) | Celebrities, sharded counters |
+| Read-your-writes | [07-consistency-models](../../01_Fundamentals/07_Consistency%20models/README.md#7-session-guarantees) | Your own post in your feed immediately |
+| Async events | [09-messaging](../../01_Fundamentals/09_Messaging/README.md) | Fan-out via Kafka |
+| Multi-stage ranking | [15-search-basics](../../01_Fundamentals/15_Search%20basics/README.md#6-multi-stage-ranking-and-quality-metrics) | Feed ranking |
+| Snowflake IDs | [Tier 1 · 04](../04_Design%20a%20Unique%20ID%20Generator/README.md) | Time-ordered post IDs |
+| Fan-out on write vs read | [Tier 1 · 06](../06_Design%20a%20Chat%20System%20%28WhatsApp%20or%20Messenger%29/README.md#12-deep-dive-6-group-chats) | The same idea as for groups and channels |
 
 ### New terms in this problem
 
@@ -701,4 +701,4 @@ With pull, the post appears for a reader the next time they open the feed — ri
 - Facebook Engineering, *Serving Facebook Multifeed: Efficiency, performance gains through redesign* (2015)
 - Alex Xu, *System Design Interview*, Vol. 1 — chapter "Design a News Feed System"
 - Instagram Engineering articles on feed ranking
-- Fundamentals topics: [02-caching](../../02-caching/README.md), [06-partitioning](../../06-partitioning/README.md), [15-search-basics](../../15-search-basics/README.md)
+- Fundamentals topics: [02-caching](../../01_Fundamentals/02_Caching/README.md), [06-partitioning](../../01_Fundamentals/06_Partitioning/README.md), [15-search-basics](../../01_Fundamentals/15_Search%20basics/README.md)

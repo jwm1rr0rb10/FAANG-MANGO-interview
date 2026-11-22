@@ -1,4 +1,4 @@
-[English](INTERVIEW.md) | **Русский** · Теория: [README_RU.md](./README_RU.md)
+[English](INTERVIEW.md) | **Русский** · Теория: [README_RU.md](./README.ru.md)
 
 # 02. Caching: кэширующий слой для страницы товара
 
@@ -504,7 +504,7 @@ LFU: популярность товаров сильно перекошена �
 
 ### Что почитать
 
-- Теория по теме: [README_RU.md](./README_RU.md)
+- Теория по теме: [README_RU.md](./README.ru.md)
 - *Scaling Memcache at Facebook* (NSDI 2013)
 - Vattani et al., *Optimal Probabilistic Cache Stampede Prevention* (VLDB 2015)
 - Документация Redis Cluster: hash slots и hash tags

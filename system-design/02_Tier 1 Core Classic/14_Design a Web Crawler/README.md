@@ -1,10 +1,10 @@
-**English** | [Русский](README_RU.md)
+**English** | [Русский](README.ru.md)
 
 # Tier 1 · 14. Web Crawler
 
 > **Level:** Medium–Hard · **Interview time:** 45 min · **Study time:** ~4–5 h
 > **Key aspects:** the URL frontier (priorities and politeness), robots.txt, DNS and page fetching, URL normalization and dedup (Bloom filter), content dedup (checksums, SimHash), crawler traps, recrawling and freshness, page storage, distribution across nodes and fault tolerance
-> **Builds on:** [Tier 1 · 01 URL Shortener](../01-url-shortener/README.md#8-deep-dive-2-fast-redirects-and-caching) (Bloom filter), [09-messaging](../../09-messaging/README.md), [06-partitioning](../../06-partitioning/README.md), [14-storage-types](../../14-storage-types/README.md), [15-search-basics](../../15-search-basics/README.md)
+> **Builds on:** [Tier 1 · 01 URL Shortener](../01_Design%20a%20URL%20Shortener%20%28TinyURL%29/README.md#8-deep-dive-2-fast-redirects-and-caching) (Bloom filter), [09-messaging](../../01_Fundamentals/09_Messaging/README.md), [06-partitioning](../../01_Fundamentals/06_Partitioning/README.md), [14-storage-types](../../01_Fundamentals/14_Storage%20types/README.md), [15-search-basics](../../01_Fundamentals/15_Search%20basics/README.md)
 
 ---
 
@@ -379,7 +379,7 @@ For each of the 50B links per month, we must quickly answer whether the URL was 
 | **A Bloom filter** | 12 GB at 1% false positives, microseconds | False positives: a new URL is treated as "seen" and skipped |
 | **A Bloom filter + an exact store** ⭐ | Fast and exact | More complex |
 
-📘 **How the combination works.** A Bloom filter answers "definitely not" or "maybe" (details in the [URL shortener](../01-url-shortener/README.md#8-deep-dive-2-fast-redirects-and-caching)):
+📘 **How the combination works.** A Bloom filter answers "definitely not" or "maybe" (details in the [URL shortener](../01_Design%20a%20URL%20Shortener%20%28TinyURL%29/README.md#8-deep-dive-2-fast-redirects-and-caching)):
 - "definitely not" (most new URLs) → the URL is new; add it to the frontier and the filter — no disk access;
 - "maybe" → check the exact on-disk store; its answer is final.
 
@@ -507,7 +507,7 @@ The scheduler periodically selects URLs whose recrawl time has come and sends th
 
 | Decision | Why |
 |:---------|:----|
-| **WARC files** in object storage | The standard web archive format: many records (request, response, headers) in one large compressed file — not billions of tiny objects (see [14-storage-types](../../14-storage-types/README.md#10-the-small-files-problem)) |
+| **WARC files** in object storage | The standard web archive format: many records (request, response, headers) in one large compressed file — not billions of tiny objects (see [14-storage-types](../../01_Fundamentals/14_Storage%20types/README.md#10-the-small-files-problem)) |
 | Compression | HTML compresses several-fold |
 | URL metadata — in a sharded DB (by URL hash) | The last crawl, status, content hash, ETag, the next crawl |
 | To the indexer — a Kafka event pointing at the WARC record | The indexer reads asynchronously, independently of the crawler |
@@ -579,12 +579,12 @@ flowchart LR
 
 | Concept | Where it's covered | How it applies here |
 |:--------|:-------------------|:--------------------|
-| Bloom filters | [Tier 1 · 01](../01-url-shortener/README.md#8-deep-dive-2-fast-redirects-and-caching) | URL seen |
-| Queues, Kafka, at-least-once | [09-messaging](../../09-messaging/README.md) | Exchanging links, handing off to the indexer |
-| Sharding, consistent hashing | [06-partitioning](../../06-partitioning/README.md) | Distributing hosts across nodes |
-| The small files problem | [14-storage-types](../../14-storage-types/README.md#10-the-small-files-problem) | WARC archives |
-| Indexing, search | [15-search-basics](../../15-search-basics/README.md) | The consumer of downloaded pages |
-| Rate limiting | [Tier 1 · 02](../02-rate-limiter/README.md) | Politeness toward hosts |
+| Bloom filters | [Tier 1 · 01](../01_Design%20a%20URL%20Shortener%20%28TinyURL%29/README.md#8-deep-dive-2-fast-redirects-and-caching) | URL seen |
+| Queues, Kafka, at-least-once | [09-messaging](../../01_Fundamentals/09_Messaging/README.md) | Exchanging links, handing off to the indexer |
+| Sharding, consistent hashing | [06-partitioning](../../01_Fundamentals/06_Partitioning/README.md) | Distributing hosts across nodes |
+| The small files problem | [14-storage-types](../../01_Fundamentals/14_Storage%20types/README.md#10-the-small-files-problem) | WARC archives |
+| Indexing, search | [15-search-basics](../../01_Fundamentals/15_Search%20basics/README.md) | The consumer of downloaded pages |
+| Rate limiting | [Tier 1 · 02](../02_Design%20a%20Rate%20Limiter%20or%20Abuse%20Protection/README.md) | Politeness toward hosts |
 
 ### New terms in this problem
 

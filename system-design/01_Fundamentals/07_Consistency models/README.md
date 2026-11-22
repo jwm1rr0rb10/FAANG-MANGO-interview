@@ -1,11 +1,11 @@
-**English** | [Русский](README_RU.md)
+**English** | [Русский](README.ru.md)
 
 # 07. Consistency Models
 
 > **Covers:** what a consistency model is, linearizability, serializability and strict serializability, sequential and causal consistency, session guarantees, eventual consistency, clocks and event ordering, CAP and PACELC, tunable consistency in real databases
 > **Study time:** ~5 h · **Needed for:** any distributed system with replication; nearly every Senior+ interview
 > **Practice:** interview-style walkthrough — [INTERVIEW.md](./INTERVIEW.md)
-> **Related topics:** [04-databases](../04-databases/README.md#10-isolation-levels) (isolation levels), [05-replication](../05-replication/README.md#6-replication-lag-and-read-guarantees) (lag and read guarantees), [06-partitioning](../06-partitioning/README.md)
+> **Related topics:** [04-databases](../04_Databases/README.md#10-isolation-levels) (isolation levels), [05-replication](../05_Replication/README.md#6-replication-lag-and-read-guarantees) (lag and read guarantees), [06-partitioning](../06_Partitioning/README.md)
 
 ---
 
@@ -52,7 +52,7 @@ On a single server without replicas the question barely arises: you read and get
 | **Transaction isolation** (multiple objects) | Do concurrent transactions look as if they ran one at a time? | Read Committed, Snapshot Isolation, Serializable |
 | **Replica consistency** (one object, freshness) | Does a read see the latest write in real time? | Linearizable, Causal, Eventual |
 
-Isolation is covered in [04-databases](../04-databases/README.md#10-isolation-levels). This topic is mainly about the second dimension and where the two meet (strict serializability).
+Isolation is covered in [04-databases](../04_Databases/README.md#10-isolation-levels). This topic is mainly about the second dimension and where the two meet (strict serializability).
 
 ---
 
@@ -241,7 +241,7 @@ Weaker but very practical guarantees scoped to **one client (session)**. Formula
 > [!TIP]
 > All four together give roughly **causal consistency within a single session**. A practical technique is a **session token**: the server returns a position (LSN, version, vector clock) after each operation, the client passes it on subsequent requests, and a replica answers only once it has caught up to that position. That's how the Session level in Azure Cosmos DB works.
 
-More on read-your-writes and monotonic reads, with diagrams, in [05-replication](../05-replication/README.md#6-replication-lag-and-read-guarantees).
+More on read-your-writes and monotonic reads, with diagrams, in [05-replication](../05_Replication/README.md#6-replication-lag-and-read-guarantees).
 
 ---
 
@@ -256,7 +256,7 @@ That's a **very weak** guarantee:
 
 ### Strong eventual consistency
 
-A stronger variant: **replicas that have received the same set of updates are in the same state** — regardless of the order received. This is the **CRDT** guarantee (see [05-replication](../05-replication/README.md#8-conflict-resolution)). There are no conflicts to resolve manually.
+A stronger variant: **replicas that have received the same set of updates are in the same state** — regardless of the order received. This is the **CRDT** guarantee (see [05-replication](../05_Replication/README.md#8-conflict-resolution)). There are no conflicts to resolve manually.
 
 ### How "eventual" in practice
 
@@ -274,7 +274,7 @@ Many models require knowing **what happened first**. Physical clocks are unrelia
 
 - Quartz clocks **drift** (typically tens of microseconds per second).
 - NTP synchronizes them to within milliseconds, but worse when the network misbehaves; clocks can **jump backward**.
-- So "the write with the larger timestamp happened later" is a **false** assumption across servers (see the LWW problem in [05-replication](../05-replication/README.md#8-conflict-resolution)).
+- So "the write with the larger timestamp happened later" is a **false** assumption across servers (see the LWW problem in [05-replication](../05_Replication/README.md#8-conflict-resolution)).
 
 ### Logical and hybrid clocks
 

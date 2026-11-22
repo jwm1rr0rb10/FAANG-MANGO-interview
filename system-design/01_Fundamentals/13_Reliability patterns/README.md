@@ -1,11 +1,11 @@
-**English** | [Русский](README_RU.md)
+**English** | [Русский](README.ru.md)
 
 # 13. Reliability Patterns
 
 > **Covers:** cascading and metastable failures, availability math, timeouts and deadlines, circuit breakers, bulkheads and isolation (cells, shuffle sharding), rate limiting, load shedding and prioritization, adaptive concurrency limits, graceful degradation and fallbacks, static stability, chaos engineering, safe deployments
 > **Study time:** ~5 h · **Needed for:** any system with dependencies; a must at Senior+
 > **Practice:** interview-style walkthrough — [INTERVIEW.md](./INTERVIEW.md)
-> **Related topics:** [10-idempotency](../10-idempotency/README.md#9-timeouts-retry-budgets-and-circuit-breakers) (retries, backoff, retry budgets), [09-messaging](../09-messaging/README.md#10-backpressure-and-flow-control) (backpressure), [01-scaling-basics](../01-scaling-basics/README.md#9-health-checks-and-server-lifecycle) (health checks)
+> **Related topics:** [10-idempotency](../10_Idempotency/README.md#9-timeouts-retry-budgets-and-circuit-breakers) (retries, backoff, retry budgets), [09-messaging](../09_Messaging/README.md#10-backpressure-and-flow-control) (backpressure), [01-scaling-basics](../01_Scaling%20basics/README.md#9-health-checks-and-server-lifecycle) (health checks)
 
 ---
 
@@ -359,7 +359,7 @@ AWS describes the "constant work" pattern: the system does **the same amount of 
 | **N+1, N+2** | Enough capacity after losing one or two nodes (or zones) |
 | **Multiple AZs** | Survives a data center failure |
 | **Independent failures** | Different racks, zones, versions; don't update everything at once |
-| **Health checks** | Quickly remove failing instances from rotation (see [01-scaling-basics](../01-scaling-basics/README.md#9-health-checks-and-server-lifecycle)) |
+| **Health checks** | Quickly remove failing instances from rotation (see [01-scaling-basics](../01_Scaling%20basics/README.md#9-health-checks-and-server-lifecycle)) |
 
 ### Static stability
 
